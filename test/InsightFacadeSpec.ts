@@ -8,7 +8,7 @@ import {expect} from 'chai';
 import InsightFacade from "../src/controller/InsightFacade";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 
-describe("InsightController", function () {
+describe("InsightFacade", function () {
 
     var zipFileContents: string = null;
     var facade: InsightFacade = null;
