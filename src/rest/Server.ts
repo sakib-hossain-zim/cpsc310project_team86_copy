@@ -19,7 +19,6 @@ export default class Server {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
     }
-
     /**
      * Stops the server. Again returns a promise so we know when the connections have
      * actually been fully closed and the port has been released.
