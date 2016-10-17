@@ -54,24 +54,14 @@ export default class DatasetController {
     public getDatasets(): Datasets {
 
         let that = this;
-        // try {
-        // let stats = fs.statSync('/data/');
-        // if (!stats.isDirectory()) {
-        //   var path = fs.mkdirSync('./data/');
-        // }
-        //  let dir = fs.readdirSync("./data/");
 
-        //  if (Object.keys(this.datasets).length == 0) {
         let i = 0;
         var filenames = fs.readdirSync("./data/");
         filenames.forEach(function (file) {
             that.datasets[i] = fs.readFileSync("./data/" + file, 'utf8');
             i++;
         });
-        //  }
-        //           } catch (err) {
-        //               log.trace("could not readfile in getDatasets");
-        //           }
+
         return that.datasets;
     }
 
