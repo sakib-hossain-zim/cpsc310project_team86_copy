@@ -15,4 +15,5 @@ export default class InsightFacade implements IInsightFacade {
 
     public performQuery (query: QueryRequest): any //Promise<InsightResponse>
     {}
+
 }
