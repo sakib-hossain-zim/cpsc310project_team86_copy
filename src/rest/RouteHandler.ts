@@ -30,7 +30,7 @@ export default class RouteHandler {
         });
     }
 
-    public static  putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+    public static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
@@ -52,11 +52,13 @@ export default class RouteHandler {
 
                 controller.process(id, req.body).then(function (result) {
                     Log.trace('RouteHandler::postDataset(..) - processed');
+
                     if (controller.invalidDataSet) {
                         res.json(400, {error: "not valid dataset"});
                     } else {
-                        if (fs.existsSync('./data/' + id + '.json')){
-                            res.json(201, {success: result});
+                        if (controller.wasPreviouslyPut() === true){
+                            Log.trace('RouteHandler::postDataset(..) - processed and id already existed'); // added
+                            res.json(201,{success: result}); // error code 201
                         }
                         else{
                             res.json(204, {success: result});
