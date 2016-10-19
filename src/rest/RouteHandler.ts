@@ -35,8 +35,8 @@ export default class RouteHandler {
         try {
             var id: string = req.params.id;
 
-            // stream bytes from request into buffer and convert to base64
-            // adapted from: https://github.com/restify/node-restify/issues/880#issuecomment-133485821
+// stream bytes from request into buffer and convert to base64
+// adapted from: https://github.com/restify/node-restify/issues/880#issuecomment-133485821
             let buffer: any = [];
             req.on('data', function onRequestData(chunk: any) {
                 Log.trace('RouteHandler::postDataset(..) on data; chunk length: ' + chunk.length);
@@ -83,8 +83,8 @@ export default class RouteHandler {
         Log.trace('RouteHandler::postQuery(..) - params: ' + JSON.stringify(req.params));
         try {
             let query: QueryRequest = req.params;
-            //console.log(typeof query);
-            //    if (typeof query === 'undefined') res.send(400,'query is undefined');
+//console.log(typeof query);
+//    if (typeof query === 'undefined') res.send(400,'query is undefined');
             let datasets: Datasets = RouteHandler.datasetController.getDatasets();
 
             let controller = new QueryController(datasets);
@@ -106,7 +106,7 @@ export default class RouteHandler {
                 res.json(400, {status: 'invalid query'});
             }
         } catch (err) {
-            //  console.log("we are here");
+//  console.log("we are here");
             Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
             res.send(400);
         }

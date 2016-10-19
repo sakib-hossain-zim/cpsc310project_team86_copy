@@ -34,7 +34,5 @@ describe("DatasetController", function () {
             Log.test('Dataset processed; result: ' + result);
             expect(result).to.equal(false); // zip file was invalid, should not have passed
         });
-
     });
-
 });
