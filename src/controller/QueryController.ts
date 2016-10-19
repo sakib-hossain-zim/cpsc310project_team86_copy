@@ -65,9 +65,9 @@ export default class QueryController {
         // }
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
-            let lookup = query.ORDER;
+            let hasORDER = query.ORDER;
 
-            if (query.GET.includes(lookup)){
+            if (query.GET.includes(hasORDER)){
                 if (query.AS === 'TABLE'){
                     return true;}
             }
