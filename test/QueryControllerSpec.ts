@@ -19,9 +19,9 @@ describe("QueryController", function () {
     it("Should be able to validate a valid query", function () {
         // NOTE: this is not actually a valid query for D1
         let query: QueryRequest = {
-            "GET": ["courses_dept", "courses_avg"],
-            "WHERE": {"GT": {"courses_avg": 90}},
-            "ORDER": "courses_avg",
+            "GET": [],
+            "WHERE": {},
+            "ORDER": "",
             "AS": "TABLE"
         };
         let dataset: Datasets = {};
@@ -32,7 +32,7 @@ describe("QueryController", function () {
     });
 
     it("Should be able to invalidate an invalid query", function () {
-        let query: any = null;
+        let query: any = [];
         let dataset: Datasets = {};
         let controller = new QueryController(dataset);
         let isValid = controller.isValid(query);

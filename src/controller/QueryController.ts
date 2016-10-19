@@ -51,7 +51,9 @@ export default class QueryController {
 
         //console.log(query.GET.includes(query.ORDER));
         if (typeof query === 'undefined') return false;
+        if (typeof query !== 'QueryRequest') return false;
         if (query.AS != 'TABLE') return false;
+
         // let operands = Object.keys(query.WHERE);
         // let validWhere: boolean = false;
         // operands.forEach(function (o){
