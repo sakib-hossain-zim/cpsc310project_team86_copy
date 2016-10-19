@@ -50,9 +50,8 @@ export default class QueryController {
     public isValid(query: QueryRequest): boolean {
 
         //console.log(query.GET.includes(query.ORDER));
-        if (typeof query === 'undefined') return false;
-        if (typeof query !== 'QueryRequest') return false;
-        if (query.AS != 'TABLE') return false;
+        if (typeof query === 'undefined' ) return false;
+        // if (query.AS != 'TABLE') return false;
 
         // let operands = Object.keys(query.WHERE);
         // let validWhere: boolean = false;
@@ -66,9 +65,15 @@ export default class QueryController {
         // }
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
-            return true;
+            let lookup = query.ORDER;
+
+            if (query.GET.includes(lookup)){
+                if (query.AS === 'TABLE'){
+                    return true;}
+            }
+            else return false;
+
         }
-        return false;
     }
 
     public isDataSetEmpty(data: any): boolean {
