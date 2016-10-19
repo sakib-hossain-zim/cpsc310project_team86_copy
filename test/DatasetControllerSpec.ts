@@ -25,6 +25,7 @@ describe("DatasetController", function () {
             compression: 'deflate', compressionOptions: {level: 2}, type: 'base64'
         };
 
+
         return zip.generateAsync(opts).then(function (data) {
             Log.test('Dataset created');
             let controller = new DatasetController();
