@@ -64,6 +64,7 @@ export default class QueryController {
         //     return false;
         // }
 
+
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             let hasORDER = query.ORDER;
 

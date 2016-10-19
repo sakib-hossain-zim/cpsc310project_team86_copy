@@ -18,7 +18,7 @@ export interface Datasets {
 }
 
 interface toBeAdded {
-    courses_dept: string;
+    courses_dept: string
     courses_id: string;
     courses_avg: number;
     courses_instructor: string;
@@ -33,7 +33,6 @@ export default class DatasetController {
 
     private datasets: Datasets = {};
     public invalidDataSet: boolean = false;
-    private previous: boolean = false;
 
     constructor() {
         Log.trace('DatasetController::init()');
@@ -75,6 +74,7 @@ export default class DatasetController {
         //           }
         return that.datasets;
     }
+
 
     /**
      * Process the dataset; save it to disk when complete.
@@ -156,13 +156,6 @@ export default class DatasetController {
     }
 
     /**
-     * Return if dataset was previously PUT
-     */
-    public wasPreviouslyPut() {
-        return this.previous;
-    }
-
-    /**
      * Writes the processed dataset to disk as 'id.json'. The function should overwrite
      * any existing dataset with the same name.
      *
@@ -176,23 +169,9 @@ export default class DatasetController {
             var dirExist = fs.existsSync('./data');
             if (!dirExist) {
                 var path =  fs.mkdirSync('./data/');
-                this.previous = false;
                 fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
             } else {
-                try {
-                    if (fs.statSync('./data/' + id + '.json')) {
-                        this.previous = true;
-                        fs.unlink('./data/' + id + '.json');
-                        fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
-                    }
-                } catch (err) {
-                    try {
-                        this.previous = false;
-                        fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
-                    } catch (err) {
-                        Log.trace('DatasetController::save(..) - ERROR: ' + err);
-                    }
-                }
+                fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
         }
 
