@@ -26,22 +26,22 @@ export default class InsightFacade implements IInsightFacade {
                 controller.process(id, content).then(function (result) {
                     try {
                         if (controller.invalidDataSet) {
-                            reject({code: 400, body: "not valid dataset"});
+                            reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
                             if (fs.existsSync('./data/' + id + '.json')) {
-                                fulfill({code: 201, body: result});
+                                fulfill({code: 201, body: {success: result}});
                             } else {
-                                fulfill({code: 204, body: result});
+                                fulfill({code: 204, body: {success: result}});
                             }
                         }
                     } catch (e) {
-                        reject({code: 400, body: e.message});
+                        reject({code: 400, body: {error: e.message}});
                     }
                 }).catch(function (err: Error) {
-                    reject({code: 400, body: err.message});
+                    reject({code: 400, body: {error: err.message}});
                 });
             } catch (e) {
-                reject({code: 400, body: e.message});
+                reject({code: 400, body: {error: e.message}});
             }
         });
     }
@@ -63,10 +63,10 @@ export default class InsightFacade implements IInsightFacade {
                     datasets[id] = null;
                     fulfill({code: 204, body: "delete successful"});
                 } else {
-                    reject({code: 404, body: 'resource with id: ' + id + ' was not previously PUT'});
+                    reject({code: 404, body: {error: 'resource with id: ' + id + ' was not previously PUT'}});
                 }
             } catch (err) {
-                reject({code: 404, body: err.message});
+                reject({code: 404, body: {error: err.message}});
             }
         });
     }
@@ -95,14 +95,14 @@ export default class InsightFacade implements IInsightFacade {
                             fulfill({code: 200, body: result});
                         }
                     } catch (err) {
-                        reject({code: 400, body: err.message});
+                        reject({code: 400, body: {error: err.message}});
                     }
                 } else {
-                    reject({code: 400, body: "invalid query"});
+                    reject({code: 400, body: {status: 'invalid query'}});
                 }
 
             } catch (e) {
-                reject({code: 400, body: e.message});
+                reject({code: 400, body: {error: e.message}});
             }
         });
     }
