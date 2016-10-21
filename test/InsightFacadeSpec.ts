@@ -31,10 +31,10 @@ describe("InsightFacade", function () {
         facade = new InsightFacade();
     });
 
-    it("Should be able to add a add a new dataset (204)", function () {
+    it("Should be able to add a new dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
+        return facade.addDataset('anewdataset', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');

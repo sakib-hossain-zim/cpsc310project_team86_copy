@@ -83,7 +83,7 @@ export default class DatasetController {
      * @param data base64 representation of a zip file
      * @returns {Promise<boolean>} returns true if successful; false if the dataset was invalid (for whatever reason)
      */
-    public process(id: string, data: any): Promise<Datasets> {
+    public process(id: string, data: any): Promise<boolean> {
         Log.trace('DatasetController::process( ' + id + '... )');
 
         let that = this;

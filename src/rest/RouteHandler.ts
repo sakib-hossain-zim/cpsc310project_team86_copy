@@ -41,7 +41,7 @@ export default class RouteHandler {
             req.on('data', function onRequestData(chunk: any) {
                 Log.trace('RouteHandler::postDataset(..) on data; chunk length: ' + chunk.length);
                 buffer.push(chunk);
-            });
+            });-
 
             req.once('end', function () {
                 let concated = Buffer.concat(buffer);
