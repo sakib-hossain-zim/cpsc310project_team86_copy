@@ -17,17 +17,12 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
-        var datasetID = id;
-        var datasetContent = content;
 
         let controller = InsightFacade.datasetController;
         var fs = require('fs');
 
-        //facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
-        //expect(response.code).to.equal(204);
-
         return new Promise(function (fulfill, reject) {
-            controller.process(datasetID, datasetContent).then(function (result) {
+            controller.process(id, content).then(function (result) {
                 try {
                     if (!result) {
                         let response: InsightResponse = {code: 400, body: "not valid dataset"};
@@ -54,13 +49,24 @@ export default class InsightFacade implements IInsightFacade {
 
     public removeDataset (id:string): Promise<InsightResponse> {
         // TODO: need to implement this
-        var datasetID = id;
+        let controller = InsightFacade.datasetController;
+        var fs = require('fs');
+        let datasets = controller.getDatasets();
 
         return new Promise(function (fulfill, reject) {
             try {
-
+                if (fs.existsSync('./data/' + id + '.json')){
+                    fs.unlink('./data/' + id + '.json');
+                    datasets[id] = null;
+                    let response: InsightResponse = {code: 204, body: "delete successful"};
+                    fulfill(response);
+                } else {
+                    let response: InsightResponse = {code: 404, body: 'resource with id: ' + id + ' was not previously PUT'};
+                    reject(response);
+                }
             } catch (err) {
-                reject(err);
+                let response: InsightResponse = {code: 404, body: err.message};
+                reject(response);
             }
         });
     }

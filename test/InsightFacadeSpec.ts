@@ -7,6 +7,7 @@ import Log from "../src/Util";
 import {expect} from 'chai';
 import InsightFacade from "../src/controller/InsightFacade";
 import {InsightResponse} from "../src/controller/IInsightFacade";
+import {QueryRequest} from "../src/controller/QueryController";
 
 describe("InsightFacade", function () {
 
@@ -19,10 +20,10 @@ describe("InsightFacade", function () {
         try {
             // what you delete here is going to depend on your impl, just make sure
             // all of your temporary files and directories are deleted
-            fs.unlinkSync('./id.json');
+            fs.unlinkSync('./courses.json');
         } catch (err) {
             // silently fail, but don't crash; this is fine
-            Log.warn('InsightController::before() - id.json not removed (probably not present)');
+            Log.warn('InsightController::before() - courses.json not removed (probably not present)');
         }
         Log.info('InsightController::before() - done');
     });
@@ -34,7 +35,7 @@ describe("InsightFacade", function () {
     it("Should be able to add a new dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('anewdataset', zipFileContents).then(function (response: InsightResponse) {
+        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');
@@ -44,7 +45,7 @@ describe("InsightFacade", function () {
     it("Should be able to update an existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
+        return facade.addDataset('setA', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(201);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');
@@ -58,6 +59,66 @@ describe("InsightFacade", function () {
             expect.fail();
         }).catch(function (response: InsightResponse) {
             expect(response.code).to.equal(400);
+        });
+    });
+
+    // it("Should be able to successfully answer a query (200)", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_dept", "courses_avg"],
+    //         "WHERE": {
+    //             "GT": {
+    //                 "courses_avg": 90
+    //             }
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(200);
+    //     }).catch(function (response: InsightResponse) {
+    //         expect.fail('Should not happen');
+    //     });
+    // });
+    //
+    // it("Should fail to query because it depends on a resource that has not been PUT (424)", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_dept", "courses_avg"],
+    //         "WHERE": {
+    //             "GT": {
+    //                 "courses_avg": 90
+    //             }
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(424);
+    //     });
+    // });
+
+    it("Should be able to delete a dataset (204)", function () {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        return facade.removeDataset('courses').then(function (response: InsightResponse) {
+            expect(response.code).to.equal(204);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');
+        });
+    });
+
+    it("Should fail to delete a dataset that has not been PUT (404)", function () {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        return facade.removeDataset('randomCourse').then(function (response: InsightResponse) {
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            expect(response.code).to.equal(404);
         });
     });
 });
