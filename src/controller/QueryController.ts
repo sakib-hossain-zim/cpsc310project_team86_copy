@@ -394,7 +394,6 @@ export default class QueryController {
             //         }
             //     }
             // }
-
       //  console.log(retArray);
       //  return retArray;
 
