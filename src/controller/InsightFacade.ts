@@ -1,7 +1,7 @@
 /*
  * This should be in the same namespace as your controllers
  */
-import {QueryRequest} from "./QueryController";
+import {QueryRequest, default as QueryController} from "./QueryController";
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
 
@@ -18,43 +18,52 @@ export default class InsightFacade implements IInsightFacade {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
 
-        let controller = InsightFacade.datasetController;
-        var fs = require('fs');
-
         return new Promise(function (fulfill, reject) {
-            controller.process(id, content).then(function (result) {
-                try {
-                    if (!result) {
-                        let response: InsightResponse = {code: 400, body: "not valid dataset"};
-                        reject(response);
-                    } else {
-                        if (fs.existsSync('./data/' + id + '.json')) {
-                            let response: InsightResponse = {code: 201, body: "success and updated"};
-                            fulfill(response);
+            try {
+                let controller = InsightFacade.datasetController;
+                var fs = require('fs');
+
+                controller.process(id, content).then(function (result) {
+                    try {
+                        if (!result) {
+                            let response: InsightResponse = {code: 400, body: "not valid dataset"};
+                            reject(response);
                         } else {
-                            let response: InsightResponse = {code: 204, body: "success"};
-                            fulfill(response);
+                            if (fs.existsSync('./data/' + id + '.json')) {
+                                let response: InsightResponse = {code: 201, body: "success and updated"};
+                                fulfill(response);
+                            } else {
+                                let response: InsightResponse = {code: 204, body: "success"};
+                                fulfill(response);
+                            }
                         }
+                    } catch (e) {
+                        let response: InsightResponse = {code: 400, body: e.message};
+                        reject(response);
                     }
-                } catch (e) {
-                    let response: InsightResponse = {code: 400, body: e.message};
+                }).catch(function (err: Error) {
+                    let response: InsightResponse = {code: 400, body: err.message};
                     reject(response);
-                }
-            }).catch(function (err: Error) {
-                let response: InsightResponse = {code: 400, body: err.message};
+                });
+            } catch (e) {
+                let response: InsightResponse = {code: 400, body: e.message};
                 reject(response);
-            });
+            }
         });
     }
 
+    /**
+     *
+     * @param id
+     * @returns {Promise<InsightResponse>}
+     */
     public removeDataset (id:string): Promise<InsightResponse> {
-        // TODO: need to implement this
-        let controller = InsightFacade.datasetController;
-        var fs = require('fs');
-        let datasets = controller.getDatasets();
-
         return new Promise(function (fulfill, reject) {
             try {
+                var fs = require('fs');
+                let controller = InsightFacade.datasetController;
+                let datasets = controller.getDatasets();
+
                 if (fs.existsSync('./data/' + id + '.json')){
                     fs.unlink('./data/' + id + '.json');
                     datasets[id] = null;
@@ -71,13 +80,42 @@ export default class InsightFacade implements IInsightFacade {
         });
     }
 
+    /**
+     *
+     * @param query
+     * @returns {Promise<InsightResponse>}
+     */
     public performQuery (query: QueryRequest): Promise<InsightResponse> {
-        // TODO: need to implement this
         return new Promise(function (fulfill, reject) {
             try {
+                var fs = require('fs');
 
-            } catch (err) {
-                reject(err);
+                let datasets = InsightFacade.datasetController.getDatasets();
+                let queryController = new QueryController(datasets);
+                let id = query.GET[0].split('_')[0];
+                let isValid = queryController.isValid(query);
+
+                if (isValid === true) {
+                    let result = queryController.query(query);
+                    try {
+                        if (!fs.existsSync('./data/' + id + '.json')) {
+                            let response: InsightResponse = {code: 424, body: {missing: [id]}};
+                            reject(response);
+                        } else {
+                            let response: InsightResponse = {code: 200, body: result};
+                            fulfill(response);
+                        }
+                    } catch (err) {
+                        let response: InsightResponse = {code: 400, body: err.message};
+                        reject(response);
+                    }
+                } else {
+                    let response: InsightResponse = {code: 400, body: "invalid query"};
+                    reject(response);
+                }
+            } catch (e) {
+                let response: InsightResponse = {code: 400, body: e.message};
+                reject(response);
             }
         });
     }

@@ -62,45 +62,47 @@ describe("InsightFacade", function () {
         });
     });
 
-    // it("Should be able to successfully answer a query (200)", function () {
-    //     var that = this;
-    //     let query: QueryRequest = {
-    //         "GET": ["courses_dept", "courses_avg"],
-    //         "WHERE": {
-    //             "GT": {
-    //                 "courses_avg": 90
-    //             }
-    //         },
-    //         "ORDER": "courses_avg",
-    //         "AS": "TABLE"
-    //     };
-    //     Log.trace("Starting test: " + that.test.title);
-    //     return facade.performQuery(query).then(function (response: InsightResponse) {
-    //         expect(response.code).to.equal(200);
-    //     }).catch(function (response: InsightResponse) {
-    //         expect.fail('Should not happen');
-    //     });
-    // });
-    //
-    // it("Should fail to query because it depends on a resource that has not been PUT (424)", function () {
-    //     var that = this;
-    //     let query: QueryRequest = {
-    //         "GET": ["courses_dept", "courses_avg"],
-    //         "WHERE": {
-    //             "GT": {
-    //                 "courses_avg": 90
-    //             }
-    //         },
-    //         "ORDER": "courses_avg",
-    //         "AS": "TABLE"
-    //     };
-    //     Log.trace("Starting test: " + that.test.title);
-    //     return facade.performQuery(query).then(function (response: InsightResponse) {
-    //         expect.fail();
-    //     }).catch(function (response: InsightResponse) {
-    //         expect(response.code).to.equal(424);
-    //     });
-    // });
+
+    it("Should be able to successfully answer a query (200)", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courses_avg"],
+            "WHERE": {
+                "GT": {
+                    "courses_avg": 90
+                }
+            },
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        return facade.performQuery(query).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(200);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');
+        });
+    });
+
+    it("Should fail to query because it depends on a resource that has not been PUT (424)", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["foo_dept", "foo_avg"],
+            "WHERE": {
+                "GT": {
+                    "foo_avg": 90
+                }
+            },
+            "ORDER": "foo_avg",
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        return facade.performQuery(query).then(function (response: InsightResponse) {
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            expect(response.code).to.equal(424);
+        });
+    });
+
 
     it("Should be able to delete a dataset (204)", function () {
         var that = this;
