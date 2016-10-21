@@ -204,7 +204,6 @@ export default class QueryController {
     }
     /**
      * Helper Method for filterRows. Returns the result of a comparison between two values.
-
      * @param s: indicates which type of comparison is to be made value & threshold are the 2 values to be compared
      * @returns boolean obtained from the comparison
      */
