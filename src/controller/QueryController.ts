@@ -53,16 +53,6 @@ export default class QueryController {
         //console.log(query.GET.includes(query.ORDER));
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
-        // let operands = Object.keys(query.WHERE);
-        // let validWhere: boolean = false;
-        // operands.forEach(function (o){
-        //     if (o ==('GT' || 'LT' || 'EQ' || 'AND' || 'OR' || 'IS' || 'NOT')) {
-        //         validWhere = true;
-        //     }
-        // });
-        // if (!validWhere) {
-        //     return false;
-        // }
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
@@ -79,16 +69,18 @@ export default class QueryController {
     }
 
     public filterColumns(query: QueryRequest, data: any): any {
-
+        console.log("in filter columns");
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
-        for (let objApply of query.APPLY) {
-            for (let prop in objApply) {
-                let innerObj = objApply[prop];
-                for (let innerProp in innerObj) {
-                    let applyKey = innerObj[innerProp];
-                    applyKeyArray.push(applyKey);
+        if (typeof query.APPLY !== "undefined") {
+            for (let objApply of query.APPLY) {
+                for (let prop in objApply) {
+                    let innerObj = objApply[prop];
+                    for (let innerProp in innerObj) {
+                        let applyKey = innerObj[innerProp];
+                        applyKeyArray.push(applyKey);
+                    }
                 }
             }
         }
@@ -126,11 +118,12 @@ export default class QueryController {
                 for (let applyKey of applyKeyArray) {
                     respObj[applyKey] = obj[applyKey];
                 }
-
-            for (let obj of query.APPLY) {
-                let newProp: any = Object.keys(obj)[0];
-                respObj[newProp] = "";
-            }
+                if (typeof query.APPLY !== 'undefined') {
+                    for (let obj of query.APPLY) {
+                        let newProp: any = Object.keys(obj)[0];
+                        respObj[newProp] = "";
+                    }
+                }
             respObjArray.push(respObj);
         });
         return respObjArray;
@@ -139,47 +132,39 @@ export default class QueryController {
     public orderResponse(query: QueryRequest, data: any, i: number) {
         let that = this;
         let key:any = query.ORDER;
-        console.log(key);
+        console.log(Object.keys(key).length);
         let dir: any = Object.keys(key)[0];
         let keys: any = Object.keys(key)[1];
         let dirValue: any = key[dir];
         let keysValue: any = key[keys];
-        console.log(dir);
-        console.log(keys);
-        console.log(dirValue);
-        console.log(keysValue);
-        console.log(keysValue[0]);
+
         let properties = (Object.keys(key).length);
 
-        if (properties == 0) {
-
-        } else if (properties == 1) {
-            return data.sort(function (result1: any, result2: any) {
-                if (result1[key] < result2[key]) {
-                    return -1;
-                }
-                else if (result1[key] > result2[key]) {
-                    return 1;
-                }
-                return 0;
-            });
-        } else {
-             console.log("in orderresponse else")
+         if (typeof query.ORDER == "string") {
+             console.log("in orderresponse if branch")
+             return data.sort(function (result1: any, result2: any) {
+                 if (result1[key] < result2[key]) {
+                     return -1;
+                 }
+                 else if (result1[key] > result2[key]) {
+                     return 1;
+                 }
+                 return 0;
+             });
+         }
+        if (properties > 1) {
             if (dirValue == 'UP') {
-                 console.log("in order response UP case")
+
                 return data.sort(function (result1: any, result2: any) {
                     console.log(result1);
                     console.log(keysValue);
                     console.log(keysValue[0]);
                     console.log(result1[keysValue[i]]);
                     if (result1[keysValue[i]] < result2[keysValue[i]]) {
-                        console.log("in less than branch");
                         return -1;
                     } else if (result1[keysValue[i]] > result2[keysValue[i]]) {
-                        console.log("in greater than branch");
                         return 1;
                     } else {
-                        console.log('in recurison branch');
                         let equalDataArray: any = [];
                         equalDataArray.push(result1);
                         equalDataArray.push(result2);
@@ -308,6 +293,9 @@ export default class QueryController {
     }
 
     public group(query: QueryRequest, data: any): any {
+        if (typeof query.GROUP == 'undefined') {
+            return data;
+        }
         console.log("in group method");
         let groupKeys : any = query.GROUP;
         var arr: any = data;
@@ -454,6 +442,9 @@ export default class QueryController {
         }
     }
     public apply(query: QueryRequest, data: any): any {
+        if (typeof query.APPLY == 'undefined') {
+            return data;
+        }
         console.log("in apply method");
       //  console.log(data);
         let respArray: any = [];
@@ -486,7 +477,6 @@ export default class QueryController {
         let dataID = Object.keys(this.datasets)[0];
 
         let data: any = this.datasets[dataID];
-        // console.log(data);
         let isEmpty = this.isDataSetEmpty(data);
         if (isEmpty === true) {
             let response: QueryResponse = {render: query.AS, result: [{}]};
