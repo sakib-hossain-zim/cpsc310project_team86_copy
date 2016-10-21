@@ -40,7 +40,6 @@ interface stringArray {
     [index: number]: string;
 }
 
-
 export default class QueryController {
     private datasets: Datasets = {};
 
@@ -480,7 +479,6 @@ export default class QueryController {
         return respArray;
     }
 
-
     public query(query: QueryRequest): any {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
@@ -499,7 +497,8 @@ export default class QueryController {
 
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
             console.log("in if branch");
-            var groupedData: any = this.group(query, GET_results);
+            let groupedData: any = this.group(query, GET_results);
+
         } else {
                 console.log("in else branch");
                 console.log(query.WHERE);
@@ -511,7 +510,7 @@ export default class QueryController {
                 }
                 let WHERE_Results: {}[] = this.filterRows(key, value, GET_results);
                 var groupedData: any = this.group(query, WHERE_Results);
-            }
+        }
 
         let appliedData: any = this.apply(query, groupedData);
 

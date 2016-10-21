@@ -4,13 +4,17 @@
 import restify = require('restify');
 import fs = require('fs');
 
+import DatasetController from '../controller/DatasetController';
+import {Datasets} from '../controller/DatasetController';
+import QueryController from '../controller/QueryController';
+
 import {QueryRequest} from "../controller/QueryController";
 import Log from '../Util';
-import InsightFacade from "../controller/InsightFacade";
 
 export default class RouteHandler {
 
-    private static insightFacade = new InsightFacade();
+    private static datasetController = new DatasetController();
+
 
     public static getHomepage(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RoutHandler::getHomepage(..)');
@@ -26,7 +30,7 @@ export default class RouteHandler {
         });
     }
 
-    public static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+    public static  putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
@@ -44,72 +48,81 @@ export default class RouteHandler {
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
 
-                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
-                    res.json(response.code, response.body);
-                }).catch(function (response) {
-                    res.json(response.code, response.body);
+                let controller = RouteHandler.datasetController;
+
+                controller.process(id, req.body).then(function (result) {
+                    Log.trace('RouteHandler::postDataset(..) - processed');
+                    if (controller.invalidDataSet) {
+                        res.json(400, {error: "not valid dataset"});
+                    } else {
+                        if (fs.existsSync('./data/' + id + '.json')){
+                            res.json(201, {success: result});
+                        }
+                        else{
+                            res.json(204, {success: result});
+                        }
+
+                    }
+                }).catch(function (err: Error) {
+                    Log.trace('RouteHandler::postDataset(..) - ERROR: ' + err.message);
+                    res.json(400, {error: err.message});
                 });
             });
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
-                res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
-            });
+            res.send(400, {error: err.message});
         }
         return next();
     }
 
     public static postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RouteHandler::postQuery(..) - params: ' + JSON.stringify(req.params));
-        let query: QueryRequest = req.params;
         try {
-            RouteHandler.insightFacade.performQuery(query).then(function (response) {
-                res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
-            });
+            let query: QueryRequest = req.params;
+            //console.log(typeof query);
+            //    if (typeof query === 'undefined') res.send(400,'query is undefined');
+            let datasets: Datasets = RouteHandler.datasetController.getDatasets();
+
+            let controller = new QueryController(datasets);
+
+            let isValid = controller.isValid(query);
+
+            let id = query.GET[0].split('_')[0];
+
+            if (isValid === true) {
+                let result = controller.query(query);
+                if (!fs.existsSync('./data/' + id + '.json')) {
+                    res.send(424,{missing: [id]});
+                }
+                else{
+                    res.json(200, result);
+                }
+
+            } else {
+                res.json(400, {status: 'invalid query'});
+            }
         } catch (err) {
             //  console.log("we are here");
             Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
-            RouteHandler.insightFacade.performQuery(query).then(function (response) {
-                res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
-            });
+            res.send(400);
         }
         return next();
     }
 
     public static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next){
         var id: string = req.params.id;
-        try {
-            RouteHandler.insightFacade.removeDataset(id).then(function (response) {
-                res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
-            });
-        } catch (err) {
-            Log.error('RouteHandler::deleteDataset(..) - ERROR: ' + err);
-            RouteHandler.insightFacade.removeDataset(id).then(function (response) {
-                res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
-            });
+        let controller = RouteHandler.datasetController;
+        let datasets = controller.getDatasets();
+        if (fs.existsSync('./data/' + id + '.json')){
+            fs.unlink('./data/' + id + '.json');
+            datasets[id] = null;
+            res.send(204);
         }
-        // let controller = RouteHandler.datasetController;
-        // let datasets = controller.getDatasets();
-        // if (fs.existsSync('./data/' + id + '.json')){
-        //     fs.unlink('./data/' + id + '.json');
-        //     datasets[id] = null;
-        //     res.send(204);
-        // }
-        //
-        // else {
-        //     res.send(404,{error: 'resource with id: ' + id + ' was not previously PUT'})
-        // }
+
+        else {
+            res.send(404,{error: 'resource with id: ' + id + ' was not previously PUT'})
+        }
         return next();
     }
 }
