@@ -30,7 +30,7 @@ export default class RouteHandler {
         });
     }
 
-    public static  putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+    public static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
@@ -41,7 +41,7 @@ export default class RouteHandler {
             req.on('data', function onRequestData(chunk: any) {
                 Log.trace('RouteHandler::postDataset(..) on data; chunk length: ' + chunk.length);
                 buffer.push(chunk);
-            });-
+            });
 
             req.once('end', function () {
                 let concated = Buffer.concat(buffer);

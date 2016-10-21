@@ -25,29 +25,23 @@ export default class InsightFacade implements IInsightFacade {
 
                 controller.process(id, content).then(function (result) {
                     try {
-                        if (!result) {
-                            let response: InsightResponse = {code: 400, body: "not valid dataset"};
-                            reject(response);
+                        if (controller.invalidDataSet) {
+                            reject({code: 400, body: "not valid dataset"});
                         } else {
                             if (fs.existsSync('./data/' + id + '.json')) {
-                                let response: InsightResponse = {code: 201, body: "success and updated"};
-                                fulfill(response);
+                                fulfill({code: 201, body: result});
                             } else {
-                                let response: InsightResponse = {code: 204, body: "success"};
-                                fulfill(response);
+                                fulfill({code: 204, body: result});
                             }
                         }
                     } catch (e) {
-                        let response: InsightResponse = {code: 400, body: e.message};
-                        reject(response);
+                        reject({code: 400, body: e.message});
                     }
                 }).catch(function (err: Error) {
-                    let response: InsightResponse = {code: 400, body: err.message};
-                    reject(response);
+                    reject({code: 400, body: err.message});
                 });
             } catch (e) {
-                let response: InsightResponse = {code: 400, body: e.message};
-                reject(response);
+                reject({code: 400, body: e.message});
             }
         });
     }
@@ -67,15 +61,12 @@ export default class InsightFacade implements IInsightFacade {
                 if (fs.existsSync('./data/' + id + '.json')){
                     fs.unlink('./data/' + id + '.json');
                     datasets[id] = null;
-                    let response: InsightResponse = {code: 204, body: "delete successful"};
-                    fulfill(response);
+                    fulfill({code: 204, body: "delete successful"});
                 } else {
-                    let response: InsightResponse = {code: 404, body: 'resource with id: ' + id + ' was not previously PUT'};
-                    reject(response);
+                    reject({code: 404, body: 'resource with id: ' + id + ' was not previously PUT'});
                 }
             } catch (err) {
-                let response: InsightResponse = {code: 404, body: err.message};
-                reject(response);
+                reject({code: 404, body: err.message});
             }
         });
     }
@@ -99,23 +90,19 @@ export default class InsightFacade implements IInsightFacade {
                     let result = queryController.query(query);
                     try {
                         if (!fs.existsSync('./data/' + id + '.json')) {
-                            let response: InsightResponse = {code: 424, body: {missing: [id]}};
-                            reject(response);
+                            reject({code: 424, body: {missing: [id]}});
                         } else {
-                            let response: InsightResponse = {code: 200, body: result};
-                            fulfill(response);
+                            fulfill({code: 200, body: result});
                         }
                     } catch (err) {
-                        let response: InsightResponse = {code: 400, body: err.message};
-                        reject(response);
+                        reject({code: 400, body: err.message});
                     }
                 } else {
-                    let response: InsightResponse = {code: 400, body: "invalid query"};
-                    reject(response);
+                    reject({code: 400, body: "invalid query"});
                 }
+
             } catch (e) {
-                let response: InsightResponse = {code: 400, body: e.message};
-                reject(response);
+                reject({code: 400, body: e.message});
             }
         });
     }

@@ -257,7 +257,8 @@ export default class QueryController {
         var key: any = operands[0];
         var value: any;
         for (let i in query.WHERE) {
-            value = query.WHERE[i];
+            var where: any = query.WHERE;
+            value = where[i];
         }
         let filteredResults: {}[] = this.filterRows(key, value, parsedData);
         if (query.ORDER !== 'undefined') {
