@@ -66,7 +66,7 @@ export default class InsightFacade implements IInsightFacade {
                     reject({code: 404, body: {error: 'resource with id: ' + id + ' was not previously PUT'}});
                 }
             } catch (err) {
-                reject({code: 404, body: {error: err.message}});
+                reject({code: 400, body: {error: err.message}});
             }
         });
     }
@@ -88,17 +88,13 @@ export default class InsightFacade implements IInsightFacade {
 
                 if (isValid === true) {
                     let result = queryController.query(query);
-                    try {
-                        if (!fs.existsSync('./data/' + id + '.json')) {
-                            reject({code: 424, body: {missing: [id]}});
-                        } else {
-                            fulfill({code: 200, body: result});
-                        }
-                    } catch (err) {
-                        reject({code: 400, body: {error: err.message}});
+                    if (!fs.existsSync('./data/' + id + '.json')) {
+                        reject({code: 424, body: {missing: [id]}});
+                    } else {
+                        fulfill({code: 200, body: result});
                     }
                 } else {
-                    reject({code: 400, body: {status: 'invalid query'}});
+                    reject({code: 400, body: {error: 'invalid query'}});
                 }
 
             } catch (e) {
