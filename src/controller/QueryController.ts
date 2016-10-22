@@ -330,105 +330,79 @@ export default class QueryController {
     //     }
     //     return arrOfKeyValues;
     // }
-
+    public arrayFromObject(obj) {
+        var arr = [];
+        for (var i in obj) {
+            arr.push(obj[i]);
+        }
+        return arr;
+    }
     /**
-     * Group the list of results into sets by some matching criteria
+     * Group the list of results into sets by some matching criteria (an Array of groups, each of which is an array)
      * @param query
      * @param data
      * @returns {any}
      */
-    public group(query: QueryRequest, data: any): any {
+    public group(query: QueryRequest, data: any, i: any): any {
         if (typeof query.GROUP == 'undefined') {
             return data;
         }
-        console.log("in group method");
-        let groupKeys : any = query.GROUP;
-        var arr: any = data;
-        var groups: any = [];
-        for(var i = 0, len = arr.length; i<len; i+=1){
-            var obj = arr[i];
-            if(groups.length == 0){
-                groups.push([obj]);
-            }
-            else{
-                var equalGroup: any = false;
-                for(var a = 0, glen = groups.length; a<glen;a+=1){
-                    var group : any = groups[a];
-                    var equal : any = true;
-                    var firstElement = group[0];
-                    groupKeys.forEach(function(property){
+        let groupKeys: any = query.GROUP;
+        console.log(groupKeys[i]);
 
-                        if(firstElement[property] !== obj[property]){
-                            equal = false;
-                        }
-
-                    });
-                    if(equal){
-                        equalGroup = group;
+        if (i < groupKeys.length - 1) {
+       return this.group(query, data, i= i +1);
+        } else {
+            var hash = {};
+                console.log(groupKeys[i]);
+                for (let obj of data) {
+                    if (hash.hasOwnProperty(obj[groupKeys[i]])) {
+                        hash[obj[groupKeys[i]]].push(obj);
+                    } else {
+                        hash[obj[groupKeys[i]]] = [];
+                        hash[obj[groupKeys[i]]].push(obj);
                     }
                 }
-                if(equalGroup){
-                    equalGroup.push(obj);
-                }
-                else {
-                    groups.push([obj]);
-                }
-            }
+
         }
-        // console.log(groups);
-        return groups;
-    }
-
-    //     let groupKeys : any = query.GROUP;
-    //     let firstTime: boolean = true;
-    //     let arrValueGroups: any = [];
-    //     for (let key of groupKeys) {
-    //         let arr: any = this.getValuesforKey(key, data);
-    //         arrValueGroups.push(arr);
-    //     }
-    //     console.log(arrValueGroups[0][0];
-    //         let count:number = 0;
-    //     for (let group of arrValueGroups) {
-    //
-    //         for (let value of group) {
-    //             console.log(value);
-    //         }
-    //     }
-    // }
-
-    // if (firstTime) {
-    //     firstTime = false;
-    //     var retArray: any = [];
-    //     let arr: any = this.getValuesforKey(key, data);
-    //     for (let group of arr) {
-    //         let groupArray: any = [];
-    //         data.forEach(function (obj: any) {
-    //             if (group == obj[key]) {
-    //                 groupArray.push(obj);
-    //             }
-    //         });
-    //         retArray.push(groupArray);
-    //     }
-    // } else {
-    //     // console.log(retArray)
-    //     let arr: any = this.getValuesforKey(key, data);
-    //     for (let group of arr) {
-    //         console.log(group);
-    //         // // let groupArray: any = [];
-    //          for (let array of retArray) {
-    //            console.log(array);
-    //         // //     array.forEach(function (obj: any) {
-    //         // //     if (group == obj[key]) {
-    //         // //         groupArray.push(obj);
-    //         // //     }
-    //         //     });
-    //         //     retArray.push(groupArray);
-    //         }
-    //     }
-    // }
-    //  console.log(retArray);
-    //  return retArray;
-
+        console.log(hash);
+        return hash;
+        }
+        // console.log("in group method");
+        // let groupKeys : any = query.GROUP;
+        // var arr: any = data;
+        // var groups: any = [];
+        // for(var i = 0, len = arr.length; i<len; i+=1){
+        //     var obj = arr[i];
+        //     if(groups.length == 0){
+        //         groups.push([obj]);
+        //     }
+        //     else{
+        //         var equalGroup: any = false;
+        //         for(var a = 0, glen = groups.length; a<glen;a+=1){
+        //             var group : any = groups[a];
+        //             var equal : any = true;
+        //             var firstElement = group[0];
+        //             groupKeys.forEach(function(property){
+        //
+        //                 if(firstElement[property] !== obj[property]){
+        //                     equal = false;
+        //                 }
+        //             });
+        //             if(equal){
+        //                 equalGroup = group;
+        //             }
+        //         }
+        //         if(equalGroup){
+        //             equalGroup.push(obj);
+        //         }
+        //         else {
+        //             groups.push([obj]);
+        //         }
+        //     }
+        // }
+        // // console.log(groups);
+        // return groups;
 
     public applyFields(field:any, value: any, group: any, query: QueryRequest) {
         if (field == 'MAX') {
@@ -497,7 +471,7 @@ export default class QueryController {
         let respArray: any = [];
         let applyArray: any = query.APPLY;
 
-        for (let group of data) {
+        for (let group in data) {
 
             for (let obj of applyArray) {
                 let applyProp: any = Object.keys(obj)[0];
@@ -550,7 +524,7 @@ export default class QueryController {
             var GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-        var groupedData = this.group(query, GET_results);
+        var groupedData = this.group(query, GET_results,0);
 
         let appliedData: any = this.apply(query, groupedData);
 
