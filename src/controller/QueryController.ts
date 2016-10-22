@@ -350,23 +350,39 @@ export default class QueryController {
         let groupKeys: any = query.GROUP;
         console.log(groupKeys[i]);
 
-        if (i < groupKeys.length - 1) {
-       return this.group(query, data, i= i +1);
-        } else {
+        if (groupKeys.length == 1) {
+
             var hash = {};
-                console.log(groupKeys[i]);
+            console.log(groupKeys[i]);
+            for (let obj of data) {
+                if (hash.hasOwnProperty(obj[groupKeys[i]])) {
+                    hash[obj[groupKeys[i]]].push(obj);
+                } else {
+                    hash[obj[groupKeys[i]]] = [];
+                    hash[obj[groupKeys[i]]].push(obj);
+                }
+            }
+            return hash;
+        } else  {
+                var hash = {};
                 for (let obj of data) {
-                    if (hash.hasOwnProperty(obj[groupKeys[i]])) {
-                        hash[obj[groupKeys[i]]].push(obj);
+                    let keyArray: any = [];
+
+                    for (let key of groupKeys) {
+                       keyArray.push(obj[key]);
+                    }
+                    let property: string = keyArray.join('');
+
+                    if (hash.hasOwnProperty(property)) {
+                        hash[property].push(obj);
                     } else {
-                        hash[obj[groupKeys[i]]] = [];
-                        hash[obj[groupKeys[i]]].push(obj);
+                        hash[property] = [];
+                        hash[property].push(obj);
                     }
                 }
-
+                console.log(hash);
+                return hash;
         }
-        console.log(hash);
-        return hash;
         }
         // console.log("in group method");
         // let groupKeys : any = query.GROUP;
