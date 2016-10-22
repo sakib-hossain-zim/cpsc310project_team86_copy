@@ -348,22 +348,7 @@ export default class QueryController {
             return data;
         }
         let groupKeys: any = query.GROUP;
-        console.log(groupKeys[i]);
 
-        if (groupKeys.length == 1) {
-
-            var hash = {};
-            console.log(groupKeys[i]);
-            for (let obj of data) {
-                if (hash.hasOwnProperty(obj[groupKeys[i]])) {
-                    hash[obj[groupKeys[i]]].push(obj);
-                } else {
-                    hash[obj[groupKeys[i]]] = [];
-                    hash[obj[groupKeys[i]]].push(obj);
-                }
-            }
-            return hash;
-        } else  {
                 var hash = {};
                 for (let obj of data) {
                     let keyArray: any = [];
@@ -383,42 +368,6 @@ export default class QueryController {
                 console.log(hash);
                 return hash;
         }
-        }
-        // console.log("in group method");
-        // let groupKeys : any = query.GROUP;
-        // var arr: any = data;
-        // var groups: any = [];
-        // for(var i = 0, len = arr.length; i<len; i+=1){
-        //     var obj = arr[i];
-        //     if(groups.length == 0){
-        //         groups.push([obj]);
-        //     }
-        //     else{
-        //         var equalGroup: any = false;
-        //         for(var a = 0, glen = groups.length; a<glen;a+=1){
-        //             var group : any = groups[a];
-        //             var equal : any = true;
-        //             var firstElement = group[0];
-        //             groupKeys.forEach(function(property){
-        //
-        //                 if(firstElement[property] !== obj[property]){
-        //                     equal = false;
-        //                 }
-        //             });
-        //             if(equal){
-        //                 equalGroup = group;
-        //             }
-        //         }
-        //         if(equalGroup){
-        //             equalGroup.push(obj);
-        //         }
-        //         else {
-        //             groups.push([obj]);
-        //         }
-        //     }
-        // }
-        // // console.log(groups);
-        // return groups;
 
     public applyFields(field:any, value: any, group: any, query: QueryRequest) {
         if (field == 'MAX') {
