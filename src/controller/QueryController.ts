@@ -365,8 +365,8 @@ export default class QueryController {
                         hash[property].push(obj);
                     }
                 }
-                console.log(hash);
-                return hash;
+               let groupArray: any = this.arrayFromObject(hash);
+                return groupArray;
         }
 
     public applyFields(field:any, value: any, group: any, query: QueryRequest) {
@@ -436,7 +436,7 @@ export default class QueryController {
         let respArray: any = [];
         let applyArray: any = query.APPLY;
 
-        for (let group in data) {
+        for (let group of data) {
 
             for (let obj of applyArray) {
                 let applyProp: any = Object.keys(obj)[0];
