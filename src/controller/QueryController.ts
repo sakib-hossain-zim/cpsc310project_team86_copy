@@ -75,7 +75,6 @@ export default class QueryController {
             return true;
         }
     }
-
     /**
      * GET filter
      * @param query
