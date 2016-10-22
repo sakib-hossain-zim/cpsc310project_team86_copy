@@ -154,16 +154,14 @@ export default class QueryController {
     public orderResponse(query: QueryRequest, data: any, i: number) {
         let that = this;
         let key:any = query.ORDER;
-        console.log(Object.keys(key).length);
         let dir: any = Object.keys(key)[0];
         let keys: any = Object.keys(key)[1];
         let dirValue: any = key[dir];
         let keysValue: any = key[keys];
+        console.log(keysValue);
 
-        let properties = (Object.keys(key).length);
 
         if (typeof query.ORDER == "string") {
-            console.log("in orderresponse if branch");
             return data.sort(function (result1: any, result2: any) {
                 if (result1[key] < result2[key]) {
                     return -1;
@@ -174,15 +172,12 @@ export default class QueryController {
                 return 0;
             });
         }
+        let properties = (Object.keys(key).length);
 
         if (properties > 1) {
             if (dirValue == 'UP') {
 
                 return data.sort(function (result1: any, result2: any) {
-                    console.log(result1);
-                    console.log(keysValue);
-                    console.log(keysValue[0]);
-                    console.log(result1[keysValue[i]]);
                     if (result1[keysValue[i]] < result2[keysValue[i]]) {
                         return -1;
                     } else if (result1[keysValue[i]] > result2[keysValue[i]]) {
@@ -277,7 +272,6 @@ export default class QueryController {
             return ANDFilteredData;
         }
 
-
         else if (field == 'OR') {
             var ORFilteredData: any;
             var ORReturnData: any = [];
@@ -297,7 +291,6 @@ export default class QueryController {
             }
             return ORReturnData;
         }
-
         else {
             let Cvalue: any;
             let keys: any = Object.keys(queryData);
@@ -308,9 +301,6 @@ export default class QueryController {
                 Cvalue = queryData[i];
             }
 
-            console.log(queryData);
-            console.log('this is cvalue: ' + Cvalue);
-
             data.forEach(function (x: any) {
                 if (that.compare(field, x[replaceKey], Cvalue)) filteredData.push(x);
             });
@@ -318,18 +308,6 @@ export default class QueryController {
         }
     }
 
-    // public getValuesforKey (key:any, data:any): any {
-    //     let arrOfKeyValues: any = [];
-    //     let i:number;
-    //     for (i =0; i < data.length; i++) {
-    //         let keyToMatch: any = data[i][key];
-    //         if (!(arrOfKeyValues.indexOf(keyToMatch)> -1)) {
-    //             arrOfKeyValues.push(keyToMatch);
-    //         }
-    //         i++;
-    //     }
-    //     return arrOfKeyValues;
-    // }
     public arrayFromObject(obj) {
         var arr = [];
         for (var i in obj) {
@@ -452,7 +430,6 @@ export default class QueryController {
             }
             respArray.push(group[0]);
         }
-        console.log(respArray);
         return respArray;
     }
 
@@ -495,10 +472,9 @@ export default class QueryController {
 
         if (typeof query.ORDER !== 'undefined') {
             let i:number = 0;
-            var orderedResults = this.orderResponse(query, appliedData, i);
+          //  var orderedResults = this.orderResponse(query, appliedData, i);
         }
-        var response: QueryResponse = {render: query.AS, result: orderedResults};
-        console.log(response);
+        var response: QueryResponse = {render: query.AS, result: appliedData};
         return response;
     }
 }
