@@ -10,13 +10,12 @@ import filter = require("core-js/library/fn/array/filter");
 export interface QueryRequest {
     GET: string|string[];
     WHERE: {};
-    ORDER: string;
+    ORDER: {};
     AS: string;
     APPLY?: {}[];
     GROUP?: string[];
     GT?: {};
     IS?: {};
-
 }
 
 
@@ -47,7 +46,11 @@ export default class QueryController {
         this.datasets = datasets;
     }
 
-
+    /**
+     * Check if query is valid
+     * @param query
+     * @returns {boolean}
+     */
     public isValid(query: QueryRequest): boolean {
 
         //console.log(query.GET.includes(query.ORDER));
@@ -60,6 +63,11 @@ export default class QueryController {
         return false;
     }
 
+    /**
+     * Check is dataset is empty
+     * @param data
+     * @returns {boolean}
+     */
     public isDataSetEmpty(data: any): boolean {
         if (typeof data !== 'undefined' && data.length > 0) {
             return false;
@@ -68,6 +76,12 @@ export default class QueryController {
         }
     }
 
+    /**
+     * GET filter
+     * @param query
+     * @param data
+     * @returns {responseObject[]}
+     */
     public filterColumns(query: QueryRequest, data: any): any {
         console.log("in filter columns");
         let respObjArray: responseObject[] = [];
@@ -84,9 +98,10 @@ export default class QueryController {
                 }
             }
         }
+
         data.forEach(function (obj: any) {
             var respObj: responseObject = <any>{};
-            let i:number = 0;
+            let i: number = 0;
 
             for (let key of query.GET) {
 
@@ -126,9 +141,16 @@ export default class QueryController {
             }
             respObjArray.push(respObj);
         });
-        return respObjArray;
+        return respObjArray; // object with only the GET columns
     }
 
+    /**
+     * ORDER results by ascending or descending
+     * @param query
+     * @param data
+     * @param i
+     * @returns {T[]|Uint32Array|Float32Array|Int32Array|any|Uint16Array}
+     */
     public orderResponse(query: QueryRequest, data: any, i: number) {
         let that = this;
         let key:any = query.ORDER;
@@ -137,12 +159,11 @@ export default class QueryController {
         let keys: any = Object.keys(key)[1];
         let dirValue: any = key[dir];
         let keysValue: any = key[keys];
-        var ORDEREDData: any;
 
         let properties = (Object.keys(key).length);
 
         if (typeof query.ORDER == "string") {
-            console.log("in orderresponse if branch")
+            console.log("in orderresponse if branch");
             return data.sort(function (result1: any, result2: any) {
                 if (result1[key] < result2[key]) {
                     return -1;
@@ -153,10 +174,11 @@ export default class QueryController {
                 return 0;
             });
         }
+
         if (properties > 1) {
             if (dirValue == 'UP') {
 
-                data.sort(function (result1: any, result2: any) {
+                return data.sort(function (result1: any, result2: any) {
                     console.log(result1);
                     console.log(keysValue);
                     console.log(keysValue[0]);
@@ -169,30 +191,32 @@ export default class QueryController {
                         let equalDataArray: any = [];
                         equalDataArray.push(result1);
                         equalDataArray.push(result2);
-                        ORDEREDData =  that.orderResponse(query, equalDataArray, i= i + 1);
+                        return that.orderResponse(query, equalDataArray, i = i + 1);
                     }
                 });
-                return ORDEREDData;
             }
+
             if (dirValue == 'DOWN') {
-                data.sort(function (result1: any, result2: any) {
+                return data.sort(function (result1: any, result2: any) {
                     if (result1[keysValue[i]] > result2[keysValue[i]]) {
                         return -1;
                     }
                     else if (result1[keysValue[i]] < result2[keysValue[i]]) {
                         return 1;
                     } else {
-                        ORDEREDData = this.orderResponse(query, data, i = i + 1);
+                        return this.orderResponse(query, data, i = i + 1);
                     }
                 });
-                return ORDEREDData;
-           }
+            }
         }
     }
+
     /**
-     * Helper Method for filterRows. Returns the result of a comparison between two values.
-     * @param s: indicates which type of comparison is to be made value & threshold are the 2 values to be compared
-     * @returns boolean obtained from the comparison
+     * Helper method for filterRows. Returns the result of a comparison between two values.
+     * @param field: indicates which type of comparison is to be made value & threshold are the 2 values to be compared
+     * @param value
+     * @param threshold
+     * @returns {Boolean} obtained from the comparison
      */
     public compare(field: string, value: any, threshold?: any) {
         var res: Boolean;
@@ -221,6 +245,13 @@ export default class QueryController {
         return res;
     }
 
+    /**
+     * WHERE filter
+     * @param field
+     * @param queryData
+     * @param data
+     * @returns {any}
+     */
     public filterRows(field: any, queryData: any, data: any) {
         let that = this;
         var filteredData: any = [];
@@ -266,6 +297,7 @@ export default class QueryController {
             }
             return ORReturnData;
         }
+
         else {
             let Cvalue: any;
             let keys: any = Object.keys(queryData);
@@ -276,67 +308,101 @@ export default class QueryController {
                 Cvalue = queryData[i];
             }
 
+            console.log(queryData);
+            console.log('this is cvalue: ' + Cvalue);
+
             data.forEach(function (x: any) {
                 if (that.compare(field, x[replaceKey], Cvalue)) filteredData.push(x);
             });
             return filteredData;
         }
     }
-    public getValuesforKey (key:any, data:any): any {
-        let arrOfKeyValues: any = [];
-        let i:number;
-        for (i =0; i < data.length; i++) {
-            let keyToMatch: any = data[i][key];
-            if (!(arrOfKeyValues.indexOf(keyToMatch)> -1)) {
-                arrOfKeyValues.push(keyToMatch);
-            }
-            i++;
-        }
-        return arrOfKeyValues;
-    }
 
-    public group(query: QueryRequest, data: any): any {
+    // public getValuesforKey (key:any, data:any): any {
+    //     let arrOfKeyValues: any = [];
+    //     let i:number;
+    //     for (i =0; i < data.length; i++) {
+    //         let keyToMatch: any = data[i][key];
+    //         if (!(arrOfKeyValues.indexOf(keyToMatch)> -1)) {
+    //             arrOfKeyValues.push(keyToMatch);
+    //         }
+    //         i++;
+    //     }
+    //     return arrOfKeyValues;
+    // }
+    public arrayFromObject(obj) {
+        var arr = [];
+        for (var i in obj) {
+            arr.push(obj[i]);
+        }
+        return arr;
+    }
+    /**
+     * Group the list of results into sets by some matching criteria (an Array of groups, each of which is an array)
+     * @param query
+     * @param data
+     * @returns {any}
+     */
+    public group(query: QueryRequest, data: any, i: any): any {
         if (typeof query.GROUP == 'undefined') {
             return data;
         }
-        console.log("in group method");
-        let groupKeys : any = query.GROUP;
-        var arr: any = data;
-        var groups: any = [];
-        for(var i = 0, len = arr.length; i<len; i+=1){
-            var obj = arr[i];
-            if(groups.length == 0){
-                groups.push([obj]);
-            }
-            else{
-                var equalGroup: any = false;
-                for(var a = 0, glen = groups.length; a<glen;a+=1){
-                    var group : any = groups[a];
-                    var equal : any = true;
-                    var firstElement = group[0];
-                    groupKeys.forEach(function(property){
+        let groupKeys: any = query.GROUP;
+        console.log(groupKeys[i]);
 
-                        if(firstElement[property] !== obj[property]){
-                            equal = false;
-                        }
-
-                    });
-                    if(equal){
-                        equalGroup = group;
+        if (i < groupKeys.length - 1) {
+       return this.group(query, data, i= i +1);
+        } else {
+            var hash = {};
+                console.log(groupKeys[i]);
+                for (let obj of data) {
+                    if (hash.hasOwnProperty(obj[groupKeys[i]])) {
+                        hash[obj[groupKeys[i]]].push(obj);
+                    } else {
+                        hash[obj[groupKeys[i]]] = [];
+                        hash[obj[groupKeys[i]]].push(obj);
                     }
                 }
-                if(equalGroup){
-                    equalGroup.push(obj);
-                }
-                else {
-                    groups.push([obj]);
-                }
-            }
-        }
-        // console.log(groups);
-        return groups;
-    }
 
+        }
+        console.log(hash);
+        return hash;
+        }
+        // console.log("in group method");
+        // let groupKeys : any = query.GROUP;
+        // var arr: any = data;
+        // var groups: any = [];
+        // for(var i = 0, len = arr.length; i<len; i+=1){
+        //     var obj = arr[i];
+        //     if(groups.length == 0){
+        //         groups.push([obj]);
+        //     }
+        //     else{
+        //         var equalGroup: any = false;
+        //         for(var a = 0, glen = groups.length; a<glen;a+=1){
+        //             var group : any = groups[a];
+        //             var equal : any = true;
+        //             var firstElement = group[0];
+        //             groupKeys.forEach(function(property){
+        //
+        //                 if(firstElement[property] !== obj[property]){
+        //                     equal = false;
+        //                 }
+        //             });
+        //             if(equal){
+        //                 equalGroup = group;
+        //             }
+        //         }
+        //         if(equalGroup){
+        //             equalGroup.push(obj);
+        //         }
+        //         else {
+        //             groups.push([obj]);
+        //         }
+        //     }
+        // }
+        // // console.log(groups);
+        // return groups;
 
     public applyFields(field:any, value: any, group: any, query: QueryRequest) {
         if (field == 'MAX') {
@@ -395,6 +461,7 @@ export default class QueryController {
             return count;
         }
     }
+
     public apply(query: QueryRequest, data: any): any {
         if (typeof query.APPLY == 'undefined') {
             return data;
@@ -404,7 +471,7 @@ export default class QueryController {
         let respArray: any = [];
         let applyArray: any = query.APPLY;
 
-        for (let group of data) {
+        for (let group in data) {
 
             for (let obj of applyArray) {
                 let applyProp: any = Object.keys(obj)[0];
@@ -437,11 +504,12 @@ export default class QueryController {
             return response;
         }
         var parsedData = JSON.parse(data);
-        let GET_results = this.filterColumns(query, parsedData);
+        // let groupedData: any = [];
+        // let GET_results = this.filterColumns(query, parsedData);
 
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
             console.log("in if branch");
-            var groupedData: any = this.group(query, GET_results);
+            var GET_results = this.filterColumns(query, parsedData);
 
         } else {
             console.log("in else branch");
@@ -452,14 +520,16 @@ export default class QueryController {
             for (let i in query.WHERE) {
                 value = query.WHERE[i];
             }
-            let WHERE_Results: {}[] = this.filterRows(key, value, GET_results);
-            var groupedData: any = this.group(query, WHERE_Results);
+            let WHERE_Results: {}[] = this.filterRows(key, value, parsedData);
+            var GET_results = this.filterColumns(query, WHERE_Results);
+
         }
+        var groupedData = this.group(query, GET_results,0);
 
         let appliedData: any = this.apply(query, groupedData);
 
         if (typeof query.ORDER !== 'undefined') {
-            let i:number = 0
+            let i:number = 0;
             var orderedResults = this.orderResponse(query, appliedData, i);
         }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
