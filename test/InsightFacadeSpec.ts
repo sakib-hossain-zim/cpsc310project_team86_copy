@@ -13,6 +13,7 @@ describe("InsightFacade", function () {
 
     var zipFileContents: string = null;
     var facade: InsightFacade = null;
+
     before(function () {
         Log.info('InsightController::before() - start');
         // this zip might be in a different spot for you
