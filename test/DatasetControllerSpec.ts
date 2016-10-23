@@ -11,6 +11,16 @@ import {expect} from 'chai';
 describe("DatasetController", function () {
 
     beforeEach(function () {
+        // Log.info('DatasetController::beforeEach() - start');
+        // var fs = require('fs');
+        // try {
+        //     // delete data folder
+        //     fs.unlinkSync('./data');
+        // } catch (err) {
+        //     // silently fail, but don't crash; this is fine
+        //     Log.warn('InsightController::before() - courses.json not removed (probably not present)');
+        // }
+        // Log.info('InsightController::before() - done');
     });
 
     afterEach(function () {
