@@ -33,6 +33,7 @@ interface responseObject {
     courses_title: string;
     courses_id: string;
     courses_audit: string;
+    courses_uuid: string;
 }
 
 interface stringArray {
@@ -110,8 +111,10 @@ export default class QueryController {
             //     }
             //
             // }
+        //Kwyjibo: All keys in GET should be in either GROUP or APPLY.
 
-        // keys in GROUP cannot occur in APPLY and vice versa
+
+        //LAGUNA keys in GROUP cannot occur in APPLY and vice versa
         if (typeof query.GROUP !== 'undefined' && typeof query.APPLY !== 'undefined') {
             for (let groupKey of query.GROUP) {
                 //  console.log(groupKey);
@@ -135,42 +138,45 @@ export default class QueryController {
             }
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
-        for (let getKey of query.GET) {
-            var get_key_in_apply: boolean;
-            console.log(getKey);
-            if (!getKey.includes("_")) {
-                get_key_in_apply = false;
-                for (let applyObj of query.APPLY) {
-                for (let applyKey in applyObj) {
-                    console.log(applyKey);
-                        if (getKey == applyKey) {
-                            get_key_in_apply = true;
+        if (typeof query.APPLY !== 'undefined') {
+            if (query.APPLY.length > 0) {
+
+                for (let getKey of query.GET) {
+                    var get_key_in_apply: boolean;
+                    if (!getKey.includes("_")) {
+                        get_key_in_apply = false;
+                        for (let applyObj of query.APPLY) {
+                            for (let applyKey in applyObj) {
+                                if (getKey == applyKey) {
+                                    get_key_in_apply = true;
+                                }
+                            }
+                        }
+                        if (!get_key_in_apply) {
+                            return false;
                         }
                     }
                 }
-                if (!get_key_in_apply) {
-                    return false;
+
+                for (let applyObj of query.APPLY) {
+                    for (let applyKey in applyObj) {
+                        var get_key_in_apply: boolean;
+                        if (!applyKey.includes("_")) {
+                            get_key_in_apply = false;
+                            for (let getKey of query.GET) {
+                                if (getKey == applyKey) {
+                                    get_key_in_apply = true;
+                                }
+                            }
+                            if (!get_key_in_apply) {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        for (let applyObj of query.APPLY) {
-            for (let applyKey in applyObj) {
-                var get_key_in_apply: boolean;
-                if (!applyKey.includes("_")) {
-                    get_key_in_apply = false;
-                    for (let getKey of query.GET) {
-                            console.log(applyKey);
-                            if (getKey == applyKey) {
-                                get_key_in_apply = true;
-                            }
-                        }
-                    if (!get_key_in_apply) {
-                        return false;
-                    }
-                    }
-            }
-        }
 
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
@@ -198,7 +204,6 @@ export default class QueryController {
      * @returns {responseObject[]}
      */
     public filterColumns(query: QueryRequest, data: any): any {
-        console.log("in filter columns (GET)");
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
@@ -243,6 +248,9 @@ export default class QueryController {
                 }
                 if (key == "courses_instructor") {
                     respObj.courses_instructor = obj.courses_instructor;
+                }
+                if (key == "courses_uuid") {
+                    respObj.courses_uuid = obj.courses_uuid;
                 }
             }
             for (let applyKey of applyKeyArray) {
