@@ -112,7 +112,9 @@ export default class QueryController {
             //
             // }
         //Kwyjibo: All keys in GET should be in either GROUP or APPLY.
+            for (let getKey of query.GET) {
 
+            }
 
         //LAGUNA keys in GROUP cannot occur in APPLY and vice versa
         if (typeof query.GROUP !== 'undefined' && typeof query.APPLY !== 'undefined') {
@@ -135,6 +137,14 @@ export default class QueryController {
                         }
                     }
                 }
+            }
+        }
+
+        //Liberation: Group should contains only valid keys (separated by underscore).
+        for (let key of query.GROUP) {
+            if (key !== 'courses_dept' && key !=='courses_avg' && key !=='courses_instructor' && key !=='courses_pass'
+                && key!== 'courses_fail' && key!=='courses_title' && key!== 'courses_id' && key!=='courses_audit' && key!=='courses_uuid') {
+                return false;
             }
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
@@ -176,7 +186,6 @@ export default class QueryController {
                 }
             }
         }
-
 
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
