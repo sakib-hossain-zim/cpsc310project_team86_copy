@@ -69,49 +69,21 @@ export default class QueryController {
             if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
                 return false;
             }
+        //Kryptonite: All keys in GROUP should be present in GET.
+        if (typeof query.GROUP !== 'undefined'){
+            for (let groupKey of query.GROUP) {
+                let is_in_GROUP_and_GET: boolean = false;
+                for (let getKey of query.GET) {
+                    if (getKey == groupKey) {
+                        is_in_GROUP_and_GET = true;
+                    }
+                }
 
+            if (!is_in_GROUP_and_GET) {
+                return false;
+            }}
+        }
 
-            // if (typeof query.GET !== 'undefined') {
-            //
-            //     let keys: any = query.GET;
-            //     let group_keys: any = query.GROUP;
-            //     let apply_keys: any = query.APPLY;
-            //
-            //     let get_arr: any = []
-            //     for (let key of keys){
-            //         var get_keys:any = key;
-            //         get_arr.push(get_keys);
-            //         // console.log ("get " + get_keys);
-            //     }
-            //     console.log ("get is " + get_arr);
-            //
-            //     let join_arr: any  = [];
-            //
-            //     for (let group_key of group_keys) {
-            //         var groupies:any = group_key;
-            //         join_arr.push(groupies);
-            //         //console.log ("what is " + groupies);
-            //     }
-            //
-            //     for (let apply_key of apply_keys) {  // iterate through every key in apply
-            //         var applies: any = Object.keys(apply_key)[0];
-            //         join_arr.push(applies);
-            //         //console.log ("what is " + applies);
-            //     }
-            //
-            //     console.log ("arr is " + join_arr);
-            //
-            //     console.log ("what is " + join_arr.includes(get_arr));
-            //
-            //     if (!join_arr.includes(get_arr)) {
-            //         return false;
-            //     }
-            //
-            //     if (!get_arr.includes(groupies)) {      // all keys in group should be in get
-            //         return false;
-            //     }
-            //
-            // }
         //Kwyjibo: All keys in GET should be in either GROUP or APPLY.
         if (typeof query.GROUP !== 'undefined') {
             for (let getKey of query.GET) {
