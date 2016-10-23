@@ -93,7 +93,6 @@ export default class QueryController {
         }
 
 
-
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
         }
