@@ -211,6 +211,14 @@ export default class QueryController {
         return respObjArray; // object with only the GET columns
     }
 
+    /**
+     * Sort ascending
+     * @param value1
+     * @param value2
+     * @param keys
+     * @param i
+     * @returns {any}
+     */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number) {
         if (value1[keys[i]] < value2[keys[i]]) {
             return -1;
@@ -221,6 +229,14 @@ export default class QueryController {
         }
     }
 
+    /**
+     * Sort descending
+     * @param value1
+     * @param value2
+     * @param keys
+     * @param i
+     * @returns {any}
+     */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number) {
         if (value1[keys[i]] > value2[keys[i]]) {
             return -1;
@@ -261,16 +277,6 @@ export default class QueryController {
                 return 0;
             });
 
-        } else if (keysValue.length === 1) {
-            return data.sort(function (result1: any, result2: any) {
-                if (result1[keysValue[0]] < result2[keysValue[0]]) {
-                    return -1;
-                }
-                else if (result1[keysValue[0]] > result2[keysValue[0]]) {
-                    return 1;
-                }
-                return 0;
-            });
         }
 
         if (i < keysValue.length) {

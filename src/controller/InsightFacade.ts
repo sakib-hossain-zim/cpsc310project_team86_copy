@@ -20,7 +20,7 @@ export default class InsightFacade implements IInsightFacade {
 
         return new Promise(function (fulfill, reject) {
             try {
-                let controller = InsightFacade.datasetController;
+                var controller = InsightFacade.datasetController;
                 var fs = require('fs');
 
                 controller.process(id, content).then(function (result) {

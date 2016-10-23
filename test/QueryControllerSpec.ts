@@ -103,6 +103,57 @@ describe("QueryController", function () {
     //     expect(isValid).to.equal(false);
     // });
 
+    it("Should invalidate query with GROUP length 0", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"LT": {"courses_avg": 90}},
+            "GROUP": [],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let isValid = controller.isValid(query);
+
+        expect(isValid).to.equal(false);
+    });
+
+    it("Should invalidate query with GROUP undefined", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"NOT": {"courses_dept": "cpsc"}}},
+            "GROUP": ['undefined'],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let isValid = controller.isValid(query);
+
+        expect(isValid).to.equal(false);
+    });
+
+    it("Should invalidate query with APPLY undefined", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"courses_dept": "cpsc"},
+            "GROUP": ["courses_id"],
+            "APPLY": ['undefined'],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let isValid = controller.isValid(query);
+
+        expect(isValid).to.equal(false);
+    });
+
     it("Should be able to query, although the answer will be empty", function () {
         let query: QueryRequest = {
             "GET": ["courses_dept", "courses_avg"],
@@ -116,6 +167,50 @@ describe("QueryController", function () {
         Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
         expect(ret).not.to.be.equal(null);
         // should check that the value is meaningful
+    });
+
+    it("Should be valid LT query", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courses_avg"],
+            "WHERE": {"LT": {"courses_avg": 200}},
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let ret = controller.query(query);
+        Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
+        expect(ret).not.to.be.equal(null);
+    });
+
+    it("Should be valid NOT query", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courses_avg"],
+            "WHERE": {"IS": {"NOT": {"courses_dept": "cpsc"}}},
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let ret = controller.query(query);
+        Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
+        expect(ret).not.to.be.equal(null);
+    });
+
+    it("Should be able to calculate MIN", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": ["courses_id"],
+            "APPLY": [ {"courseAverage": {"MIN": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let ret = controller.query(query);
+        Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
+        expect(ret).not.to.be.equal(null);
     });
 
     it("Should be able to query with OLD QUERY EXAMPLE 1", function () {
