@@ -69,26 +69,28 @@ export default class QueryController {
             }
         }
         // keys in GROUP cannot occur in APPLY and vice versa
-      for (let groupKey of query.GROUP) {
-        //  console.log(groupKey);
-        for (let applyObj of query.APPLY) {
-            let applyKeys = Object.keys(applyObj);
-            for (let key of applyKeys) {
-             //   console.log(key);
-                if (key == groupKey) {
-                    return false;
-                }
-                let insideObj =applyObj[key];
-                let insideKeys = Object.keys(insideObj);
-                for (let insideKey of insideKeys) {
-                let insideValue = insideObj[insideKey];
-                    if (insideValue == groupKey) {
-                        return false;
+        if (typeof query.GROUP !== 'undefined' && typeof query.APPLY !== 'undefined') {
+            for (let groupKey of query.GROUP) {
+                //  console.log(groupKey);
+                for (let applyObj of query.APPLY) {
+                    let applyKeys = Object.keys(applyObj);
+                    for (let key of applyKeys) {
+                        //   console.log(key);
+                        if (key == groupKey) {
+                            return false;
+                        }
+                        let insideObj = applyObj[key];
+                        let insideKeys = Object.keys(insideObj);
+                        for (let insideKey of insideKeys) {
+                            let insideValue = insideObj[insideKey];
+                            if (insideValue == groupKey) {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
         }
-      }
 
 
 
