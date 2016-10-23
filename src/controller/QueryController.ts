@@ -100,7 +100,7 @@ export default class QueryController {
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
-        if (typeof query.APPLY !== "undefined") {
+        if (typeof query.APPLY !== "undefined" && query.APPLY.length > 0) {
             for (let objApply of query.APPLY) {
                 for (let prop in objApply) {
                     let innerObj = objApply[prop];
@@ -146,7 +146,7 @@ export default class QueryController {
             for (let applyKey of applyKeyArray) {
                 respObj[applyKey] = obj[applyKey];
             }
-            if (typeof query.APPLY !== 'undefined') {
+            if (typeof query.APPLY !== 'undefined' && query.APPLY.length > 0) {
                 for (let obj of query.APPLY) {
                     let newProp: any = Object.keys(obj)[0];
                     respObj[newProp] = "";
