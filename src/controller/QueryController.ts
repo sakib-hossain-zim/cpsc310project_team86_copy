@@ -74,27 +74,37 @@ export default class QueryController {
                 let group_keys: any = query.GROUP;
                 let apply_keys: any = query.APPLY;
 
+                let get_arr: any = []
                 for (let key of keys){
                     var get_keys:any = key;
-                   // console.log ("what is " + get_keys);
+                    get_arr.push(get_keys);
+                    // console.log ("get " + get_keys);
                 }
+                console.log ("get is " + get_arr);
+
+                let join_arr: any  = [];
 
                 for (let group_key of group_keys) {
-                    var groupies = group_key;
+                    var groupies:any = group_key;
+                    join_arr.push(groupies);
                     //console.log ("what is " + groupies);
                 }
 
                 for (let apply_key of apply_keys) {  // iterate through every key in apply
                     var applies: any = Object.keys(apply_key)[0];
+                    join_arr.push(applies);
                     //console.log ("what is " + applies);
                 }
-                //console.log ("groupies is" + groupies);
-                //console.log (get_keys.includes(groupies));
 
-                if (get_keys.includes(groupies)) {
-                    return true;
+                console.log ("arr is " + join_arr);
+
+                console.log ("what is " + join_arr.includes(get_arr));
+
+                if (!join_arr.includes(get_arr)) {
+                    return false;
                 }
-                else {
+
+                if (!get_arr.includes(groupies)) {      // all keys in group should be in get
                     return false;
                 }
 

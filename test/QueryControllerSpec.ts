@@ -50,21 +50,21 @@ describe("QueryController", function () {
         expect(isValid).to.equal(false);
     });
 
-    // it("Should be able a valid query for GET, GROUP, APPLY", function () {
-    //     let query: QueryRequest = {
-    //         "GET": ["courses_dept", "courses_id", "courseAverage", "maxFail"],
-    //         "WHERE": {},
-    //         "GROUP": [ "courses_dept", "courses_id" ],
-    //         "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}}, {"maxFail": {"MAX": "courses_fail"}} ],
-    //         "ORDER": { "dir": "UP", "keys": ["courseAverage", "maxFail", "courses_dept", "courses_id"]},
-    //         "AS":"TABLE"
-    //     };
-    //     let dataset: Datasets = {};
-    //     let controller = new QueryController(dataset);
-    //     let isValid = controller.isValid(query);
-    //
-    //     expect(isValid).to.equal(true);
-    // });
+    it("Should be able an invalid query for - all GROUP not in GET", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courseAverage", "maxFail"],
+            "WHERE": {},
+            "GROUP": [ "courses_dept", "courses_id" ],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}}, {"maxFail": {"MAX": "courses_fail"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "maxFail", "courses_dept", "courses_id"]},
+            "AS":"TABLE"
+        };
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let isValid = controller.isValid(query);
+
+        expect(isValid).to.equal(false);
+    });
 
     it("Should be able to invalidate an invalid query for AS", function () {
         let query: QueryRequest = {
