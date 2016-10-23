@@ -58,17 +58,18 @@ export default class QueryController {
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
 
-        if (query.GROUP != undefined && query.APPLY != undefined) {
+        if (typeof query.GROUP != 'undefined') {
             if ((query.GROUP.length) == 0) {
                 return false;
             }
+        }
             if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
                 return false;
             }
             if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
                 return false;
             }
-        }
+
 
             // if (typeof query.GET !== 'undefined') {
             //
@@ -112,9 +113,26 @@ export default class QueryController {
             //
             // }
         //Kwyjibo: All keys in GET should be in either GROUP or APPLY.
+        if (typeof query.GROUP !== 'undefined') {
             for (let getKey of query.GET) {
-
+                let is_in_GROUP_or_APPLY: boolean = false;
+                for (let groupKey of query.GROUP) {
+                    if (getKey == groupKey) {
+                        is_in_GROUP_or_APPLY = true;
+                    }
+                }
+                for (let applyObj of query.APPLY) {
+                    for (let applyKey in applyObj) {
+                        if (getKey == applyKey) {
+                            is_in_GROUP_or_APPLY = true;
+                        }
+                    }
+                }
+                if (!is_in_GROUP_or_APPLY) {
+                    return false;
+                }
             }
+        }
 
         //LAGUNA keys in GROUP cannot occur in APPLY and vice versa
         if (typeof query.GROUP !== 'undefined' && typeof query.APPLY !== 'undefined') {
@@ -140,10 +158,12 @@ export default class QueryController {
             }
         }
         //Liberation: Group should contains only valid keys (separated by underscore).
-        for (let key of query.GROUP) {
-            if (key !== 'courses_dept' && key !=='courses_avg' && key !=='courses_instructor' && key !=='courses_pass'
-                && key!== 'courses_fail' && key!=='courses_title' && key!== 'courses_id' && key!=='courses_audit' && key!=='courses_uuid') {
-                return false;
+        if (typeof query.GROUP !== 'undefined') {
+            for (let key of query.GROUP) {
+                if (key !== 'courses_dept' && key !== 'courses_avg' && key !== 'courses_instructor' && key !== 'courses_pass'
+                    && key !== 'courses_fail' && key !== 'courses_title' && key !== 'courses_id' && key !== 'courses_audit' && key !== 'courses_uuid') {
+                    return false;
+                }
             }
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
@@ -458,18 +478,6 @@ export default class QueryController {
         }
     }
 
-    // public getValuesforKey (key:any, data:any): any {
-    //     let arrOfKeyValues: any = [];
-    //     let i:number;
-    //     for (i =0; i < data.length; i++) {
-    //         let keyToMatch: any = data[i][key];
-    //         if (!(arrOfKeyValues.indexOf(keyToMatch)> -1)) {
-    //             arrOfKeyValues.push(keyToMatch);
-    //         }
-    //         i++;
-    //     }
-    //     return arrOfKeyValues;
-    // }
     public arrayFromObject(obj) {
         var arr = [];
         for (var i in obj) {
