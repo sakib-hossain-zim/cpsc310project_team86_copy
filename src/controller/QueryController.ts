@@ -56,12 +56,17 @@ export default class QueryController {
         //console.log(query.GET.includes(query.ORDER));
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
+        if ((query.GROUP.length) == 0 ) {
+            return false;
+        }
         if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
             return false;
         }
         if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
             return false;
         }
+
+
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
