@@ -322,7 +322,7 @@ export default class QueryController {
         }
 
         else {
-            let Cvalue: any;
+            var Cvalue: any;
             let keys: any = Object.keys(queryData);
             for (let key of keys) {
                 var replaceKey = key.replace(/[\[\]']+/g,'');
@@ -332,7 +332,9 @@ export default class QueryController {
             }
 
             data.forEach(function (x: any) {
-                if (that.compare(field, x[replaceKey], Cvalue)) filteredData.push(x);
+                if (that.compare(field, x[replaceKey], Cvalue)) {
+                    filteredData.push(x);
+                }
             });
             return filteredData;
         }
