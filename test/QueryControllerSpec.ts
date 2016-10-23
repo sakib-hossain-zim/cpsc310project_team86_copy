@@ -95,17 +95,20 @@ describe("QueryController", function () {
         // should check that the value is meaningful
     });
 
-    it("Should be able to query single UP ORDER key", function () {
+    it("Should be able to query with single ORDER string", function () {
         let query: QueryRequest = {
             "GET": ["courses_dept", "courses_avg"],
             "WHERE": {"GT": {"courses_avg": 200}},
-            "ORDER": { "dir": "UP", "keys": ["courses_dept"]},
+            "ORDER": "courses_avg",
             "AS": "TABLE"
         };
-        let dataset: Datasets = {};
-        let controller = new QueryController(dataset);
+
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
         let ret = controller.query(query);
-        let expectedResult = { render: 'TABLE',
+        let expectedResult =
+        { render: 'TABLE',
             result:
                 [ { courses_dept: 'cnps', courses_avg: 90.02 },
                     { courses_dept: 'dhyg', courses_avg: 90.03 },

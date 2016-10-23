@@ -69,6 +69,8 @@ export default class QueryController {
             }
         }
 
+
+
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
         }
@@ -206,29 +208,15 @@ export default class QueryController {
             });
 
         } else if (keysValue.length === 1) {
-            if (dirValue == 'UP') {
-                return data.sort(function (result1: any, result2: any) {
-                    if (result1[keysValue[0]] < result2[keysValue[0]]) {
-                        return -1;
-                    }
-                    else if (result1[keysValue[0]] > result2[keysValue[0]]) {
-                        return 1;
-                    }
-                    return 0;
-                });
-            }
-
-            if (dirValue == 'DOWN') {
-                return data.sort(function (result1: any, result2: any) {
-                    if (result1[keysValue[0]] > result2[keysValue[0]]) {
-                        return -1;
-                    }
-                    else if (result1[keysValue[0]] < result2[keysValue[0]]) {
-                        return 1;
-                    }
-                    return 0;
-                });
-            }
+            return data.sort(function (result1: any, result2: any) {
+                if (result1[keysValue[0]] < result2[keysValue[0]]) {
+                    return -1;
+                }
+                else if (result1[keysValue[0]] > result2[keysValue[0]]) {
+                    return 1;
+                }
+                return 0;
+            });
         }
 
         if (i < keysValue.length) {
@@ -527,7 +515,6 @@ export default class QueryController {
 
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
             var GET_results = this.filterColumns(query, parsedData);
-
         } else {
             let operands: stringArray = Object.keys(query.WHERE);
             var key: any = operands[0];
