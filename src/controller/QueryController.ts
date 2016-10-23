@@ -56,11 +56,16 @@ export default class QueryController {
         //console.log(query.GET.includes(query.ORDER));
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
+        if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
+            return false;
+        }
+        if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
+            return false;
+        }
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
         }
-        return false;
     }
 
     /**
@@ -434,11 +439,8 @@ export default class QueryController {
             for (var i = 0; i < compareArray.length; i++) {
                 counts[compareArray[i]] = 1 + (counts[compareArray[i]] || 0);
             }
-            console.log(counts);
             let key = Object.keys(counts)[0];
-            console.log(key);
             let result: any = counts[key];
-            console.log(result);
 
             for (let obj of group)  {
                 if(!query.GET.hasOwnProperty(value)) {
@@ -460,7 +462,6 @@ export default class QueryController {
             return data;
         }
         console.log("in apply method");
-        //  console.log(data);
         let respArray: any = [];
         let applyArray: any = query.APPLY;
 
@@ -480,7 +481,6 @@ export default class QueryController {
             }
             respArray.push(group[0]);
         }
-        // console.log(respArray);
         return respArray;
     }
 
@@ -506,12 +506,9 @@ export default class QueryController {
         // let GET_results = this.filterColumns(query, parsedData);
 
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
-            console.log("in if branch (WHERE)");
             var GET_results = this.filterColumns(query, parsedData);
 
         } else {
-            console.log("in else branch (WHERE)");
-            console.log(query.WHERE);
             let operands: stringArray = Object.keys(query.WHERE);
             var key: any = operands[0];
             var value: any;
