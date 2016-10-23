@@ -428,17 +428,24 @@ export default class QueryController {
             let compareArray: any = [];
             for (let obj of group) {
                 let compareVal: any = obj[value];
-                for (let val of compareArray) {
-                    if (val !== obj[value]) {
-                        count++;
-                        compareArray.push(compareVal);
-                    }
-                }
+                compareArray.push(compareVal);
+            }
+            var counts = {};
+            for (var i = 0; i < compareArray.length; i++) {
+                counts[compareArray[i]] = 1 + (counts[compareArray[i]] || 0);
+            }
+            console.log(counts);
+            let key = Object.keys(counts)[0];
+            console.log(key);
+            let result: any = counts[key];
+            console.log(result);
+
+            for (let obj of group)  {
                 if(!query.GET.hasOwnProperty(value)) {
                     delete obj[value];
                 }
             }
-            return count;
+            return result;
         }
     }
 
@@ -524,7 +531,6 @@ export default class QueryController {
             var orderedResults = this.orderResponse(query, appliedData, 0);
         }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
-        console.log(response);
         return response;
     }
 }
