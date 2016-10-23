@@ -83,7 +83,7 @@ export default class QueryController {
      * @returns {responseObject[]}
      */
     public filterColumns(query: QueryRequest, data: any): any {
-        console.log("in filter columns");
+        console.log("in filter columns (GET)");
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
@@ -144,6 +144,26 @@ export default class QueryController {
         return respObjArray; // object with only the GET columns
     }
 
+    public sortUpFunction (value1: any, value2: any, keys: any, i: number) {
+        if (value1[keys[i]] < value2[keys[i]]) {
+            return -1;
+        } else if (value1[keys[i]] > value2[keys[i]]) {
+            return 1;
+        } else {
+            return this.sortUpFunction (value1, value2, keys, i + 1);
+        }
+    }
+
+    public sortDownFunction (value1: any, value2: any, keys: any, i: number) {
+        if (value1[keys[i]] > value2[keys[i]]) {
+            return -1;
+        } else if (value1[keys[i]] < value2[keys[i]]) {
+            return 1;
+        } else {
+            return this.sortDownFunction (value1, value2, keys, i + 1);
+        }
+    }
+
     /**
      * ORDER results by ascending or descending
      * @param query
@@ -151,19 +171,19 @@ export default class QueryController {
      * @param i
      * @returns {T[]|Uint32Array|Float32Array|Int32Array|any|Uint16Array}
      */
-    public orderResponse(query: QueryRequest, data: any, i: number) {
+    public orderResponse(query: QueryRequest, data: any, i: number) { // i always starts 0
         let that = this;
         let key:any = query.ORDER;
-        console.log(Object.keys(key).length);
+        // console.log(Object.keys(key).length);
         let dir: any = Object.keys(key)[0];
         let keys: any = Object.keys(key)[1];
         let dirValue: any = key[dir];
         let keysValue: any = key[keys];
 
-        let properties = (Object.keys(key).length);
+        // let properties = (Object.keys(key).length);
 
         if (typeof query.ORDER == "string") {
-            console.log("in orderresponse if branch");
+            console.log("in orderResponse if branch");
             return data.sort(function (result1: any, result2: any) {
                 if (result1[key] < result2[key]) {
                     return -1;
@@ -173,39 +193,28 @@ export default class QueryController {
                 }
                 return 0;
             });
+        } else if (keysValue.length === 1) {
+            return data.sort(function (result1: any, result2: any) {
+                if (result1[keysValue[0]] < result2[keysValue[0]]) {
+                    return -1;
+                }
+                else if (result1[keysValue[0]] > result2[keysValue[0]]) {
+                    return 1;
+                }
+                return 0;
+            });
         }
 
-        if (properties > 1) {
+        if (i < keysValue.length) {
             if (dirValue == 'UP') {
-
                 return data.sort(function (result1: any, result2: any) {
-                    console.log(result1);
-                    console.log(keysValue);
-                    console.log(keysValue[0]);
-                    console.log(result1[keysValue[i]]);
-                    if (result1[keysValue[i]] < result2[keysValue[i]]) {
-                        return -1;
-                    } else if (result1[keysValue[i]] > result2[keysValue[i]]) {
-                        return 1;
-                    } else {
-                        let equalDataArray: any = [];
-                        equalDataArray.push(result1);
-                        equalDataArray.push(result2);
-                        return that.orderResponse(query, equalDataArray, i = i + 1);
-                    }
+                    return that.sortUpFunction(result1, result2, keysValue, i);
                 });
             }
-
+            
             if (dirValue == 'DOWN') {
                 return data.sort(function (result1: any, result2: any) {
-                    if (result1[keysValue[i]] > result2[keysValue[i]]) {
-                        return -1;
-                    }
-                    else if (result1[keysValue[i]] < result2[keysValue[i]]) {
-                        return 1;
-                    } else {
-                        return this.orderResponse(query, data, i = i + 1);
-                    }
+                    return that.sortDownFunction(result1, result2, keysValue, i);
                 });
             }
         }
@@ -308,9 +317,6 @@ export default class QueryController {
                 Cvalue = queryData[i];
             }
 
-            console.log(queryData);
-            console.log('this is cvalue: ' + Cvalue);
-
             data.forEach(function (x: any) {
                 if (that.compare(field, x[replaceKey], Cvalue)) filteredData.push(x);
             });
@@ -349,26 +355,34 @@ export default class QueryController {
         }
         let groupKeys: any = query.GROUP;
 
-                var hash = {};
-                for (let obj of data) {
-                    let keyArray: any = [];
+        var hash = {};
+        for (let obj of data) {
+            let keyArray: any = [];
 
-                    for (let key of groupKeys) {
-                       keyArray.push(obj[key]);
-                    }
-                    let property: string = keyArray.join('');
+            for (let key of groupKeys) {
+                keyArray.push(obj[key]);
+            }
+            let property: string = keyArray.join('');
 
-                    if (hash.hasOwnProperty(property)) {
-                        hash[property].push(obj);
-                    } else {
-                        hash[property] = [];
-                        hash[property].push(obj);
-                    }
-                }
-               let groupArray: any = this.arrayFromObject(hash);
-                return groupArray;
+            if (hash.hasOwnProperty(property)) {
+                hash[property].push(obj);
+            } else {
+                hash[property] = [];
+                hash[property].push(obj);
+            }
         }
+        let groupArray: any = this.arrayFromObject(hash);
+        return groupArray;
+    }
 
+    /**
+     *
+     * @param field
+     * @param value
+     * @param group
+     * @param query
+     * @returns {number}
+     */
     public applyFields(field:any, value: any, group: any, query: QueryRequest) {
         if (field == 'MAX') {
             var max: number = 0;
@@ -427,6 +441,12 @@ export default class QueryController {
         }
     }
 
+    /**
+     *
+     * @param query
+     * @param data
+     * @returns {any}
+     */
     public apply(query: QueryRequest, data: any): any {
         if (typeof query.APPLY == 'undefined') {
             return data;
@@ -452,10 +472,15 @@ export default class QueryController {
             }
             respArray.push(group[0]);
         }
-        console.log(respArray);
+        // console.log(respArray);
         return respArray;
     }
 
+    /**
+     * The actual query happening
+     * @param query
+     * @returns {QueryResponse}
+     */
     public query(query: QueryRequest): any {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
@@ -473,11 +498,11 @@ export default class QueryController {
         // let GET_results = this.filterColumns(query, parsedData);
 
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
-            console.log("in if branch");
+            console.log("in if branch (WHERE)");
             var GET_results = this.filterColumns(query, parsedData);
 
         } else {
-            console.log("in else branch");
+            console.log("in else branch (WHERE)");
             console.log(query.WHERE);
             let operands: stringArray = Object.keys(query.WHERE);
             var key: any = operands[0];
@@ -494,8 +519,8 @@ export default class QueryController {
         let appliedData: any = this.apply(query, groupedData);
 
         if (typeof query.ORDER !== 'undefined') {
-            let i:number = 0;
-            var orderedResults = this.orderResponse(query, appliedData, i);
+            // let i: number = 0;
+            var orderedResults = this.orderResponse(query, appliedData, 0);
         }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
         console.log(response);
