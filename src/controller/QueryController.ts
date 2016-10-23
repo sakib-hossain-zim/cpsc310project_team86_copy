@@ -67,6 +67,38 @@ export default class QueryController {
             if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
                 return false;
             }
+
+            if (typeof query.GET !== 'undefined') {
+
+                let keys: any = query.GET;
+                let group_keys: any = query.GROUP;
+                let apply_keys: any = query.APPLY;
+
+                for (let key of keys){
+                    var get_keys:any = key;
+                   // console.log ("what is " + get_keys);
+                }
+
+                for (let group_key of group_keys) {
+                    var groupies = group_key;
+                    //console.log ("what is " + groupies);
+                }
+
+                for (let apply_key of apply_keys) {  // iterate through every key in apply
+                    var applies: any = Object.keys(apply_key)[0];
+                    //console.log ("what is " + applies);
+                }
+                //console.log ("groupies is" + groupies);
+                //console.log (get_keys.includes(groupies));
+
+                if (get_keys.includes(groupies)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
+            }
         }
         // keys in GROUP cannot occur in APPLY and vice versa
         if (typeof query.GROUP !== 'undefined' && typeof query.APPLY !== 'undefined') {
