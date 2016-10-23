@@ -193,6 +193,7 @@ export default class QueryController {
                 }
                 return 0;
             });
+
         } else if (keysValue.length === 1) {
             return data.sort(function (result1: any, result2: any) {
                 if (result1[keysValue[0]] < result2[keysValue[0]]) {
