@@ -56,17 +56,18 @@ export default class QueryController {
         //console.log(query.GET.includes(query.ORDER));
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
-        if ((query.GROUP.length) == 0 ) {
-            return false;
-        }
-        if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
-            return false;
-        }
-        if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
-            return false;
-        }
 
-
+        if (query.GROUP != undefined && query.APPLY != undefined) {
+            if ((query.GROUP.length) == 0) {
+                return false;
+            }
+            if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
+                return false;
+            }
+            if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
+                return false;
+            }
+        }
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
@@ -205,15 +206,29 @@ export default class QueryController {
             });
 
         } else if (keysValue.length === 1) {
-            return data.sort(function (result1: any, result2: any) {
-                if (result1[keysValue[0]] < result2[keysValue[0]]) {
-                    return -1;
-                }
-                else if (result1[keysValue[0]] > result2[keysValue[0]]) {
-                    return 1;
-                }
-                return 0;
-            });
+            if (dirValue == 'UP') {
+                return data.sort(function (result1: any, result2: any) {
+                    if (result1[keysValue[0]] < result2[keysValue[0]]) {
+                        return -1;
+                    }
+                    else if (result1[keysValue[0]] > result2[keysValue[0]]) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
+
+            if (dirValue == 'DOWN') {
+                return data.sort(function (result1: any, result2: any) {
+                    if (result1[keysValue[0]] > result2[keysValue[0]]) {
+                        return -1;
+                    }
+                    else if (result1[keysValue[0]] < result2[keysValue[0]]) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
         }
 
         if (i < keysValue.length) {

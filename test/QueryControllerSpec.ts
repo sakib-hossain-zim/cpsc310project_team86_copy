@@ -95,6 +95,125 @@ describe("QueryController", function () {
         // should check that the value is meaningful
     });
 
+    it("Should be able to query single UP ORDER key", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courses_avg"],
+            "WHERE": {"GT": {"courses_avg": 200}},
+            "ORDER": { "dir": "UP", "keys": ["courses_dept"]},
+            "AS": "TABLE"
+        };
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let ret = controller.query(query);
+        let expectedResult = { render: 'TABLE',
+            result:
+                [ { courses_dept: 'cnps', courses_avg: 90.02 },
+                    { courses_dept: 'dhyg', courses_avg: 90.03 },
+                    { courses_dept: 'epse', courses_avg: 90.03 },
+                    { courses_dept: 'epse', courses_avg: 90.05 },
+                    { courses_dept: 'kin', courses_avg: 90.05 },
+                    { courses_dept: 'kin', courses_avg: 90.05 },
+                    { courses_dept: 'epse', courses_avg: 90.05 },
+                    { courses_dept: 'edcp', courses_avg: 90.06 },
+                    { courses_dept: 'civl', courses_avg: 90.06 },
+                    { courses_dept: 'edst', courses_avg: 90.06 },
+                    { courses_dept: 'nurs', courses_avg: 90.06 },
+                    { courses_dept: 'edst', courses_avg: 90.06 },
+                    { courses_dept: 'civl', courses_avg: 90.06 },
+                    { courses_dept: 'sowk', courses_avg: 90.06 },
+                    { courses_dept: 'edst', courses_avg: 90.06 },
+                    { courses_dept: 'edst', courses_avg: 90.06 },
+                    { courses_dept: 'sowk', courses_avg: 90.06 },
+                    { courses_dept: 'psyc', courses_avg: 90.06 },
+                    { courses_dept: 'psyc', courses_avg: 90.06 },
+                    { courses_dept: 'cnps', courses_avg: 90.06 },
+                    { courses_dept: 'cnps', courses_avg: 90.06 },
+                    { courses_dept: 'edcp', courses_avg: 90.06 },
+                    { courses_dept: 'nurs', courses_avg: 90.06 },
+                    { courses_dept: 'cnps', courses_avg: 90.07 },
+                    { courses_dept: 'epse', courses_avg: 90.07 },
+                    { courses_dept: 'pcth', courses_avg: 90.07 },
+                    { courses_dept: 'educ', courses_avg: 90.07 },
+                    { courses_dept: 'eece', courses_avg: 90.07 },
+                    { courses_dept: 'eece', courses_avg: 90.07 },
+                    { courses_dept: 'pcth', courses_avg: 90.07 },
+                    { courses_dept: 'epse', courses_avg: 90.07 },
+                    { courses_dept: 'nurs', courses_avg: 90.07 },
+                    { courses_dept: 'nurs', courses_avg: 90.07 },
+                    { courses_dept: 'epse', courses_avg: 90.07 },
+                    { courses_dept: 'eece', courses_avg: 90.07 },
+                    { courses_dept: 'econ', courses_avg: 90.07 },
+                    { courses_dept: 'econ', courses_avg: 90.07 },
+                    { courses_dept: 'eece', courses_avg: 90.07 },
+                    { courses_dept: 'eosc', courses_avg: 90.08 },
+                    { courses_dept: 'epse', courses_avg: 90.08 },
+                    { courses_dept: 'etec', courses_avg: 90.08 },
+                    { courses_dept: 'dhyg', courses_avg: 90.08 },
+                    { courses_dept: 'plan', courses_avg: 90.08 },
+                    { courses_dept: 'plan', courses_avg: 90.08 },
+                    { courses_dept: 'dhyg', courses_avg: 90.08 },
+                    { courses_dept: 'etec', courses_avg: 90.09 },
+                    { courses_dept: 'epse', courses_avg: 90.09 },
+                    { courses_dept: 'bioc', courses_avg: 90.1 },
+                    { courses_dept: 'bioc', courses_avg: 90.1 },
+                    { courses_dept: 'epse', courses_avg: 90.1 },
+                    { courses_dept: 'lled', courses_avg: 90.1 },
+                    { courses_dept: 'phar', courses_avg: 90.1 },
+                    { courses_dept: 'phar', courses_avg: 90.1 },
+                    { courses_dept: 'cons', courses_avg: 90.1 },
+                    { courses_dept: 'etec', courses_avg: 90.1 },
+                    { courses_dept: 'etec', courses_avg: 90.1 },
+                    { courses_dept: 'cons', courses_avg: 90.1 },
+                    { courses_dept: 'civl', courses_avg: 90.11 },
+                    { courses_dept: 'civl', courses_avg: 90.11 },
+                    { courses_dept: 'audi', courses_avg: 90.11 },
+                    { courses_dept: 'spph', courses_avg: 90.11 },
+                    { courses_dept: 'edcp', courses_avg: 90.11 },
+                    { courses_dept: 'path', courses_avg: 90.11 },
+                    { courses_dept: 'audi', courses_avg: 90.11 },
+                    { courses_dept: 'epse', courses_avg: 90.11 },
+                    { courses_dept: 'epse', courses_avg: 90.11 },
+                    { courses_dept: 'audi', courses_avg: 90.12 },
+                    { courses_dept: 'audi', courses_avg: 90.12 },
+                    { courses_dept: 'cnps', courses_avg: 90.12 },
+                    { courses_dept: 'surg', courses_avg: 90.13 },
+                    { courses_dept: 'sowk', courses_avg: 90.13 },
+                    { courses_dept: 'surg', courses_avg: 90.13 },
+                    { courses_dept: 'sowk', courses_avg: 90.13 },
+                    { courses_dept: 'econ', courses_avg: 90.13 },
+                    { courses_dept: 'medg', courses_avg: 90.13 },
+                    { courses_dept: 'econ', courses_avg: 90.13 },
+                    { courses_dept: 'medg', courses_avg: 90.13 },
+                    { courses_dept: 'educ', courses_avg: 90.14 },
+                    { courses_dept: 'edcp', courses_avg: 90.14 },
+                    { courses_dept: 'edcp', courses_avg: 90.14 },
+                    { courses_dept: 'thtr', courses_avg: 90.14 },
+                    { courses_dept: 'etec', courses_avg: 90.14 },
+                    { courses_dept: 'mtrl', courses_avg: 90.14 },
+                    { courses_dept: 'kin', courses_avg: 90.14 },
+                    { courses_dept: 'thtr', courses_avg: 90.14 },
+                    { courses_dept: 'mtrl', courses_avg: 90.14 },
+                    { courses_dept: 'phar', courses_avg: 90.15 },
+                    { courses_dept: 'phar', courses_avg: 90.15 },
+                    { courses_dept: 'phar', courses_avg: 90.15 },
+                    { courses_dept: 'phar', courses_avg: 90.15 },
+                    { courses_dept: 'epse', courses_avg: 90.15 },
+                    { courses_dept: 'eosc', courses_avg: 90.15 },
+                    { courses_dept: 'eosc', courses_avg: 90.15 },
+                    { courses_dept: 'econ', courses_avg: 90.17 },
+                    { courses_dept: 'mech', courses_avg: 90.17 },
+                    { courses_dept: 'adhe', courses_avg: 90.17 },
+                    { courses_dept: 'biol', courses_avg: 90.17 },
+                    { courses_dept: 'biol', courses_avg: 90.17 },
+                    { courses_dept: 'russ', courses_avg: 90.17 },
+                    { courses_dept: 'mech', courses_avg: 90.17 }]};
+        Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
+        expect(ret).not.to.be.equal(null);
+        expect(ret).to.contain(expectedResult);
+        // should check that the value is meaningful
+    });
+
+
     it("Should be able to query with QUERY EXAMPLE 1", function () {
         let query: QueryRequest = {
             "GET": ["courses_id", "courseAverage"],
@@ -106,7 +225,6 @@ describe("QueryController", function () {
             // "ORDER": { "dir": "UP", "keys": ["courseAverage"]},
             "AS": "TABLE"
         };
-
         let datasetController = new DatasetController();
         let datasets: Datasets = datasetController.getDatasets();
         let controller = new QueryController(datasets);
@@ -154,7 +272,6 @@ describe("QueryController", function () {
             "ORDER": { "dir": "UP", "keys": ["courseAverage", "maxFail", "courses_dept", "courses_id"]},
             "AS":"TABLE"
         };
-
         let datasetController = new DatasetController();
         let datasets: Datasets = datasetController.getDatasets();
         let controller = new QueryController(datasets);
@@ -176,7 +293,6 @@ describe("QueryController", function () {
             "ORDER": { "dir": "UP", "keys": ["numSections", "courses_dept", "courses_id"]},
             "AS":"TABLE"
         };
-
         let datasetController = new DatasetController();
         let datasets: Datasets = datasetController.getDatasets();
         let controller = new QueryController(datasets);
@@ -197,12 +313,10 @@ describe("QueryController", function () {
             "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
             "AS": "TABLE"
         };
-
         let datasetController = new DatasetController();
         let datasets: Datasets = datasetController.getDatasets();
         let controller = new QueryController(datasets);
         let ret = controller.query(query);
-
         let expectedResult: any =
         { render: 'TABLE',
             result:
@@ -273,12 +387,10 @@ describe("QueryController", function () {
             "ORDER": { "dir": "DOWN", "keys": ["courseAverage", "courses_id"]},
             "AS": "TABLE"
         };
-
         let datasetController = new DatasetController();
         let datasets: Datasets = datasetController.getDatasets();
         let controller = new QueryController(datasets);
         let ret = controller.query(query);
-
         let expectedResult: any =
         { render: 'TABLE',
             result:
