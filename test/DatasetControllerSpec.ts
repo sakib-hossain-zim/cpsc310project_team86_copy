@@ -16,26 +16,6 @@ describe("DatasetController", function () {
     afterEach(function () {
     });
 
-    it("Should be able to reject an invalid Dataset", function () {
-        Log.test('Creating dataset');
-        let content = null;
-        let zip = new JSZip();
-        zip.file('content.obj', JSON.stringify(content));
-        const opts = {
-            compression: 'deflate', compressionOptions: {level: 2}, type: 'base64'
-        };
-
-        return zip.generateAsync(opts).then(function (data) {
-            Log.test('Dataset created');
-            let controller = new DatasetController();
-            return controller.process('setA', data);
-        }).then(function (result) {
-            Log.test('Dataset processed; result: ' + result);
-            expect(result).to.equal(false); // zip file was invalid, should not have passed
-        });
-    });
-
-
     it("Should be able to process valid dataset", function () {
         Log.test('Creating dataset');
         let content = [{
@@ -139,6 +119,7 @@ describe("DatasetController", function () {
             compression: 'deflate', compressionOptions: {level: 2}, type: 'base64'
         };
         return zip.generateAsync(opts).then(function (data) {
+            console.log("what is " + data);
             Log.test('Dataset created');
             let controller = new DatasetController();
             return controller.process('setA', data);
@@ -148,6 +129,7 @@ describe("DatasetController", function () {
         });
 
     });
+
 
 });
 

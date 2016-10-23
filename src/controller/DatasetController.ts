@@ -98,10 +98,13 @@ export default class DatasetController {
                     });
                     Promise.all(promises).then(function(files: any[]) {
 
-                        if (typeof files === 'undefined' || files.length < 1) {
+                        console.log("typeof files is " + typeof files);
+
+                        if (typeof files === 'undefined' || files.length < 0) {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
+                            //throw error("Invalid dataset");
                         }
                         files.forEach(function (file) {
 
@@ -134,7 +137,9 @@ export default class DatasetController {
                         });
                         console.log ("about to save id");
                         that.save(id, processedDataset);
+                        //fulfill(true);
                     });
+                    console.log("hits fulfill");
                     fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
