@@ -140,10 +140,9 @@ export default class QueryController {
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
-            if (query.APPLY.length > 0) {
 
                 for (let getKey of query.GET) {
-                    var get_key_in_apply: boolean;
+                    let get_key_in_apply: boolean;
                     if (!getKey.includes("_")) {
                         get_key_in_apply = false;
                         for (let applyObj of query.APPLY) {
@@ -158,25 +157,8 @@ export default class QueryController {
                         }
                     }
                 }
-
-                for (let applyObj of query.APPLY) {
-                    for (let applyKey in applyObj) {
-                        var get_key_in_apply: boolean;
-                        if (!applyKey.includes("_")) {
-                            get_key_in_apply = false;
-                            for (let getKey of query.GET) {
-                                if (getKey == applyKey) {
-                                    get_key_in_apply = true;
-                                }
-                            }
-                            if (!get_key_in_apply) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
         }
+
 
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
