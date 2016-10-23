@@ -139,7 +139,6 @@ export default class QueryController {
                 }
             }
         }
-
         //Liberation: Group should contains only valid keys (separated by underscore).
         for (let key of query.GROUP) {
             if (key !== 'courses_dept' && key !=='courses_avg' && key !=='courses_instructor' && key !=='courses_pass'
