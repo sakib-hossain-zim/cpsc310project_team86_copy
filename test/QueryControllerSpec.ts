@@ -59,6 +59,7 @@ describe("QueryController", function () {
             "ORDER": { "dir": "UP", "keys": ["courseAverage", "maxFail", "courses_dept", "courses_id"]},
             "AS":"TABLE"
         };
+        console.log (query.APPLY.length);
         let dataset: Datasets = {};
         let controller = new QueryController(dataset);
         let isValid = controller.isValid(query);
@@ -81,6 +82,23 @@ describe("QueryController", function () {
 
         expect(isValid).to.equal(false);
     });
+
+    it("Should be able a valid query for empty apply", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_dept"],
+            "WHERE": {},
+            "GROUP": ["courses_dept"],
+            "APPLY": [],
+            "ORDER": {"dir": "UP", "keys": ["courses_dept"]},
+            "AS": "TABLE"
+        };
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let isValid = controller.isValid(query);
+
+        expect(isValid).to.equal(true);
+    });
+
 
     it("Should be able to invalidate an invalid query for AS", function () {
         let query: QueryRequest = {
@@ -707,6 +725,300 @@ describe("QueryController", function () {
                     { courses_id: '415', courseAverage: 70.72 },
                     { courses_id: '320', courseAverage: 70.61 },
                     { courses_id: '261', courseAverage: 68.41 } ] };
+        expect(ret).not.to.be.equal(null);
+        expect(ret).to.deep.equal(expectedResult);
+    });
+
+    it("Should be able to query with DOWN ORDER", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": ["courses_id"],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "DOWN", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+        let expectedResult: any =
+        { render: 'TABLE',
+            result:
+                [ { courses_id: '449', courseAverage: 92.1 },
+                    { courses_id: '490', courseAverage: 90.73 },
+                    { courses_id: '501', courseAverage: 90.21 },
+                    { courses_id: '507', courseAverage: 88.57 },
+                    { courses_id: '547', courseAverage: 88.47 },
+                    { courses_id: '503', courseAverage: 88.43 },
+                    { courses_id: '543', courseAverage: 87.32 },
+                    { courses_id: '540', courseAverage: 86.46 },
+                    { courses_id: '589', courseAverage: 85.82 },
+                    { courses_id: '522', courseAverage: 85.75 },
+                    { courses_id: '509', courseAverage: 85.72 },
+                    { courses_id: '521', courseAverage: 84.86 },
+                    { courses_id: '544', courseAverage: 84.25 },
+                    { courses_id: '319', courseAverage: 84.15 },
+                    { courses_id: '500', courseAverage: 83.95 },
+                    { courses_id: '527', courseAverage: 83.78 },
+                    { courses_id: '502', courseAverage: 83.22 },
+                    { courses_id: '312', courseAverage: 81.81 },
+                    { courses_id: '301', courseAverage: 81.64 },
+                    { courses_id: '445', courseAverage: 81.61 },
+                    { courses_id: '513', courseAverage: 81.5 },
+                    { courses_id: '515', courseAverage: 81.02 },
+                    { courses_id: '411', courseAverage: 79.34 },
+                    { courses_id: '444', courseAverage: 79.19 },
+                    { courses_id: '344', courseAverage: 79.05 },
+                    { courses_id: '310', courseAverage: 78.06 },
+                    { courses_id: '430', courseAverage: 77.77 },
+                    { courses_id: '418', courseAverage: 77.74 },
+                    { courses_id: '410', courseAverage: 77.61 },
+                    { courses_id: '311', courseAverage: 77.17 },
+                    { courses_id: '304', courseAverage: 76.86 },
+                    { courses_id: '421', courseAverage: 76.83 },
+                    { courses_id: '314', courseAverage: 76.71 },
+                    { courses_id: '121', courseAverage: 76.24 },
+                    { courses_id: '302', courseAverage: 76.2 },
+                    { courses_id: '221', courseAverage: 75.08 },
+                    { courses_id: '259', courseAverage: 74.98 },
+                    { courses_id: '416', courseAverage: 74.8 },
+                    { courses_id: '110', courseAverage: 74.61 },
+                    { courses_id: '213', courseAverage: 74.37 },
+                    { courses_id: '425', courseAverage: 74.16 },
+                    { courses_id: '422', courseAverage: 74.15 },
+                    { courses_id: '313', courseAverage: 74.15 },
+                    { courses_id: '210', courseAverage: 74.08 },
+                    { courses_id: '340', courseAverage: 73.55 },
+                    { courses_id: '303', courseAverage: 73.55 },
+                    { courses_id: '404', courseAverage: 73.47 },
+                    { courses_id: '322', courseAverage: 73.47 },
+                    { courses_id: '317', courseAverage: 72.09 },
+                    { courses_id: '420', courseAverage: 71.57 },
+                    { courses_id: '415', courseAverage: 70.72 },
+                    { courses_id: '320', courseAverage: 70.61 },
+                    { courses_id: '261', courseAverage: 68.41 } ] };
+        expect(ret).not.to.be.equal(null);
+        expect(ret).to.deep.equal(expectedResult);
+    });
+
+
+    it("Should be able to query - MAX", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}} ,
+            "GROUP": [ "courses_id" ],
+            "APPLY": [ {"courseAverage": {"MAX": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courses_id", "courseAverage"]},
+            "AS":"TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+        let expectedResult: any =
+        { render: 'TABLE',
+            result:
+                [ { courses_id: '110', courseAverage: 85.46 },
+                    { courses_id: '121', courseAverage: 84.56 },
+                    { courses_id: '210', courseAverage: 86.15 },
+                    { courses_id: '213', courseAverage: 81.76 },
+                    { courses_id: '221', courseAverage: 86.47 },
+                    { courses_id: '259', courseAverage: 75.82 },
+                    { courses_id: '261', courseAverage: 69.1 },
+                    { courses_id: '301', courseAverage: 88 },
+                    { courses_id: '302', courseAverage: 79.46 },
+                    { courses_id: '303', courseAverage: 77.62 },
+                    { courses_id: '304', courseAverage: 85.5 },
+                    { courses_id: '310', courseAverage: 81.88 },
+                    { courses_id: '311', courseAverage: 80.15 },
+                    { courses_id: '312', courseAverage: 85.13 },
+                    { courses_id: '313', courseAverage: 82.27 },
+                    { courses_id: '314', courseAverage: 82.58 },
+                    { courses_id: '317', courseAverage: 75.56 },
+                    { courses_id: '319', courseAverage: 88.39 },
+                    { courses_id: '320', courseAverage: 72.78 },
+                    { courses_id: '322', courseAverage: 78.34 },
+                    { courses_id: '340', courseAverage: 77.93 },
+                    { courses_id: '344', courseAverage: 81.18 },
+                    { courses_id: '404', courseAverage: 77.95 },
+                    { courses_id: '410', courseAverage: 80.18 },
+                    { courses_id: '411', courseAverage: 85 },
+                    { courses_id: '415', courseAverage: 73.37 },
+                    { courses_id: '416', courseAverage: 79.31 },
+                    { courses_id: '418', courseAverage: 79.87 },
+                    { courses_id: '420', courseAverage: 78.32 },
+                    { courses_id: '421', courseAverage: 79.88 },
+                    { courses_id: '422', courseAverage: 78.3 },
+                    { courses_id: '425', courseAverage: 77.68 },
+                    { courses_id: '430', courseAverage: 80.55 },
+                    { courses_id: '444', courseAverage: 80.62 },
+                    { courses_id: '445', courseAverage: 91.25 },
+                    { courses_id: '449', courseAverage: 93.5 },
+                    { courses_id: '490', courseAverage: 92.4 },
+                    { courses_id: '500', courseAverage: 86.33 },
+                    { courses_id: '501', courseAverage: 92.75 },
+                    { courses_id: '502', courseAverage: 86.2 },
+                    { courses_id: '503', courseAverage: 89.1 },
+                    { courses_id: '507', courseAverage: 91.79 },
+                    { courses_id: '509', courseAverage: 88 },
+                    { courses_id: '513', courseAverage: 89.09 },
+                    { courses_id: '515', courseAverage: 82.15 },
+                    { courses_id: '521', courseAverage: 87.78 },
+                    { courses_id: '522', courseAverage: 90.71 },
+                    { courses_id: '527', courseAverage: 83.78 },
+                    { courses_id: '540', courseAverage: 91.22 },
+                    { courses_id: '543', courseAverage: 89.75 },
+                    { courses_id: '544', courseAverage: 86.71 },
+                    { courses_id: '547', courseAverage: 88.47 },
+                    { courses_id: '589', courseAverage: 95 } ] }
+        expect(ret).not.to.be.equal(null);
+        expect(ret).to.deep.equal(expectedResult);
+    });
+
+    it("Should be able to query - MIN", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}} ,
+            "GROUP": [ "courses_id" ],
+            "APPLY": [ {"courseAverage": {"MIN": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courses_id", "courseAverage"]},
+            "AS":"TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+        let expectedResult: any =
+        { render: 'TABLE',
+            result:
+                [ { courses_id: '110', courseAverage: 67.79 },
+                    { courses_id: '121', courseAverage: 69.73 },
+                    { courses_id: '210', courseAverage: 68.13 },
+                    { courses_id: '213', courseAverage: 64.62 },
+                    { courses_id: '221', courseAverage: 65.1 },
+                    { courses_id: '259', courseAverage: 74.22 },
+                    { courses_id: '261', courseAverage: 67.91 },
+                    { courses_id: '301', courseAverage: 71 },
+                    { courses_id: '302', courseAverage: 73.18 },
+                    { courses_id: '303', courseAverage: 70.16 },
+                    { courses_id: '304', courseAverage: 71.89 },
+                    { courses_id: '310', courseAverage: 72.27 },
+                    { courses_id: '311', courseAverage: 74.06 },
+                    { courses_id: '312', courseAverage: 76.84 },
+                    { courses_id: '313', courseAverage: 70.46 },
+                    { courses_id: '314', courseAverage: 67.85 },
+                    { courses_id: '317', courseAverage: 68.54 },
+                    { courses_id: '319', courseAverage: 78.93 },
+                    { courses_id: '320', courseAverage: 67.76 },
+                    { courses_id: '322', courseAverage: 67.48 },
+                    { courses_id: '340', courseAverage: 68.4 },
+                    { courses_id: '344', courseAverage: 75.91 },
+                    { courses_id: '404', courseAverage: 69.58 },
+                    { courses_id: '410', courseAverage: 74.25 },
+                    { courses_id: '411', courseAverage: 72.24 },
+                    { courses_id: '415', courseAverage: 68.79 },
+                    { courses_id: '416', courseAverage: 72 },
+                    { courses_id: '418', courseAverage: 75.61 },
+                    { courses_id: '420', courseAverage: 68.77 },
+                    { courses_id: '421', courseAverage: 74.68 },
+                    { courses_id: '422', courseAverage: 68.84 },
+                    { courses_id: '425', courseAverage: 72.48 },
+                    { courses_id: '430', courseAverage: 73.25 },
+                    { courses_id: '444', courseAverage: 78.42 },
+                    { courses_id: '445', courseAverage: 73.88 },
+                    { courses_id: '449', courseAverage: 88.5 },
+                    { courses_id: '490', courseAverage: 89 },
+                    { courses_id: '500', courseAverage: 78.87 },
+                    { courses_id: '501', courseAverage: 84.67 },
+                    { courses_id: '502', courseAverage: 81.06 },
+                    { courses_id: '503', courseAverage: 87.36 },
+                    { courses_id: '507', courseAverage: 84.75 },
+                    { courses_id: '509', courseAverage: 84.25 },
+                    { courses_id: '513', courseAverage: 64 },
+                    { courses_id: '515', courseAverage: 79.88 },
+                    { courses_id: '521', courseAverage: 82.65 },
+                    { courses_id: '522', courseAverage: 82.55 },
+                    { courses_id: '527', courseAverage: 83.78 },
+                    { courses_id: '540', courseAverage: 82.82 },
+                    { courses_id: '543', courseAverage: 85.35 },
+                    { courses_id: '544', courseAverage: 82.28 },
+                    { courses_id: '547', courseAverage: 88.47 },
+                    { courses_id: '589', courseAverage: 75 } ] }
+        expect(ret).not.to.be.equal(null);
+        expect(ret).to.deep.equal(expectedResult);
+    });
+
+    it("Should be able to query - COUNT", function () {
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courses_id", "numSections"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": [ "courses_dept", "courses_id" ],
+            "APPLY": [ {"numSections": {"COUNT": "courses_uuid"}} ],
+            "ORDER": { "dir": "UP", "keys": ["numSections", "courses_dept", "courses_id"]},
+            "AS":"TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+        console.log (ret);
+        let expectedResult: any =
+        { render: 'TABLE',
+            result:
+                [ { courses_dept: 'cpsc', courses_id: '527', numSections: 2 },
+                    { courses_dept: 'cpsc', courses_id: '547', numSections: 2 },
+                    { courses_dept: 'cpsc', courses_id: '418', numSections: 4 },
+                    { courses_dept: 'cpsc', courses_id: '515', numSections: 4 },
+                    { courses_dept: 'cpsc', courses_id: '261', numSections: 6 },
+                    { courses_dept: 'cpsc', courses_id: '503', numSections: 6 },
+                    { courses_dept: 'cpsc', courses_id: '507', numSections: 6 },
+                    { courses_dept: 'cpsc', courses_id: '522', numSections: 6 },
+                    { courses_dept: 'cpsc', courses_id: '259', numSections: 8 },
+                    { courses_dept: 'cpsc', courses_id: '444', numSections: 8 },
+                    { courses_dept: 'cpsc', courses_id: '501', numSections: 8 },
+                    { courses_dept: 'cpsc', courses_id: '502', numSections: 8 },
+                    { courses_dept: 'cpsc', courses_id: '509', numSections: 8 },
+                    { courses_dept: 'cpsc', courses_id: '543', numSections: 8 },
+                    { courses_dept: 'cpsc', courses_id: '449', numSections: 10 },
+                    { courses_dept: 'cpsc', courses_id: '490', numSections: 10 },
+                    { courses_dept: 'cpsc', courses_id: '521', numSections: 10 },
+                    { courses_dept: 'cpsc', courses_id: '540', numSections: 10 },
+                    { courses_dept: 'cpsc', courses_id: '301', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '302', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '303', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '311', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '312', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '319', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '340', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '410', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '411', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '415', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '416', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '420', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '421', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '422', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '425', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '445', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '500', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '513', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '544', numSections: 12 },
+                    { courses_dept: 'cpsc', courses_id: '344', numSections: 13 },
+                    { courses_dept: 'cpsc', courses_id: '589', numSections: 14 },
+                    { courses_dept: 'cpsc', courses_id: '430', numSections: 16 },
+                    { courses_dept: 'cpsc', courses_id: '314', numSections: 18 },
+                    { courses_dept: 'cpsc', courses_id: '317', numSections: 18 },
+                    { courses_dept: 'cpsc', courses_id: '404', numSections: 18 },
+                    { courses_dept: 'cpsc', courses_id: '322', numSections: 22 },
+                    { courses_dept: 'cpsc', courses_id: '320', numSections: 23 },
+                    { courses_dept: 'cpsc', courses_id: '310', numSections: 26 },
+                    { courses_dept: 'cpsc', courses_id: '313', numSections: 26 },
+                    { courses_dept: 'cpsc', courses_id: '304', numSections: 30 },
+                    { courses_dept: 'cpsc', courses_id: '213', numSections: 31 },
+                    { courses_dept: 'cpsc', courses_id: '221', numSections: 37 },
+                    { courses_dept: 'cpsc', courses_id: '210', numSections: 39 },
+                    { courses_dept: 'cpsc', courses_id: '121', numSections: 43 },
+                    { courses_dept: 'cpsc', courses_id: '110', numSections: 49 } ] }
         expect(ret).not.to.be.equal(null);
         expect(ret).to.deep.equal(expectedResult);
     });

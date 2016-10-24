@@ -55,6 +55,9 @@ export default class QueryController {
     public isValid(query: QueryRequest): boolean {
 
         //console.log(query.GET.includes(query.ORDER));
+        if (typeof query.GET === 'undefined') {
+            return false;
+        }
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
 
@@ -63,12 +66,12 @@ export default class QueryController {
                 return false;
             }
         }
-            if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
-                return false;
-            }
-            if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
-                return false;
-            }
+        if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
+            return false;
+        }
+        if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
+            return false;
+        }
         //Kryptonite: All keys in GROUP should be present in GET.
         if (typeof query.GROUP !== 'undefined'){
             for (let groupKey of query.GROUP) {
@@ -79,9 +82,9 @@ export default class QueryController {
                     }
                 }
 
-            if (!is_in_GROUP_and_GET) {
-                return false;
-            }}
+                if (!is_in_GROUP_and_GET) {
+                    return false;
+                }}
         }
 
         //Kwyjibo: All keys in GET should be in either GROUP or APPLY.
@@ -141,22 +144,22 @@ export default class QueryController {
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
 
-                for (let getKey of query.GET) {
-                    let get_key_in_apply: boolean;
-                    if (!getKey.includes("_")) {
-                        get_key_in_apply = false;
-                        for (let applyObj of query.APPLY) {
-                            for (let applyKey in applyObj) {
-                                if (getKey == applyKey) {
-                                    get_key_in_apply = true;
-                                }
+            for (let getKey of query.GET) {
+                let get_key_in_apply: boolean;
+                if (!getKey.includes("_")) {
+                    get_key_in_apply = false;
+                    for (let applyObj of query.APPLY) {
+                        for (let applyKey in applyObj) {
+                            if (getKey == applyKey) {
+                                get_key_in_apply = true;
                             }
                         }
-                        if (!get_key_in_apply) {
-                            return false;
-                        }
+                    }
+                    if (!get_key_in_apply) {
+                        return false;
                     }
                 }
+            }
         }
 
 
@@ -323,7 +326,7 @@ export default class QueryController {
                     return that.sortUpFunction(result1, result2, keysValue, i);
                 });
             }
-            
+
             if (dirValue == 'DOWN') {
                 return data.sort(function (result1: any, result2: any) {
                     return that.sortDownFunction(result1, result2, keysValue, i);

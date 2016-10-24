@@ -35,6 +35,7 @@ describe("InsightFacade", function () {
 
     it("Should be able to add a new dataset (204)", function () {
         var that = this;
+        that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
         return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(204);
@@ -45,6 +46,7 @@ describe("InsightFacade", function () {
 
     it("Should be able to update an existing dataset (201)", function () {
         var that = this;
+        that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
         return facade.addDataset('setA', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(201);

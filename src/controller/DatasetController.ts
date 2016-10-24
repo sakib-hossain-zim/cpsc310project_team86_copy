@@ -70,7 +70,7 @@ export default class DatasetController {
      * @param data base64 representation of a zip file
      * @returns {Promise<boolean>} returns true if successful; false if the dataset was invalid (for whatever reason)
      */
-    public process(id: string, data: any): Promise<boolean> {
+    public process(id: string, data: any): Promise<boolean> {           // returns a boolean promise
         Log.trace('DatasetController::process( ' + id + '... )');
 
         let that = this;
@@ -80,12 +80,8 @@ export default class DatasetController {
             try {
 
                 let myZip = new JSZip();
-                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
+                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {      // needs to return a promise
                     Log.trace('DatasetController::process(..) - unzipped');
-                    // The contents of the file will depend on the id provided. e.g.,
-                    // some zips will contain .html files, some will contain .json files.
-                    // You can depend on 'id' to differentiate how the zip should be handled,
-                    // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
                     //  console.log(zip.folder('courses'));
@@ -93,9 +89,9 @@ export default class DatasetController {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
                     });
-                    Promise.all(promises).then(function(files: any[]) {
+                    Promise.all(promises).then(function(files: any[]) {         // needs to return a promise
 
-                        console.log("typeof files is " + typeof files);
+                        console.log("what is files" + files);
 
                         if (typeof files === undefined || files.length < 0) {
                             console.log("made it here");
