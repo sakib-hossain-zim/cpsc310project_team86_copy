@@ -261,10 +261,12 @@ export default class QueryController {
                     }
                 }
             }
-            if (typeof query.APPLY !== 'undefined' && query.APPLY.length > 0) {
-                for (let obj of query.APPLY) {
-                    let newProp: any = Object.keys(obj)[0];
-                    respObj[newProp] = "";
+            if (typeof query.APPLY !== 'undefined') {
+                if (query.APPLY.length > 0) {
+                    for (let obj of query.APPLY) {
+                        let newProp: any = Object.keys(obj)[0];
+                        respObj[newProp] = "";
+                    }
                 }
             }
             respObjArray.push(respObj);
@@ -582,7 +584,6 @@ export default class QueryController {
         if (query.APPLY.length == 0) {
             return data;
         }
-        console.log("in apply method");
         let respArray: any = [];
         let applyArray: any = query.APPLY;
 
@@ -625,12 +626,9 @@ export default class QueryController {
         var parsedData = JSON.parse(data);
         // let groupedData: any = [];
         // let GET_results = this.filterColumns(query, parsedData);
-
-        if (typeof query.WHERE == 'undefined') {
-            var GET_results = this.filterColumns(query, parsedData);
-
-        } else if  (Object.keys(query.WHERE).length == 0) {
-              var GET_results = this.filterColumns(query, parsedData);
+        var GET_results: any;
+        if (typeof query.WHERE == 'undefined' || (Object.keys(query.WHERE).length == 0)) {
+             GET_results = this.filterColumns(query, parsedData);
 
         } else {
             let operands: stringArray = Object.keys(query.WHERE);
@@ -640,15 +638,16 @@ export default class QueryController {
                 value = query.WHERE[i];
             }
             let WHERE_Results: {}[] = this.filterRows(key, value, parsedData);
-            var GET_results = this.filterColumns(query, WHERE_Results);
+             GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-        var groupedData = this.group(query, GET_results,0);
+
+        let groupedData = this.group(query, GET_results,0);
 
         let appliedData: any = this.apply(query, groupedData);
 
             // let i: number = 0;
-            var orderedResults = this.orderResponse(query, appliedData, 0);
+        let orderedResults = this.orderResponse(query, appliedData, 0);
 
         var response: QueryResponse = {render: query.AS, result: orderedResults};
         return response;
