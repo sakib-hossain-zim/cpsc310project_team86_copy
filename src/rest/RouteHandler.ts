@@ -43,17 +43,18 @@ export default class RouteHandler {
                 let concated = Buffer.concat(buffer);
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
-
-                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+                    console.log(response);
                     res.json(response.code, response.body);
-                }).catch(function(err: InsightResponse) {
-                    res.json(err.code, err.body);
+                }).catch(function (response) {
+                    console.log(response);
+                    res.json(response.code, response.body);
                 });
             });
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+             RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
             }).catch(function(err: InsightResponse) {
                 res.json(err.code, err.body);
@@ -80,12 +81,6 @@ export default class RouteHandler {
                 res.json(err.code, err.body);
             });
         }
-        // RouteHandler.insightFacade.performQuery(query).then(function (response) {
-        //     res.json(response.code, response.body);
-        // }).catch(function (response) {
-        //     res.json(response.code, response.body);
-        // });
-        
         return next();
     }
 
@@ -105,12 +100,6 @@ export default class RouteHandler {
                 res.json(err.code, err.body);
             });
         }
-        // RouteHandler.insightFacade.removeDataset(id).then(function (response) {
-        //     res.json(response.code, response.body);
-        // }).catch(function (response) {
-        //     res.json(response.code, response.body);
-        // });
-
         return next();
     }
 }

@@ -23,6 +23,7 @@ interface toBeAdded {
     courses_pass: number;
     courses_fail: number;
     courses_audit: number;
+    courses_uuid: string;
 }
 
 
@@ -70,7 +71,7 @@ export default class DatasetController {
      * @param data base64 representation of a zip file
      * @returns {Promise<boolean>} returns true if successful; false if the dataset was invalid (for whatever reason)
      */
-    public process(id: string, data: any): Promise<boolean> {           // returns a boolean promise
+    public process(id: string, data: any): Promise<boolean> {
         Log.trace('DatasetController::process( ' + id + '... )');
 
         let that = this;
@@ -80,8 +81,12 @@ export default class DatasetController {
             try {
 
                 let myZip = new JSZip();
-                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {      // needs to return a promise
+                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
                     Log.trace('DatasetController::process(..) - unzipped');
+                    // The contents of the file will depend on the id provided. e.g.,
+                    // some zips will contain .html files, some will contain .json files.
+                    // You can depend on 'id' to differentiate how the zip should be handled,
+                    // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
                     //  console.log(zip.folder('courses'));
@@ -89,11 +94,9 @@ export default class DatasetController {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
                     });
-                    Promise.all(promises).then(function(files: any[]) {         // needs to return a promise
+                    Promise.all(promises).then(function(files: any[]) {
 
-                        console.log("what is files" + files);
-
-                        if (typeof files === undefined || files.length < 0) {
+                        if (typeof files === 'undefined' || files.length < 0) {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
@@ -124,6 +127,7 @@ export default class DatasetController {
                                     tba.courses_pass = arrObject['Pass'];
                                     tba.courses_fail = arrObject['Fail'];
                                     tba.courses_audit = arrObject['Audit'];
+                                    tba.courses_uuid = arrObject['id'];
                                     processedDataset.push(tba);
                                 });
                             }
