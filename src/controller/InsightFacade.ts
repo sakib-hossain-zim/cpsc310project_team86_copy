@@ -22,21 +22,21 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 var controller = InsightFacade.datasetController;
                 var fs = require('fs');
-                
-                controller.process(id, content).then(function (result) {     // returns result which is a promise boolean
-                    // try {
-                         if (fs.existsSync('./data/' + id + '.json')) {
-                            fulfill({code: 201, body: {success: result}});
-                        } else if (!(fs.existsSync('./data/' + id + '.json'))){
-                             fulfill({code: 204, body: {success: result}});
+
+                controller.process(id, content).then(function (result) {
+                    try {
+                        if (controller.invalidDataSet) {
+                            reject({code: 400, body: {error: "not valid dataset"}});
+                        } else {
+                            if (fs.existsSync('./data/' + id + '.json')) {
+                                fulfill({code: 201, body: {success: result}});
                             } else {
-                                if (controller.invalidDataSet) {
-                                    reject({code: 400, body: {error: "not valid dataset"}});
+                                fulfill({code: 204, body: {success: result}});
                             }
                         }
-                    // } catch (e) {
-                    //     reject({code: 400, body: {error: e.message}});
-                    // }
+                    } catch (e) {
+                        reject({code: 400, body: {error: e.message}});
+                    }
                 }).catch(function (err: Error) {
                     reject({code: 400, body: {error: err.message}});
                 });

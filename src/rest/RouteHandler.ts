@@ -29,7 +29,7 @@ export default class RouteHandler {
 
     public static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
-        // try {
+        try {
             var id: string = req.params.id;
             // stream bytes from request into buffer and convert to base64
             // adapted from: https://github.com/restify/node-restify/issues/880#issuecomment-133485821
@@ -44,89 +44,72 @@ export default class RouteHandler {
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
 
-               return RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
-                        console.log(response)
+                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
                     res.json(response.code, response.body);
                 }).catch(function(err: InsightResponse) {
                     res.json(err.code, err.body);
                 });
             });
 
-        // } catch (err) {
-        //     Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-        //     RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // }
+        } catch (err) {
+            Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
+            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
+            });
+        }
         return next();
     }
 
     public static postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RouteHandler::postQuery(..) - params: ' + JSON.stringify(req.params));
         let query: QueryRequest = req.params;
-        // try {
-        //      RouteHandler.insightFacade.performQuery(query).then(function (response) {
-        //
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // } catch (err) {
-        //     //  console.log("we are here");
-        //     Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
-        //      RouteHandler.insightFacade.performQuery(query).then(function (response) {
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // }
-        // try {
-        //     RouteHandler.insightFacade.performQuery(query).then(function (response) {
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // } catch (err) {
-        //     //  console.log("we are here");
-        //     Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
-        //     RouteHandler.insightFacade.performQuery(query).then(function (response) {
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // }
-        RouteHandler.insightFacade.performQuery(query).then(function (response) {
-            res.json(response.code, response.body);
-        }).catch(function(err: InsightResponse) {
-            res.json(err.code, err.body);
-        });
-
+        try {
+            RouteHandler.insightFacade.performQuery(query).then(function (response) {
+                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
+            });
+        } catch (err) {
+            //  console.log("we are here");
+            Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
+            RouteHandler.insightFacade.performQuery(query).then(function (response) {
+                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
+            });
+        }
+        // RouteHandler.insightFacade.performQuery(query).then(function (response) {
+        //     res.json(response.code, response.body);
+        // }).catch(function (response) {
+        //     res.json(response.code, response.body);
+        // });
+        
         return next();
     }
 
     public static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next){
         var id: string = req.params.id;
-        // try {
-        //     RouteHandler.insightFacade.removeDataset(id).then(function (response) {
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // } catch (err) {
-        //     Log.error('RouteHandler::deleteDataset(..) - ERROR: ' + err);
-        //     RouteHandler.insightFacade.removeDataset(id).then(function (response) {
-        //         res.json(response.code, response.body);
-        //     }).catch(function (response) {
-        //         res.json(response.code, response.body);
-        //     });
-        // }
-        RouteHandler.insightFacade.removeDataset(id).then(function (response) {
-            res.json(response.code, response.body);
-        }).catch(function(err: InsightResponse) {
-            res.json(err.code, err.body);
-        });
+        try {
+            RouteHandler.insightFacade.removeDataset(id).then(function (response) {
+                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
+            });
+        } catch (err) {
+            Log.error('RouteHandler::deleteDataset(..) - ERROR: ' + err);
+            RouteHandler.insightFacade.removeDataset(id).then(function (response) {
+                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
+            });
+        }
+        // RouteHandler.insightFacade.removeDataset(id).then(function (response) {
+        //     res.json(response.code, response.body);
+        // }).catch(function (response) {
+        //     res.json(response.code, response.body);
+        // });
 
         return next();
     }
