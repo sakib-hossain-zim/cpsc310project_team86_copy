@@ -63,6 +63,7 @@ export default class DatasetController {
         return that.datasets;
     }
 
+    public previous: boolean = false;
 
     /**
      * Process the dataset; save it to disk when complete.
@@ -76,6 +77,13 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
+
+        if (that.datasets.hasOwnProperty(id) || fs.existsSync('./data/' + id + '.json')) {
+            delete that.datasets[id];
+            that.previous = true;
+        } else {
+            that.previous = false;
+        }
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -160,17 +168,41 @@ export default class DatasetController {
      */
     private save(id: string, processedDataset: any) {
         // add it to the memory model
+        // try {
+        //     // let stats =  fs.statSync('./data/');
+        //     var dirExist = fs.existsSync('./data');
+        //     if (!dirExist) {
+        //         var path =  fs.mkdirSync('./data/');
+        //         fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
+        //     } else {
+        //         fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
+        //     }
+        // }
+        //
+        // catch(err){
+        //     Log.trace("error in writing file to disk");
+        // }
         try {
             // let stats =  fs.statSync('./data/');
             var dirExist = fs.existsSync('./data');
+            // var fileExists = fs.existsSync('./data/' + id + '.json');
+            // if (!dirExist) {
+            //     var path =  fs.mkdirSync('./data/');
+            //     fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
+            // } else {
+            //     fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
+            // }
             if (!dirExist) {
-                var path =  fs.mkdirSync('./data/');
-                fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
+                fs.mkdirSync('./data');
+            }
+
+            if (this.previous === true) {
+                fs.unlink('./data/' + id + '.json');
+                fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             } else {
                 fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
         }
-
         catch(err){
             Log.trace("error in writing file to disk");
         }
