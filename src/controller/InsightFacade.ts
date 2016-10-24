@@ -89,10 +89,11 @@ export default class InsightFacade implements IInsightFacade {
 
                 if (isValid === true) {
                     let result = queryController.query(query);
-                    if (!fs.existsSync('./data/' + id + '.json')) {
-                        reject({code: 424, body: {missing: [id]}});
-                    } else {
+                    if (fs.existsSync('./data/' + id + '.json')) {
                         fulfill({code: 200, body: result});
+                        // reject({code: 424, body: {missing: [id]}});
+                    } else {
+                        reject({code: 424, body: {missing: [id]}});
                     }
                 } else {
                     reject({code: 400, body: {error: 'invalid query'}});

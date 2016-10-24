@@ -46,11 +46,18 @@ describe("InsightFacade", function () {
     it("Should be able to update an existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
-            expect(response.code).to.equal(201);
-        }).catch(function (response: InsightResponse) {
-            expect.fail('Should not happen');
+        facade.addDataset('repeat', zipFileContents).then(function() {
+            return facade.addDataset('repeat', zipFileContents).then(function (response: InsightResponse) {
+                expect(response.code).to.equal(201);
+            }).catch(function (response: InsightResponse) {
+                expect.fail('Should not happen');
+            });
         });
+        // return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
+        //     expect(response.code).to.equal(201);
+        // }).catch(function (response: InsightResponse) {
+        //     expect.fail('Should not happen');
+        // });
     });
 
     it("Should not be able to add an invalid dataset (400)", function () {
@@ -68,11 +75,7 @@ describe("InsightFacade", function () {
         var that = this;
         let query: QueryRequest = {
             "GET": ["courses_dept", "courses_avg"],
-            "WHERE": {
-                "GT": {
-                    "courses_avg": 90
-                }
-            },
+            "WHERE": {"GT": {"courses_avg": 90}},
             "ORDER": "courses_avg",
             "AS": "TABLE"
         };
@@ -88,11 +91,7 @@ describe("InsightFacade", function () {
         var that = this;
         let query: QueryRequest = {
             "GET": ["foo_dept", "foo_avg"],
-            "WHERE": {
-                "GT": {
-                    "foo_avg": 90
-                }
-            },
+            "WHERE": {"GT": {"foo_avg": 90}},
             "ORDER": "foo_avg",
             "AS": "TABLE"
         };
@@ -103,7 +102,6 @@ describe("InsightFacade", function () {
             expect(response.code).to.equal(424);
         });
     });
-
 
     it("Should be able to delete a dataset (204)", function () {
         var that = this;

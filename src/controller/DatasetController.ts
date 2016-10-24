@@ -80,8 +80,11 @@ export default class DatasetController {
         let that = this;
         let processedDataset : toBeAdded[] = [];
 
-        if (that.getDataset(id) != 'undefined') {
+        if (that.datasets.hasOwnProperty(id) || fs.existsSync('./data/' + id + '.json')) {
+            delete that.datasets[id];
             that.previous = true;
+        } else {
+            that.previous = false;
         }
 
         return new Promise(function (fulfill, reject) {
@@ -101,6 +104,7 @@ export default class DatasetController {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
                     });
+
                     Promise.all(promises).then(function(files: any[]) {
 
                         console.log("typeof files is " + typeof files);
@@ -169,9 +173,20 @@ export default class DatasetController {
         try {
             // let stats =  fs.statSync('./data/');
             var dirExist = fs.existsSync('./data');
+            // var fileExists = fs.existsSync('./data/' + id + '.json');
+            // if (!dirExist) {
+            //     var path =  fs.mkdirSync('./data/');
+            //     fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
+            // } else {
+            //     fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
+            // }
             if (!dirExist) {
-                var path =  fs.mkdirSync('./data/');
-                fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
+                fs.mkdirSync('./data');
+            }
+
+            if (this.previous === true) {
+                fs.unlink('./data/' + id + '.json');
+                fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             } else {
                 fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
