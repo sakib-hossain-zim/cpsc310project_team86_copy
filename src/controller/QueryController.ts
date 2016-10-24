@@ -626,8 +626,12 @@ export default class QueryController {
         // let groupedData: any = [];
         // let GET_results = this.filterColumns(query, parsedData);
 
-        if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
+        if (typeof query.WHERE == 'undefined') {
             var GET_results = this.filterColumns(query, parsedData);
+
+        } else if  (Object.keys(query.WHERE).length == 0) {
+              var GET_results = this.filterColumns(query, parsedData);
+
         } else {
             let operands: stringArray = Object.keys(query.WHERE);
             var key: any = operands[0];
