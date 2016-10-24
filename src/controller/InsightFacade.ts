@@ -28,12 +28,11 @@ export default class InsightFacade implements IInsightFacade {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
-                            console.log ("what is id " + controller.getDataset(id));
-                            if (controller.getDataset(id) !== null) {     // does exist on disk should give 201
+                            // if (fs.existsSync('./data/' + id + '.json')) {
+                            if (controller.getDataset(id) !== null) {
                                 fulfill({code: 201, body: {success: result}});
                             }
-                            else {
-                              // does not exist on disk should give 204
+                            if (controller.getDataset(id) == null){
                                 fulfill({code: 204, body: {success: result}});
                             }
                         }
