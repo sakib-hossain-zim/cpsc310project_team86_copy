@@ -1051,4 +1051,15 @@ describe("QueryController", function () {
         expect(ret1).to.not.deep.equal(ret2);
         // should check that the value is meaningful
     });
+
+    it("undefined query", function () {
+        let query = undefined;
+        let dataset: Datasets = {};
+        let controller = new QueryController(dataset);
+        let isValid = controller.isValid(query);
+        expect(isValid).to.equal(false);
+    });
+
+
+
 });

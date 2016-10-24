@@ -23,41 +23,25 @@ export default class InsightFacade implements IInsightFacade {
                 var controller = InsightFacade.datasetController;
                 var fs = require('fs');
 
-                return controller.process(id, content).then(function (result) {
-                                if (controller.invalidDataSet) {
-                                    reject({code: 400, body: {error: "not valid dataset"}});}
-
-                                else if (fs.existsSync('./data/' + id + '.json')) {
-                                // if (controller.getDataset(id) !== null) {
-                                    fulfill({code: 201, body: {success: result}});
-                                }
-                                else {
-                                // if (controller.getDataset(id) == null){
-                                    fulfill({code: 204, body: {success: result}});
-                                }
-
+                controller.process(id, content).then(function (result) {
+                    try {
+                        if (controller.invalidDataSet) {
+                            reject({code: 400, body: {error: "not valid dataset"}});
+                        } else {
+                            // if (fs.existsSync('./data/' + id + '.json')) {
+                            if (controller.getDataset(id) !== null) {
+                                fulfill({code: 201, body: {success: result}});
+                            }
+                            if (controller.getDataset(id) == null){
+                                fulfill({code: 204, body: {success: result}});
+                            }
+                        }
+                    } catch (e) {
+                        reject({code: 400, body: {error: e.message}});
+                    }
+                }).catch(function (err: Error) {
+                    reject({code: 400, body: {error: err.message}});
                 });
-
-                // controller.process(id, content).then(function (result) {
-                //     try {
-                //         console.log("inside try block");
-                //         if (controller.invalidDataSet) {
-                //             reject({code: 400, body: {error: "not valid dataset"}});
-                //         } else {
-                //             // if (fs.existsSync('./data/' + id + '.json')) {
-                //             if (controller.getDataset(id) !== null) {
-                //                 fulfill({code: 201, body: {success: result}});
-                //             }
-                //             if (controller.getDataset(id) == null){
-                //                 fulfill({code: 204, body: {success: result}});
-                //             }
-                //         }
-                //     } catch (e) {
-                //         reject({code: 400, body: {error: e.message}});
-                //     }
-                // }).catch(function (err: Error) {
-                //     reject({code: 400, body: {error: err.message}});
-                // });
             } catch (e) {
                 reject({code: 400, body: {error: e.message}});
             }
