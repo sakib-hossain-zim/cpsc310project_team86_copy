@@ -26,6 +26,7 @@ interface toBeAdded {
     courses_pass: number;
     courses_fail: number;
     courses_audit: number;
+    courses_uuid: string;
 }
 
 
@@ -129,6 +130,7 @@ export default class DatasetController {
                                     tba.courses_pass = arrObject['Pass'];
                                     tba.courses_fail = arrObject['Fail'];
                                     tba.courses_audit = arrObject['Audit'];
+                                    tba.courses_uuid = arrObject['id'];
                                     processedDataset.push(tba);
                                 });
                             }
