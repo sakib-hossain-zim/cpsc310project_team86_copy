@@ -22,7 +22,6 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             try {
                 var controller = InsightFacade.datasetController;
-
                 var responseCode: number;
 
                 if (fs.existsSync('./data/' + id + '.json')) {
@@ -36,13 +35,13 @@ export default class InsightFacade implements IInsightFacade {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
-                            console.log(id);
-                             // if (fs.existsSync('./data/' + id + '.json')) {
-                         //   if (controller.getDataset(id) !== null) {
+                         //    console.log(id);
+                         //     if (fs.existsSync('./data/' + id + '.json')) {
+                         // //   if (controller.getDataset(id) !== null) {
                          //        fulfill({code: 201, body: {success: result}});
-                            // } else {
-                            //     fulfill({code: 204, body: {success: result}});
-                            // }
+                         //    } else {
+                         //        fulfill({code: 204, body: {success: result}});
+                         //    }
                             fulfill({code: responseCode, body: {success: result}});
                         }
                     } catch (e) {
