@@ -170,7 +170,6 @@ export default class DatasetController {
                 fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
         }
-
         catch(err){
             Log.trace("error in writing file to disk");
         }
