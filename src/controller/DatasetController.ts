@@ -46,22 +46,20 @@ export default class DatasetController {
      * @returns {{}}
      */
     public getDataset(id: string): any {
-
-            return this.datasets[id];
-
+        return this.datasets[id];
     }
 
     public getDatasets(): Datasets {
+
         let that = this;
 
         let i = 0;
         var filenames = fs.readdirSync("./data/");
-        console.log(filenames);
         filenames.forEach(function (file) {
-            let fileName: string = file;
-            that.datasets[file] = fs.readFileSync("./data/" + file, 'utf8');
+            that.datasets[i] = fs.readFileSync("./data/" + file, 'utf8');
             i++;
         });
+
         return that.datasets;
     }
 

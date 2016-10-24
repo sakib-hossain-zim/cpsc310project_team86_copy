@@ -118,6 +118,24 @@ describe("QueryController", function () {
         expect(isValid).to.equal(false);
     });
 
+    // it("Should be able to invalidate an invalid query for ORDER", function () {
+    //     // NOTE: this is not actually a valid query for D1
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_dept"],
+    //         "WHERE": {
+    //             "GT": {
+    //                 "courses_avg": 90
+    //             }
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     let dataset: Datasets = {};
+    //     let controller = new QueryController(dataset);
+    //     let isValid = controller.isValid(query);
+    //
+    //     expect(isValid).to.equal(false);
+    // });
 
     it("Should invalidate query with GROUP length 0", function () {
         let query: QueryRequest = {
@@ -1003,5 +1021,34 @@ describe("QueryController", function () {
                     { courses_dept: 'cpsc', courses_id: '110', numSections: 49 } ] }
         expect(ret).not.to.be.equal(null);
         expect(ret).to.deep.equal(expectedResult);
+    });
+
+    it("Order of keys ordering should matter (Galactica)", function () {
+        let query1: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": ["courses_id"],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let query2: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": ["courses_id"],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courses_id", "courseAverage"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller1 = new QueryController(datasets);
+        let controller2 = new QueryController(datasets);
+        let ret1 = controller1.query(query1);
+        let ret2 = controller2.query(query2);
+        expect(ret1).not.to.be.equal(null);
+        expect(ret2).not.to.be.equal(null);
+        expect(ret1).to.not.deep.equal(ret2);
+        // should check that the value is meaningful
     });
 });
