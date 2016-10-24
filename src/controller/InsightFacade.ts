@@ -4,6 +4,8 @@
 import {QueryRequest, default as QueryController} from "./QueryController";
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
+import fs = require('fs');
+
 
 export default class InsightFacade implements IInsightFacade {
     private static datasetController = new DatasetController();
@@ -20,8 +22,7 @@ export default class InsightFacade implements IInsightFacade {
 
         return new Promise(function (fulfill, reject) {
             try {
-                var controller = InsightFacade.datasetController;
-                var fs = require('fs');
+                let controller = InsightFacade.datasetController;
 
                 controller.process(id, content).then(function (result) {
                     try {
@@ -54,7 +55,6 @@ export default class InsightFacade implements IInsightFacade {
     public removeDataset (id:string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
             try {
-                var fs = require('fs');
                 let controller = InsightFacade.datasetController;
                 let datasets = controller.getDatasets();
 
@@ -79,7 +79,6 @@ export default class InsightFacade implements IInsightFacade {
     public performQuery (query: QueryRequest): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
             try {
-                var fs = require('fs');
 
                 let datasets = InsightFacade.datasetController.getDatasets();
                 let queryController = new QueryController(datasets);

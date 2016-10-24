@@ -7,6 +7,7 @@ import fs = require('fs');
 import {QueryRequest} from "../controller/QueryController";
 import Log from '../Util';
 import InsightFacade from "../controller/InsightFacade";
+import {InsightResponse} from "../controller/IInsightFacade";
 
 export default class RouteHandler {
 
@@ -43,7 +44,7 @@ export default class RouteHandler {
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
 
-                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                     res.json(response.code, response.body);
                 }).catch(function (response) {
                     res.json(response.code, response.body);
@@ -52,7 +53,7 @@ export default class RouteHandler {
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
