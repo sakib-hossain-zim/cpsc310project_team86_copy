@@ -31,7 +31,8 @@ export default class InsightFacade implements IInsightFacade {
                             // if (fs.existsSync('./data/' + id + '.json')) {
                             if (controller.getDataset(id) !== null) {
                                 fulfill({code: 201, body: {success: result}});
-                            } else {
+                            }
+                            if (controller.getDataset(id) == null){
                                 fulfill({code: 204, body: {success: result}});
                             }
                         }
