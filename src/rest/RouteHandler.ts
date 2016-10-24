@@ -7,6 +7,7 @@ import fs = require('fs');
 import {QueryRequest} from "../controller/QueryController";
 import Log from '../Util';
 import InsightFacade from "../controller/InsightFacade";
+import {InsightResponse} from "../controller/IInsightFacade";
 
 export default class RouteHandler {
 
@@ -43,7 +44,8 @@ export default class RouteHandler {
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
 
-                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+               return RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+                        console.log(response)
                     res.json(response.code, response.body);
                 }).catch(function (response) {
                     res.json(response.code, response.body);
@@ -52,7 +54,7 @@ export default class RouteHandler {
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+            return RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
@@ -65,7 +67,8 @@ export default class RouteHandler {
         Log.trace('RouteHandler::postQuery(..) - params: ' + JSON.stringify(req.params));
         let query: QueryRequest = req.params;
         try {
-            RouteHandler.insightFacade.performQuery(query).then(function (response) {
+             RouteHandler.insightFacade.performQuery(query).then(function (response) {
+
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
@@ -73,7 +76,7 @@ export default class RouteHandler {
         } catch (err) {
             //  console.log("we are here");
             Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
-            RouteHandler.insightFacade.performQuery(query).then(function (response) {
+             RouteHandler.insightFacade.performQuery(query).then(function (response) {
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
@@ -85,14 +88,14 @@ export default class RouteHandler {
     public static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next){
         var id: string = req.params.id;
         try {
-            RouteHandler.insightFacade.removeDataset(id).then(function (response) {
+             RouteHandler.insightFacade.removeDataset(id).then(function (response) {
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
             });
         } catch (err) {
             Log.error('RouteHandler::deleteDataset(..) - ERROR: ' + err);
-            RouteHandler.insightFacade.removeDataset(id).then(function (response) {
+             RouteHandler.insightFacade.removeDataset(id).then(function (response) {
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
