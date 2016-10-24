@@ -4,6 +4,8 @@
 import {QueryRequest, default as QueryController} from "./QueryController";
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
+import fs = require('fs');
+
 
 export default class InsightFacade implements IInsightFacade {
     private static datasetController = new DatasetController();
@@ -17,22 +19,20 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
-
         return new Promise(function (fulfill, reject) {
             try {
                 var controller = InsightFacade.datasetController;
-                var fs = require('fs');
 
                 controller.process(id, content).then(function (result) {
                     try {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
-                            // if (fs.existsSync('./data/' + id + '.json')) {
-                            if (controller.getDataset(id) !== null) {
+                            console.log(id);
+                             if (fs.existsSync('./data/' + id + '.json')) {
+                         //   if (controller.getDataset(id) !== null) {
                                 fulfill({code: 201, body: {success: result}});
-                            }
-                            if (controller.getDataset(id) == null){
+                            } else {
                                 fulfill({code: 204, body: {success: result}});
                             }
                         }
@@ -56,7 +56,6 @@ export default class InsightFacade implements IInsightFacade {
     public removeDataset (id:string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
             try {
-                var fs = require('fs');
                 let controller = InsightFacade.datasetController;
                 let datasets = controller.getDatasets();
 
@@ -81,7 +80,6 @@ export default class InsightFacade implements IInsightFacade {
     public performQuery (query: QueryRequest): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
             try {
-                var fs = require('fs');
 
                 let datasets = InsightFacade.datasetController.getDatasets();
                 let queryController = new QueryController(datasets);

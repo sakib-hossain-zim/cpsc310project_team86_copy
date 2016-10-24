@@ -207,7 +207,8 @@ export default class QueryController {
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
-        if (typeof query.APPLY !== "undefined" && query.APPLY.length > 0) {
+        if (typeof query.APPLY !== "undefined") {
+            if (query.APPLY.length > 0) {
             for (let objApply of query.APPLY) {
                 for (let prop in objApply) {
                     let innerObj = objApply[prop];
@@ -215,6 +216,7 @@ export default class QueryController {
                         let applyKey = innerObj[innerProp];
                         applyKeyArray.push(applyKey);
                     }
+                }
                 }
             }
         }
@@ -295,13 +297,13 @@ export default class QueryController {
      * @returns {T[]|Uint32Array|Float32Array|Int32Array|any|Uint16Array}
      */
     public orderResponse(query: QueryRequest, data: any, i: number) { // i always starts 0
-        let that = this;
+         if (typeof query.ORDER === 'undefined') {
+             return data;
+         }
+
+            let that = this;
         let key:any = query.ORDER;
         // console.log(Object.keys(key).length);
-        let dir: any = Object.keys(key)[0];
-        let keys: any = Object.keys(key)[1];
-        let dirValue: any = key[dir];
-        let keysValue: any = key[keys];
 
         // let properties = (Object.keys(key).length);
 
@@ -316,8 +318,13 @@ export default class QueryController {
                 }
                 return 0;
             });
+        }
+            let dir: any = Object.keys(key)[0];
+            let keys: any = Object.keys(key)[1];
+            let dirValue: any = key[dir];
+            let keysValue: any = key[keys];
 
-        } else if (keysValue.length === 1) {
+        if (keysValue.length === 1) {
             return data.sort(function (result1: any, result2: any) {
                 if (result1[keysValue[0]] < result2[keysValue[0]]) {
                     return -1;
@@ -630,10 +637,9 @@ export default class QueryController {
 
         let appliedData: any = this.apply(query, groupedData);
 
-        if (typeof query.ORDER !== 'undefined') {
             // let i: number = 0;
             var orderedResults = this.orderResponse(query, appliedData, 0);
-        }
+
         var response: QueryResponse = {render: query.AS, result: orderedResults};
         return response;
     }
