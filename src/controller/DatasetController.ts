@@ -53,7 +53,6 @@ export default class DatasetController {
     }
 
     public getDatasets(): Datasets {
-
         let that = this;
 
         let i = 0;
