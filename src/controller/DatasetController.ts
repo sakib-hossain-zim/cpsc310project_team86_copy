@@ -94,6 +94,7 @@ export default class DatasetController {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
                     });
+
                     Promise.all(promises).then(function(files: any[]) {
 
                         console.log("typeof files is " + typeof files);
@@ -104,6 +105,7 @@ export default class DatasetController {
                             console.log("dataset is invalid");
                             //throw error("Invalid dataset");
                         }
+
                         files.forEach(function (file) {
 
                             let results: any[];
@@ -136,7 +138,7 @@ export default class DatasetController {
                         });
                         console.log ("about to save id");
                         that.save(id, processedDataset);
-                        //fulfill(true);
+                        fulfill(true);
                     });
                     console.log("hits fulfill");
                     fulfill(true);
