@@ -54,7 +54,7 @@ export default class RouteHandler {
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-             RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
             }).catch(function(err: InsightResponse) {
                 res.json(err.code, err.body);
