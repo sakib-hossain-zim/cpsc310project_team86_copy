@@ -6,6 +6,9 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
+import {stringify} from "querystring";
+//import {Course} from "./Course";
+import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -96,10 +99,7 @@ export default class DatasetController {
                     });
                     Promise.all(promises).then(function(files: any[]) {
 
-                        console.log('praying for miracles');
-                        console.log('file is' + files);
-
-                        if (typeof files === 'undefined' || files.length < 0) {
+                        if (typeof files === 'undefined' || files.length < 1) {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
@@ -107,7 +107,7 @@ export default class DatasetController {
                         }
                         files.forEach(function (file) {
 
-                            let results: Promise<any>[] = [];
+                            let results: any[];
                             if (file !== null) {
                                 var o = JSON.parse(file);
                                 results = o.result;

@@ -58,10 +58,13 @@ export default class QueryController {
         if (typeof query.GET === 'undefined') {
             return false;
         }
+        if (typeof query.AS === 'undefined') {
+            return false;
+        }
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
 
-        if (typeof query.GROUP != 'undefined') {
+        if (typeof query.GROUP !== 'undefined') {
             if ((query.GROUP.length) == 0) {
                 return false;
             }
@@ -617,9 +620,9 @@ export default class QueryController {
             var GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-        var groupedData = this.group(query, GET_results,0);
+            var groupedData = this.group(query, GET_results, 0);
+            let appliedData: any = this.apply(query, groupedData);
 
-        let appliedData: any = this.apply(query, groupedData);
 
         if (typeof query.ORDER !== 'undefined') {
             // let i: number = 0;
