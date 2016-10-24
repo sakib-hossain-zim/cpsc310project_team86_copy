@@ -43,18 +43,18 @@ export default class RouteHandler {
                 let concated = Buffer.concat(buffer);
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
-
-               return RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
-                        console.log(response)
+                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+                    console.log(response);
                     res.json(response.code, response.body);
                 }).catch(function (response) {
+                    console.log(response);
                     res.json(response.code, response.body);
                 });
             });
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            return RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+             RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
             }).catch(function (response) {
                 res.json(response.code, response.body);
