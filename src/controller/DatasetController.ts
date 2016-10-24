@@ -46,7 +46,11 @@ export default class DatasetController {
      * @returns {{}}
      */
     public getDataset(id: string): any {
-        return this.datasets[id];
+
+        if (fs.existsSync('./data/' + id + '.json')) {   // if id exists return id.
+            return this.datasets[id];
+        }
+        else return null;
     }
 
     public getDatasets(): Datasets {
