@@ -63,6 +63,7 @@ export default class DatasetController {
         return that.datasets;
     }
 
+    public previous: boolean = false;
 
     /**
      * Process the dataset; save it to disk when complete.
@@ -76,6 +77,12 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
+
+        if (this.datasets[id] != null || fs.existsSync('./data/' + id + '.json')) {
+            this.previous = true;
+        } else {
+            this.previous = false;
+        }
 
         return new Promise(function (fulfill, reject) {
             try {
