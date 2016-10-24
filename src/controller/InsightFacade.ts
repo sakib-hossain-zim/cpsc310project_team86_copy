@@ -24,7 +24,7 @@ export default class InsightFacade implements IInsightFacade {
                 var fs = require('fs');
 
                 controller.process(id, content).then(function (result) {
-                    try {
+                    // try {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
@@ -34,9 +34,9 @@ export default class InsightFacade implements IInsightFacade {
                                 fulfill({code: 204, body: {success: result}});
                             }
                         }
-                    } catch (e) {
-                        reject({code: 400, body: {error: e.message}});
-                    }
+                    // } catch (e) {
+                    //     reject({code: 400, body: {error: e.message}});
+                    // }
                 }).catch(function (err: Error) {
                     reject({code: 400, body: {error: err.message}});
                 });
