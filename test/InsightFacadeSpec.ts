@@ -21,7 +21,7 @@ describe("InsightFacade", function () {
         try {
             // what you delete here is going to depend on your impl, just make sure
             // all of your temporary files and directories are deleted
-            fs.unlinkSync('./courses.json');
+            fs.unlinkSync('./data');
         } catch (err) {
             // silently fail, but don't crash; this is fine
             Log.warn('InsightController::before() - courses.json not removed (probably not present)');
@@ -33,16 +33,16 @@ describe("InsightFacade", function () {
         facade = new InsightFacade();
     });
 
-    // it("Should be able to add a new dataset (204)", function () {
-    //     var that = this;
-    //     that.timeout(5000);
-    //     Log.trace("Starting test: " + that.test.title);
-    //     return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
-    //         expect(response.code).to.equal(204);
-    //     }).catch(function (response: InsightResponse) {
-    //         expect.fail('Should not happen');
-    //     });
-    // });
+    it("Should be able to add a new dataset (204)", function () {
+        var that = this;
+        that.timeout(5000);
+        Log.trace("Starting test: " + that.test.title);
+        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(204);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');
+        });
+    });
 
     it("Should be able to update an existing dataset (201)", function () {
         var that = this;
@@ -55,11 +55,6 @@ describe("InsightFacade", function () {
                 expect.fail('Should not happen');
             });
         });
-        // return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
-        //     expect(response.code).to.equal(201);
-        // }).catch(function (response: InsightResponse) {
-        //     expect.fail('Should not happen');
-        // });
     });
 
     it("Should not be able to add an invalid dataset (400)", function () {
