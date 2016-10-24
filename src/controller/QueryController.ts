@@ -55,6 +55,9 @@ export default class QueryController {
     public isValid(query: QueryRequest): boolean {
 
         //console.log(query.GET.includes(query.ORDER));
+        if (typeof query.GET === 'undefined') {
+            return false;
+        }
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
 
