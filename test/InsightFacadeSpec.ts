@@ -46,7 +46,7 @@ describe("InsightFacade", function () {
     it("Should be able to update an existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('setA', zipFileContents).then(function (response: InsightResponse) {
+        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(201);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');

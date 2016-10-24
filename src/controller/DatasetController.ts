@@ -65,6 +65,7 @@ export default class DatasetController {
         return that.datasets;
     }
 
+    public previous: boolean = false;
 
     /**
      * Process the dataset; save it to disk when complete.
@@ -78,6 +79,10 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
+
+        if (that.getDataset(id) != 'undefined') {
+            that.previous = true;
+        }
 
         return new Promise(function (fulfill, reject) {
             try {
