@@ -119,13 +119,31 @@ describe("DatasetController", function () {
             compression: 'deflate', compressionOptions: {level: 2}, type: 'base64'
         };
         return zip.generateAsync(opts).then(function (data) {
-            console.log("what is " + data);
             Log.test('Dataset created');
             let controller = new DatasetController();
             return controller.process('setA', data);
         }).then(function (result) {
             Log.test('Dataset processed; result: ' + result);
             expect(result).to.equal(true);
+        });
+
+    });
+
+    it("Should be able to not process invalid dataset", function () {
+        Log.test('Creating dataset');
+        let content = [];
+        let zip = new JSZip();
+        zip.file('content.obj', JSON.stringify(content));
+        const opts = {
+            compression: 'deflate', compressionOptions: {level: 2}, type: 'base64'
+        };
+        return zip.generateAsync(opts).then(function (data) {
+            Log.test('Dataset created');
+            let controller = new DatasetController();
+            return controller.process('setA', data);
+        }).then(function (result) {
+            Log.test('Dataset processed; result: ' + result);
+            expect(result).to.equal(false);
         });
 
     });

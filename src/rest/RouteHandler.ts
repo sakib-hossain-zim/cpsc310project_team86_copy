@@ -7,6 +7,7 @@ import fs = require('fs');
 import {QueryRequest} from "../controller/QueryController";
 import Log from '../Util';
 import InsightFacade from "../controller/InsightFacade";
+import {InsightResponse} from "../controller/IInsightFacade";
 
 export default class RouteHandler {
 
@@ -42,20 +43,21 @@ export default class RouteHandler {
                 let concated = Buffer.concat(buffer);
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
-
-                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+                RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+                    console.log(response);
                     res.json(response.code, response.body);
                 }).catch(function (response) {
+                    console.log(response);
                     res.json(response.code, response.body);
                 });
             });
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response) {
+             RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
             });
         }
         return next();
@@ -67,16 +69,16 @@ export default class RouteHandler {
         try {
             RouteHandler.insightFacade.performQuery(query).then(function (response) {
                 res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
             });
         } catch (err) {
             //  console.log("we are here");
             Log.error('RouteHandler::postQuery(..) - ERROR: ' + err);
             RouteHandler.insightFacade.performQuery(query).then(function (response) {
                 res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
             });
         }
         return next();
@@ -87,15 +89,15 @@ export default class RouteHandler {
         try {
             RouteHandler.insightFacade.removeDataset(id).then(function (response) {
                 res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
             });
         } catch (err) {
             Log.error('RouteHandler::deleteDataset(..) - ERROR: ' + err);
             RouteHandler.insightFacade.removeDataset(id).then(function (response) {
                 res.json(response.code, response.body);
-            }).catch(function (response) {
-                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
             });
         }
         return next();

@@ -21,7 +21,6 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             try {
                 var controller = InsightFacade.datasetController;
-                var fs = require('fs');
 
                 controller.process(id, content).then(function (result) {
                     try {
@@ -89,11 +88,10 @@ export default class InsightFacade implements IInsightFacade {
 
                 if (isValid === true) {
                     let result = queryController.query(query);
-                    if (fs.existsSync('./data/' + id + '.json')) {
-                        fulfill({code: 200, body: result});
-                        // reject({code: 424, body: {missing: [id]}});
-                    } else {
+                    if (!fs.existsSync('./data/' + id + '.json')) {
                         reject({code: 424, body: {missing: [id]}});
+                    } else {
+                        fulfill({code: 200, body: result});
                     }
                 } else {
                     reject({code: 400, body: {error: 'invalid query'}});

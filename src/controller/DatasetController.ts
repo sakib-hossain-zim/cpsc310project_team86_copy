@@ -9,7 +9,6 @@ import keys = require("core-js/fn/array/keys");
 import {stringify} from "querystring";
 //import {Course} from "./Course";
 import {error} from "util";
-
 /**
  * In memory representation of all datasets.
  */
@@ -26,6 +25,7 @@ interface toBeAdded {
     courses_pass: number;
     courses_fail: number;
     courses_audit: number;
+    courses_uuid: string;
 }
 
 
@@ -107,9 +107,7 @@ export default class DatasetController {
 
                     Promise.all(promises).then(function(files: any[]) {
 
-                        console.log("typeof files is " + typeof files);
-
-                        if (typeof files === undefined || files.length < 0) {
+                        if (typeof files === 'undefined' || files.length < 1) {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
@@ -140,6 +138,7 @@ export default class DatasetController {
                                     tba.courses_pass = arrObject['Pass'];
                                     tba.courses_fail = arrObject['Fail'];
                                     tba.courses_audit = arrObject['Audit'];
+                                    tba.courses_uuid = arrObject['id'];
                                     processedDataset.push(tba);
                                 });
                             }
@@ -191,7 +190,6 @@ export default class DatasetController {
                 fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
         }
-
         catch(err){
             Log.trace("error in writing file to disk");
         }
