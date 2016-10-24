@@ -118,24 +118,6 @@ describe("QueryController", function () {
         expect(isValid).to.equal(false);
     });
 
-    // it("Should be able to invalidate an invalid query for ORDER", function () {
-    //     // NOTE: this is not actually a valid query for D1
-    //     let query: QueryRequest = {
-    //         "GET": ["courses_dept"],
-    //         "WHERE": {
-    //             "GT": {
-    //                 "courses_avg": 90
-    //             }
-    //         },
-    //         "ORDER": "courses_avg",
-    //         "AS": "TABLE"
-    //     };
-    //     let dataset: Datasets = {};
-    //     let controller = new QueryController(dataset);
-    //     let isValid = controller.isValid(query);
-    //
-    //     expect(isValid).to.equal(false);
-    // });
 
     it("Should invalidate query with GROUP length 0", function () {
         let query: QueryRequest = {
