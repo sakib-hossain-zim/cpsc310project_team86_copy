@@ -178,7 +178,6 @@ export default class QueryController {
             }
         }
 
-
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
         }
@@ -255,8 +254,12 @@ export default class QueryController {
                     respObj.courses_uuid = obj.courses_uuid;
                 }
             }
-            for (let applyKey of applyKeyArray) {
-                respObj[applyKey] = obj[applyKey];
+            if (typeof query.APPLY !== 'undefined') {
+                if (query.APPLY.length > 0) {
+                    for (let applyKey of applyKeyArray) {
+                        respObj[applyKey] = obj[applyKey];
+                    }
+                }
             }
             if (typeof query.APPLY !== 'undefined' && query.APPLY.length > 0) {
                 for (let obj of query.APPLY) {
@@ -574,6 +577,9 @@ export default class QueryController {
      */
     public apply(query: QueryRequest, data: any): any {
         if (typeof query.APPLY == 'undefined') {
+            return data;
+        }
+        if (query.APPLY.length == 0) {
             return data;
         }
         console.log("in apply method");
