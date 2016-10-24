@@ -55,16 +55,10 @@ export default class QueryController {
     public isValid(query: QueryRequest): boolean {
 
         //console.log(query.GET.includes(query.ORDER));
-        if (typeof query.GET === 'undefined') {
-            return false;
-        }
-        if (typeof query.AS === 'undefined') {
-            return false;
-        }
         if (typeof query === 'undefined') return false;
         if (query.AS != 'TABLE') return false;
 
-        if (typeof query.GROUP !== 'undefined') {
+        if (typeof query.GROUP != 'undefined') {
             if ((query.GROUP.length) == 0) {
                 return false;
             }
@@ -146,25 +140,43 @@ export default class QueryController {
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
+            if (query.APPLY.length > 0) {
 
-            for (let getKey of query.GET) {
-                let get_key_in_apply: boolean;
-                if (!getKey.includes("_")) {
-                    get_key_in_apply = false;
-                    for (let applyObj of query.APPLY) {
-                        for (let applyKey in applyObj) {
-                            if (getKey == applyKey) {
-                                get_key_in_apply = true;
+                for (let getKey of query.GET) {
+                    var get_key_in_apply: boolean;
+                    if (!getKey.includes("_")) {
+                        get_key_in_apply = false;
+                        for (let applyObj of query.APPLY) {
+                            for (let applyKey in applyObj) {
+                                if (getKey == applyKey) {
+                                    get_key_in_apply = true;
+                                }
                             }
                         }
+                        if (!get_key_in_apply) {
+                            return false;
+                        }
                     }
-                    if (!get_key_in_apply) {
-                        return false;
+                }
+
+                for (let applyObj of query.APPLY) {
+                    for (let applyKey in applyObj) {
+                        var get_key_in_apply: boolean;
+                        if (!applyKey.includes("_")) {
+                            get_key_in_apply = false;
+                            for (let getKey of query.GET) {
+                                if (getKey == applyKey) {
+                                    get_key_in_apply = true;
+                                }
+                            }
+                            if (!get_key_in_apply) {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
         }
-
 
 
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
@@ -255,14 +267,6 @@ export default class QueryController {
         return respObjArray; // object with only the GET columns
     }
 
-    /**
-     * Sort ascending
-     * @param value1
-     * @param value2
-     * @param keys
-     * @param i
-     * @returns {any}
-     */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number) {
         if (value1[keys[i]] < value2[keys[i]]) {
             return -1;
@@ -273,14 +277,6 @@ export default class QueryController {
         }
     }
 
-    /**
-     * Sort descending
-     * @param value1
-     * @param value2
-     * @param keys
-     * @param i
-     * @returns {any}
-     */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number) {
         if (value1[keys[i]] > value2[keys[i]]) {
             return -1;
@@ -321,6 +317,16 @@ export default class QueryController {
                 return 0;
             });
 
+        } else if (keysValue.length === 1) {
+            return data.sort(function (result1: any, result2: any) {
+                if (result1[keysValue[0]] < result2[keysValue[0]]) {
+                    return -1;
+                }
+                else if (result1[keysValue[0]] > result2[keysValue[0]]) {
+                    return 1;
+                }
+                return 0;
+            });
         }
 
         if (i < keysValue.length) {
@@ -620,9 +626,9 @@ export default class QueryController {
             var GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-            var groupedData = this.group(query, GET_results, 0);
-            let appliedData: any = this.apply(query, groupedData);
+        var groupedData = this.group(query, GET_results,0);
 
+        let appliedData: any = this.apply(query, groupedData);
 
         if (typeof query.ORDER !== 'undefined') {
             // let i: number = 0;

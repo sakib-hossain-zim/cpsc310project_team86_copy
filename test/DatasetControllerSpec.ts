@@ -129,9 +129,9 @@ describe("DatasetController", function () {
 
     });
 
-    it("Should be able to not process invalid dataset", function () {
+    it("Should not be able process invalid dataset", function () {
         Log.test('Creating dataset');
-        let content = [];
+        let content = null;
         let zip = new JSZip();
         zip.file('content.obj', JSON.stringify(content));
         const opts = {

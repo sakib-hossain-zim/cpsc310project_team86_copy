@@ -6,9 +6,7 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
-import {stringify} from "querystring";
-//import {Course} from "./Course";
-import {error} from "util";
+
 /**
  * In memory representation of all datasets.
  */
@@ -24,8 +22,8 @@ interface toBeAdded {
     courses_title: string;
     courses_pass: number;
     courses_fail: number;
-    courses_audit: number;
     courses_uuid: string;
+    courses_audit: number;
 }
 
 
@@ -65,7 +63,6 @@ export default class DatasetController {
         return that.datasets;
     }
 
-    public previous: boolean = false;
 
     /**
      * Process the dataset; save it to disk when complete.
@@ -79,13 +76,6 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
-
-        if (that.datasets.hasOwnProperty(id) || fs.existsSync('./data/' + id + '.json')) {
-            delete that.datasets[id];
-            that.previous = true;
-        } else {
-            that.previous = false;
-        }
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -104,10 +94,11 @@ export default class DatasetController {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
                     });
-
                     Promise.all(promises).then(function(files: any[]) {
 
-                        if (typeof files === 'undefined' || files.length < 1) {
+                        console.log("typeof files is " + typeof files);
+
+                        if (typeof files === undefined || files.length < 1) {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
@@ -137,8 +128,8 @@ export default class DatasetController {
                                     tba.courses_title = arrObject['Title'];
                                     tba.courses_pass = arrObject['Pass'];
                                     tba.courses_fail = arrObject['Fail'];
-                                    tba.courses_audit = arrObject['Audit'];
                                     tba.courses_uuid = arrObject['id'];
+                                    tba.courses_audit = arrObject['Audit'];
                                     processedDataset.push(tba);
                                 });
                             }
@@ -172,24 +163,14 @@ export default class DatasetController {
         try {
             // let stats =  fs.statSync('./data/');
             var dirExist = fs.existsSync('./data');
-            // var fileExists = fs.existsSync('./data/' + id + '.json');
-            // if (!dirExist) {
-            //     var path =  fs.mkdirSync('./data/');
-            //     fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
-            // } else {
-            //     fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
-            // }
             if (!dirExist) {
-                fs.mkdirSync('./data');
-            }
-
-            if (this.previous === true) {
-                fs.unlink('./data/' + id + '.json');
-                fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
+                var path =  fs.mkdirSync('./data/');
+                fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
             } else {
                 fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
         }
+
         catch(err){
             Log.trace("error in writing file to disk");
         }
