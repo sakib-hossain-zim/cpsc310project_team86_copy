@@ -91,6 +91,7 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
+                    //  console.log(zip.folder('courses'));
                     zip.folder('courses').forEach(function(relativePath, file) {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
@@ -103,6 +104,7 @@ export default class DatasetController {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
+                            //throw error("Invalid dataset");
                         }
                         files.forEach(function (file) {
 
@@ -133,7 +135,9 @@ export default class DatasetController {
                                 });
                             }
                         });
+                        console.log ("about to save id");
                         that.save(id, processedDataset);
+                        //fulfill(true);
                     });
                     console.log("hits fulfill");
                     fulfill(true);
