@@ -9,7 +9,6 @@ import keys = require("core-js/fn/array/keys");
 import {stringify} from "querystring";
 //import {Course} from "./Course";
 import {error} from "util";
-
 /**
  * In memory representation of all datasets.
  */
