@@ -96,6 +96,9 @@ export default class DatasetController {
                     });
                     Promise.all(promises).then(function(files: any[]) {
 
+                        console.log('praying for miracles');
+                        console.log('file is' + files);
+
                         if (typeof files === 'undefined' || files.length < 0) {
                             console.log("made it here");
                             that.invalidDataSet = true;
@@ -104,7 +107,7 @@ export default class DatasetController {
                         }
                         files.forEach(function (file) {
 
-                            let results: any[];
+                            let results: Promise<any>[] = [];
                             if (file !== null) {
                                 var o = JSON.parse(file);
                                 results = o.result;
