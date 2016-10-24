@@ -24,7 +24,6 @@ export default class InsightFacade implements IInsightFacade {
                 var fs = require('fs');
 
                 controller.process(id, content).then(function (result) {     // returns result which is a promise boolean
-
                     try {
                          if (fs.existsSync('./data/' + id + '.json')) {
                             fulfill({code: 201, body: {success: result}});
