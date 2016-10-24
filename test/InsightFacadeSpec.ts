@@ -105,15 +105,15 @@ describe("InsightFacade", function () {
         });
     });
 
-    // it("Should be able to delete a dataset (204)", function () {
-    //     var that = this;
-    //     Log.trace("Starting test: " + that.test.title);
-    //     return facade.removeDataset('courses').then(function (response: InsightResponse) {
-    //         expect(response.code).to.equal(204);
-    //     }).catch(function (response: InsightResponse) {
-    //         expect.fail('Should not happen');
-    //     });
-    // });
+    it("Should be able to delete a dataset (204)", function () {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        return facade.removeDataset('repeat').then(function (response: InsightResponse) {
+            expect(response.code).to.equal(204);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');
+        });
+    });
 
     it("Should fail to delete a dataset that has not been PUT (404)", function () {
         var that = this;

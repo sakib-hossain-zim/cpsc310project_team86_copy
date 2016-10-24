@@ -6,6 +6,8 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
+import {stringify} from "querystring";
+import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -99,7 +101,7 @@ export default class DatasetController {
 
                         console.log("typeof files is " + typeof files);
 
-                        if (typeof files === undefined || files.length < 1) {
+                        if (typeof files === 'undefined' || files.length < 1) {
                             console.log("made it here");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
