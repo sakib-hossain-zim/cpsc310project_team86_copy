@@ -546,7 +546,7 @@ export default class QueryController {
         if (field == 'COUNT') {
             let count: number = 0;
             let compareArray: any = [];
-            for (let obj of group) {
+            for (let obj in group) {
                 let compareVal: any = obj[value];
                 compareArray.push(compareVal);
             }
@@ -557,7 +557,7 @@ export default class QueryController {
             let key = Object.keys(counts)[0];
             let result: any = counts[key];
 
-            for (let obj of group)  {
+            for (let obj in group)  {
                 if(!query.GET.hasOwnProperty(value)) {
                     delete obj[value];
                 }
