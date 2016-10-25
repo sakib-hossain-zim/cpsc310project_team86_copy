@@ -101,7 +101,7 @@ export default class DatasetController {
                         console.log("typeof files is " + typeof files);
 
                         if (typeof files === 'undefined' || files.length < 1) {
-                            console.log("made it here");
+                            console.log("made it here = typeof files undefined or length < 1");
                             that.invalidDataSet = true;
                             console.log("dataset is invalid");
                             //throw error("Invalid dataset");
