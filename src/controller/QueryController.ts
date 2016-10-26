@@ -140,7 +140,7 @@ export default class QueryController {
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
-            // if (query.APPLY.length > 0) {
+             if (query.APPLY.length > 0) {
 
                 for (let getKey of query.GET) {
                     var get_key_in_apply: boolean;
@@ -175,7 +175,7 @@ export default class QueryController {
                         }
                     }
                 }
-            // }
+             }
         }
 
 
@@ -546,7 +546,7 @@ export default class QueryController {
         if (field == 'COUNT') {
             let count: number = 0;
             let compareArray: any = [];
-            for (let obj in group) {
+            for (let obj of group) {
                 let compareVal: any = obj[value];
                 compareArray.push(compareVal);
             }
