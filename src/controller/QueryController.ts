@@ -42,9 +42,12 @@ interface stringArray {
 
 export default class QueryController {
     private datasets: Datasets = {};
+    private count: number = 0;
+
 
     constructor(datasets: Datasets) {
         this.datasets = datasets;
+
     }
 
     /**
@@ -69,6 +72,39 @@ export default class QueryController {
         if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
             return false;
         }
+
+        //Firefly: a query ORDER by a key not in GET should not be valid.
+        if (typeof query.ORDER !== 'undefined') {
+            if (typeof query.ORDER === 'string') {
+                let is_ORDER_key_in_GET: boolean = false;
+                for (let key of query.GET) {
+                    if (key == query.ORDER) {
+                        is_ORDER_key_in_GET = true;
+                    }
+                }
+                if (!is_ORDER_key_in_GET) {
+                    return false;
+                }
+            }
+            if (typeof query.ORDER == 'object') {
+                let is_ORDER_key_in_GET: boolean = false;
+                if (Object.keys(query.ORDER).length !== 0) {
+                    let obj = query.ORDER;
+                    let keys = Object.keys(query.ORDER)[1];
+                    for (let orderKey of obj[keys]) {
+                        for (let getKey of query.GET) {
+                            if (orderKey == getKey) {
+                                is_ORDER_key_in_GET = true;
+                            }
+                        }
+                        if (!is_ORDER_key_in_GET ){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
         //Kryptonite: All keys in GROUP should be present in GET.
         if (typeof query.GROUP !== 'undefined'){
             for (let groupKey of query.GROUP) {
@@ -392,6 +428,7 @@ export default class QueryController {
      * @param data
      * @returns {any}
      */
+
     public filterRows(field: any, queryData: any, data: any) {
         let that = this;
         var filteredData: any = [];
@@ -405,15 +442,23 @@ export default class QueryController {
                 for (let i in obj) {
                     key = i;
                     value = obj[i];
+                  //  console.log(field);
+                  //  console.log(key);
+                  //  console.log(value);
                     if (count < 1) {
                         ANDFilteredData = this.filterRows(key, value, data);
+                      //  console.log(ANDFilteredData);
                     }
                     else {
+                       // console.log(ANDFilteredData);
                         ANDFilteredData = this.filterRows(key, value, ANDFilteredData);
                     }
                     count++;
+                //   that.count++;
+                 //   console.log(that.count);
                 }
             }
+          //  console.log(ANDFilteredData);
             return ANDFilteredData;
         }
 

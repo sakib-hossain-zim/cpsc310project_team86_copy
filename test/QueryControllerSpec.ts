@@ -1117,4 +1117,19 @@ describe("QueryController", function () {
         expect(ret2).not.to.be.equal(null);
         expect(ret1).to.not.deep.equal(ret2);
     });
+    it ("Should return an empty array if the dataset is empty", function() {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": ["courses_id"],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let datasets: Datasets = {};
+        let controller1 = new QueryController(datasets);
+        let ret = controller1.query(query);
+        let expectedResult = {render: query.AS, result: [{}]};
+        expect(ret).to.deep.equal(expectedResult);
+    })
 });
