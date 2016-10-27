@@ -42,9 +42,13 @@ interface stringArray {
 
 export default class QueryController {
     private datasets: Datasets = {};
+    private count: number = 0;
+    private is_NOT: boolean = false;
+
 
     constructor(datasets: Datasets) {
         this.datasets = datasets;
+
     }
 
     /**
@@ -69,6 +73,39 @@ export default class QueryController {
         if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
             return false;
         }
+
+        //Firefly: a query ORDER by a key not in GET should not be valid.
+        if (typeof query.ORDER !== 'undefined') {
+            if (typeof query.ORDER === 'string') {
+                let is_ORDER_key_in_GET: boolean = false;
+                for (let key of query.GET) {
+                    if (key == query.ORDER) {
+                        is_ORDER_key_in_GET = true;
+                    }
+                }
+                if (!is_ORDER_key_in_GET) {
+                    return false;
+                }
+            }
+            if (typeof query.ORDER == 'object') {
+                let is_ORDER_key_in_GET: boolean = false;
+                if (Object.keys(query.ORDER).length !== 0) {
+                    let obj = query.ORDER;
+                    let keys = Object.keys(query.ORDER)[1];
+                    for (let orderKey of obj[keys]) {
+                        for (let getKey of query.GET) {
+                            if (orderKey == getKey) {
+                                is_ORDER_key_in_GET = true;
+                            }
+                        }
+                        if (!is_ORDER_key_in_GET ){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
         //Kryptonite: All keys in GROUP should be present in GET.
         if (typeof query.GROUP !== 'undefined'){
             for (let groupKey of query.GROUP) {
@@ -140,7 +177,7 @@ export default class QueryController {
         }
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
-            // if (query.APPLY.length > 0) {
+             if (query.APPLY.length > 0) {
 
                 for (let getKey of query.GET) {
                     var get_key_in_apply: boolean;
@@ -175,7 +212,7 @@ export default class QueryController {
                         }
                     }
                 }
-            // }
+             }
         }
 
 
@@ -361,28 +398,47 @@ export default class QueryController {
     public compare(field: string, value: any, threshold?: any) {
         var res: Boolean;
         // console.log("in compare method");
-        switch (field) {
-            case "GT":
-                res = value > +threshold;
-                break;
-            case 'LT':
-                res = value < +threshold;
-                break;
-            case 'EQ':
-                res = value == threshold;
-                break;
-            case 'NOT':
-                res = value !== threshold;
-                break;
-            case 'IS':
-                res = value === threshold;
-                break;
-            default:
-                res = true;
-                break;
+        if (!this.is_NOT) {
+            switch (field) {
+                case "GT":
+                    res = value > +threshold;
+                    break;
+                case 'LT':
+                    res = value < +threshold;
+                    break;
+                case 'EQ':
+                    res = value == threshold;
+                    break;
+                case 'IS':
+                    res = value === threshold;
+                    break;
+                default:
+                    res = true;
+                    break;
 
+            }
+            return res;
         }
-        return res;
+        if (this.is_NOT) {
+            switch (field) {
+                case "GT":
+                    res = value <= +threshold;
+                    break;
+                case 'LT':
+                    res = value >= +threshold;
+                    break;
+                case 'EQ':
+                    res = value != threshold;
+                    break;
+                case 'IS':
+                    res = value !== threshold;
+                    break;
+                default:
+                    res = true;
+                    break;
+            }
+            return res;
+        }
     }
 
     /**
@@ -392,6 +448,7 @@ export default class QueryController {
      * @param data
      * @returns {any}
      */
+
     public filterRows(field: any, queryData: any, data: any) {
         let that = this;
         var filteredData: any = [];
@@ -417,7 +474,6 @@ export default class QueryController {
             return ANDFilteredData;
         }
 
-
         else if (field == 'OR') {
             var ORFilteredData: any;
             var ORReturnData: any = [];
@@ -437,8 +493,24 @@ export default class QueryController {
             }
             return ORReturnData;
         }
+        else if (field == "NOT") {
+            if (this.is_NOT) {
+                this.is_NOT = false;
+            } else {
+                this.is_NOT = true;
+            }
+            var key: any;
+            var value: any;
+            var NOTfilteredData: any;
 
-        else {
+            console.log(queryData);
+            for (let prop in queryData) {
+                key = prop;
+                value = queryData[key];
+                NOTfilteredData =this.filterRows(key, value, data);
+            }
+            return NOTfilteredData;
+        } else {
             var Cvalue: any;
             let keys: any = Object.keys(queryData);
             for (let key of keys) {
@@ -546,7 +618,7 @@ export default class QueryController {
         if (field == 'COUNT') {
             let count: number = 0;
             let compareArray: any = [];
-            for (let obj in group) {
+            for (let obj of group) {
                 let compareVal: any = obj[value];
                 compareArray.push(compareVal);
             }

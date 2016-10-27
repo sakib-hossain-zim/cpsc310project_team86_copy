@@ -1117,4 +1117,34 @@ describe("QueryController", function () {
         expect(ret2).not.to.be.equal(null);
         expect(ret1).to.not.deep.equal(ret2);
     });
+    it ("Should return an empty array if the dataset is empty", function() {
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courseAverage"],
+            "WHERE": {"IS": {"courses_dept": "cpsc"}},
+            "GROUP": ["courses_id"],
+            "APPLY": [ {"courseAverage": {"AVG": "courses_avg"}} ],
+            "ORDER": { "dir": "UP", "keys": ["courseAverage", "courses_id"]},
+            "AS": "TABLE"
+        };
+        let datasets: Datasets = {};
+        let controller1 = new QueryController(datasets);
+        let ret = controller1.query(query);
+        let expectedResult = {render: query.AS, result: [{}]};
+        expect(ret).to.deep.equal(expectedResult);
+    });
+    it ("Shoule be able to handle nested ANDs", function() {
+        let dataset = [ { courses_dept: 'adhe', courses_id: '412', courses_avg: 70.53 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 70.53 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 70.56 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 72.29 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 72.93 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 73.79 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 75.67 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 75.68 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 75.91 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 76.17 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 76.22 }];
+
+    })
+
 });

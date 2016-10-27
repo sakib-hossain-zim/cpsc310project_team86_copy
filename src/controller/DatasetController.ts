@@ -78,6 +78,7 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
+        console.log(this.datasets);
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -166,8 +167,8 @@ export default class DatasetController {
             // let stats =  fs.statSync('./data/');
             var dirExist = fs.existsSync('./data');
             if (!dirExist) {
-                var path =  fs.mkdirSync('./data/');
-                fs.writeFile(path + id + '.json', JSON.stringify(processedDataset));
+                fs.mkdirSync('./data/');
+                fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             } else {
                 fs.writeFile('./data/' + id + '.json', JSON.stringify(processedDataset));
             }
