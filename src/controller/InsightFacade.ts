@@ -60,7 +60,7 @@ export default class InsightFacade implements IInsightFacade {
                 let datasets = controller.getDatasets();
 
                 if (fs.existsSync('./data/' + id + '.json')){
-                    fs.unlink('./data/' + id + '.json');
+                    fs.unlinkSync('./data/' + id + '.json');
                     datasets[id] = null;
                     fulfill({code: 204, body: "delete successful"});
                 } else {
