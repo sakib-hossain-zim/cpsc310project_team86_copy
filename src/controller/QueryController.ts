@@ -182,6 +182,7 @@ export default class QueryController {
                 }
             }
         }
+
         //Liberation: Group should contains only valid keys (separated by underscore).
         if (typeof query.GROUP !== 'undefined') {
             for (let key of query.GROUP) {
@@ -191,6 +192,7 @@ export default class QueryController {
                 }
             }
         }
+
         //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
              if (query.APPLY.length > 0) {
