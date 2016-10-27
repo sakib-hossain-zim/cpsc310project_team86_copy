@@ -43,6 +43,7 @@ interface stringArray {
 export default class QueryController {
     private datasets: Datasets = {};
     private count: number = 0;
+    private is_NOT: boolean = false;
 
 
     constructor(datasets: Datasets) {
@@ -397,28 +398,47 @@ export default class QueryController {
     public compare(field: string, value: any, threshold?: any) {
         var res: Boolean;
         // console.log("in compare method");
-        switch (field) {
-            case "GT":
-                res = value > +threshold;
-                break;
-            case 'LT':
-                res = value < +threshold;
-                break;
-            case 'EQ':
-                res = value == threshold;
-                break;
-            case 'NOT':
-                res = value !== threshold;
-                break;
-            case 'IS':
-                res = value === threshold;
-                break;
-            default:
-                res = true;
-                break;
+        if (!this.is_NOT) {
+            switch (field) {
+                case "GT":
+                    res = value > +threshold;
+                    break;
+                case 'LT':
+                    res = value < +threshold;
+                    break;
+                case 'EQ':
+                    res = value == threshold;
+                    break;
+                case 'IS':
+                    res = value === threshold;
+                    break;
+                default:
+                    res = true;
+                    break;
 
+            }
+            return res;
         }
-        return res;
+        if (this.is_NOT) {
+            switch (field) {
+                case "GT":
+                    res = value <= +threshold;
+                    break;
+                case 'LT':
+                    res = value >= +threshold;
+                    break;
+                case 'EQ':
+                    res = value != threshold;
+                    break;
+                case 'IS':
+                    res = value !== threshold;
+                    break;
+                default:
+                    res = true;
+                    break;
+            }
+            return res;
+        }
     }
 
     /**
@@ -442,26 +462,17 @@ export default class QueryController {
                 for (let i in obj) {
                     key = i;
                     value = obj[i];
-                  //  console.log(field);
-                  //  console.log(key);
-                  //  console.log(value);
                     if (count < 1) {
                         ANDFilteredData = this.filterRows(key, value, data);
-                      //  console.log(ANDFilteredData);
                     }
                     else {
-                       // console.log(ANDFilteredData);
                         ANDFilteredData = this.filterRows(key, value, ANDFilteredData);
                     }
                     count++;
-                //   that.count++;
-                 //   console.log(that.count);
                 }
             }
-          //  console.log(ANDFilteredData);
             return ANDFilteredData;
         }
-
 
         else if (field == 'OR') {
             var ORFilteredData: any;
@@ -482,8 +493,24 @@ export default class QueryController {
             }
             return ORReturnData;
         }
+        else if (field == "NOT") {
+            if (this.is_NOT) {
+                this.is_NOT = false;
+            } else {
+                this.is_NOT = true;
+            }
+            var key: any;
+            var value: any;
+            var NOTfilteredData: any;
 
-        else {
+            console.log(queryData);
+            for (let prop in queryData) {
+                key = prop;
+                value = queryData[key];
+                NOTfilteredData =this.filterRows(key, value, data);
+            }
+            return NOTfilteredData;
+        } else {
             var Cvalue: any;
             let keys: any = Object.keys(queryData);
             for (let key of keys) {

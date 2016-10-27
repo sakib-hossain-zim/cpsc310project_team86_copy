@@ -1131,5 +1131,20 @@ describe("QueryController", function () {
         let ret = controller1.query(query);
         let expectedResult = {render: query.AS, result: [{}]};
         expect(ret).to.deep.equal(expectedResult);
+    });
+    it ("Shoule be able to handle nested ANDs", function() {
+        let dataset = [ { courses_dept: 'adhe', courses_id: '412', courses_avg: 70.53 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 70.53 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 70.56 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 72.29 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 72.93 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 73.79 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 75.67 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 75.68 },
+            { courses_dept: 'adhe', courses_id: '329', courses_avg: 75.91 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 76.17 },
+            { courses_dept: 'adhe', courses_id: '412', courses_avg: 76.22 }];
+
     })
+
 });

@@ -78,6 +78,7 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
+        console.log(this.datasets);
 
         return new Promise(function (fulfill, reject) {
             try {
