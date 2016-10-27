@@ -74,22 +74,6 @@ export default class QueryController {
             return false;
         }
 
-        // Boourns: courses_dept should be recognizable as valid key.
-        if (typeof query.GET !== 'undefined'){
-            for (let key of query.GET){
-                if (key !== 'courses_dept' ||
-                    key !== 'courses_id' ||
-                    key !== 'courses_avg' ||
-                    key !== 'courses_instructor' ||
-                    key !== 'courses_title' ||
-                    key !== 'courses_pass' ||
-                    key !== 'courses_fail' ||
-                    key !== 'courses_audit' ) {
-                    return false;
-                }
-            }
-        }
-
         //Firefly: a query ORDER by a key not in GET should not be valid.
         if (typeof query.ORDER !== 'undefined') {
             if (typeof query.ORDER === 'string') {
