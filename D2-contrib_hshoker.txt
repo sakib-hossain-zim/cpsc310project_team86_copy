@@ -1,0 +1,32 @@
+D2-contrib_hshoker
+
+Monday noon test pass rate: 18 passing, 17 failing, 0 skipped (51.4%)
+
+Code coverage:
+
+=============================== Coverage summary ===============================
+
+Statements : 88.84% ( 446/502 )
+Branches : 78.71% ( 159/202 )
+Functions : 92.31% ( 48/52 )
+Lines : 88.84% ( 446/502 )
+
+Contributions:
+
+Tried to fix 204/201 error
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/0c223ff7381952ad6d75a878c98c7db4420b6180
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/56b5be4736ad760aaf934a4aeaeb062f6f8de77c
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/01b449cbc5f17c17f911e175f849f4abb41af5ad
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/1857289e24284da6dfeb47120865403900353f90
+
+Tried to fix isValid
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/37cc20b430dc0036e49b9f78870880b563aefe52
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/9a86a3f295c46a98ca36dca051aec2e5ba0258db
+
+Write test for QueryControllerSpec
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/020169d827122f362bd0b67824c3d1c3b8e3c2e6
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/608cf092d937658beac735fe62fca010dc49b935
+https://github.com/CS310-2016Fall/cpsc310project_team86/blob/b4a342e05373816647a55f03d5f6b64bcadd5ab1/test/QueryControllerSpec.ts
