@@ -1,0 +1,23 @@
+Monday noon test pass rate: 18 passing, 17 failing, 0 skipped (51.4%)
+
+Code coverage:
+
+=============================== Coverage summary ===============================
+
+Statements : 88.84% ( 446/502 )
+Branches : 78.71% ( 159/202 )
+Functions : 92.31% ( 48/52 )
+Lines : 88.84% ( 446/502 )
+Contributions:
+
+Wrote GROUP/APPLY and APPLY FIELDS and part first version of ORDER
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/d07f81cfa2dab7baebfeee678f232da2e6ff308b
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/dcfd294f4510cea4cc8bb18c5ffb5df1fc596c89
+
+Wrote most of isValid
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/614f6d902c003c73fe401cea7ccb4221705e982f
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/c851d6f55526d6cad94b47d2e1a4ac1a5ef419a6
