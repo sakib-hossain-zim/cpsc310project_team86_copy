@@ -217,7 +217,6 @@ export default class QueryController {
              }
         }
 
-
         if (typeof query !== 'undefined' && query !== null && Object.keys(query).length > 0) {
             return true;
         }
@@ -294,10 +293,10 @@ export default class QueryController {
                     respObj.courses_uuid = obj.courses_uuid;
                 }
             }
-            for (let applyKey of applyKeyArray) {
+            if (typeof query.APPLY !== 'undefined' && query.APPLY.length > 0) {
+                for (let applyKey of applyKeyArray) {
                 respObj[applyKey] = obj[applyKey];
             }
-            if (typeof query.APPLY !== 'undefined' && query.APPLY.length > 0) {
                 for (let obj of query.APPLY) {
                     let newProp: any = Object.keys(obj)[0];
                     respObj[newProp] = "";
@@ -346,7 +345,7 @@ export default class QueryController {
 
         // let properties = (Object.keys(key).length);
 
-        if (typeof query.ORDER == "string") {
+        if (typeof query.ORDER === "string") {
             console.log("in orderResponse if branch");
             return data.sort(function (result1: any, result2: any) {
                 if (result1[key] < result2[key]) {
@@ -397,10 +396,10 @@ export default class QueryController {
      * @param threshold
      * @returns {Boolean} obtained from the comparison
      */
-    public compare(field: string, value: any, threshold?: any) {
+    public compare(field: string, value: any, is_NOT: boolean, threshold?: any ) {
         var res: Boolean;
         // console.log("in compare method");
-        if (!this.is_NOT) {
+        if (!is_NOT) {
             switch (field) {
                 case "GT":
                     res = value > +threshold;
@@ -421,7 +420,7 @@ export default class QueryController {
             }
             return res;
         }
-        if (this.is_NOT) {
+        if (is_NOT) {
             switch (field) {
                 case "GT":
                     res = value <= +threshold;
@@ -451,7 +450,7 @@ export default class QueryController {
      * @returns {any}
      */
 
-    public filterRows(field: any, queryData: any, data: any) {
+    public filterRows(field: any, queryData: any, data: any, is_NOT: boolean) {
         let that = this;
         var filteredData: any = [];
         var ANDFilteredData: any;
@@ -465,10 +464,10 @@ export default class QueryController {
                     key = i;
                     value = obj[i];
                     if (count < 1) {
-                        ANDFilteredData = this.filterRows(key, value, data);
+                        ANDFilteredData = this.filterRows(key, value, data, is_NOT);
                     }
                     else {
-                        ANDFilteredData = this.filterRows(key, value, ANDFilteredData);
+                        ANDFilteredData = this.filterRows(key, value, ANDFilteredData, is_NOT);
                     }
                     count++;
                 }
@@ -487,7 +486,7 @@ export default class QueryController {
                 for (let i in obj) {
                     key = i;
                     value = obj[i];
-                    ORFilteredData = this.filterRows(key, value, data);
+                    ORFilteredData = this.filterRows(key, value, data, is_NOT);
                     for (let obj of ORFilteredData) {
                         ORReturnData.push(obj);
                     }
@@ -496,11 +495,6 @@ export default class QueryController {
             return ORReturnData;
         }
         else if (field == "NOT") {
-            if (this.is_NOT) {
-                this.is_NOT = false;
-            } else {
-                this.is_NOT = true;
-            }
             var key: any;
             var value: any;
             var NOTfilteredData: any;
@@ -509,7 +503,11 @@ export default class QueryController {
             for (let prop in queryData) {
                 key = prop;
                 value = queryData[key];
-                NOTfilteredData =this.filterRows(key, value, data);
+                if (is_NOT) {
+                    NOTfilteredData = this.filterRows(key, value, data, false);
+                } else {
+                    NOTfilteredData = this.filterRows(key, value, data, true);
+                }
             }
             return NOTfilteredData;
         } else {
@@ -523,7 +521,7 @@ export default class QueryController {
             }
 
             data.forEach(function (x: any) {
-                if (that.compare(field, x[replaceKey], Cvalue)) {
+                if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
                     filteredData.push(x);
                 }
             });
@@ -693,9 +691,9 @@ export default class QueryController {
         var parsedData = JSON.parse(data);
         // let groupedData: any = [];
         // let GET_results = this.filterColumns(query, parsedData);
-
+        var GET_results: any;
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
-            var GET_results = this.filterColumns(query, parsedData);
+            GET_results = this.filterColumns(query, parsedData);
         } else {
             let operands: stringArray = Object.keys(query.WHERE);
             var key: any = operands[0];
@@ -703,8 +701,8 @@ export default class QueryController {
             for (let i in query.WHERE) {
                 value = query.WHERE[i];
             }
-            let WHERE_Results: {}[] = this.filterRows(key, value, parsedData);
-            var GET_results = this.filterColumns(query, WHERE_Results);
+            let WHERE_Results: {}[] = this.filterRows(key, value, parsedData, false);
+            GET_results = this.filterColumns(query, WHERE_Results);
 
         }
         var groupedData = this.group(query, GET_results,0);
