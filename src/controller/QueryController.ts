@@ -555,7 +555,7 @@ export default class QueryController {
      * @param data
      * @returns {any}
      */
-    public group(query: QueryRequest, data: any, i: any): any {
+    public group(query: QueryRequest, data: any): any {
         if (typeof query.GROUP == 'undefined') {
             return data;
         }
@@ -591,7 +591,7 @@ export default class QueryController {
      * @param query
      * @returns {number}
      */
-    public applyFields(field:any, value: any, group: any, query: QueryRequest) {
+    public applyFields(field: any, value: any, group: any, query: QueryRequest) {
         if (field == 'MAX') {
             var max: number = 0;
             for (let obj of group) {
@@ -631,9 +631,19 @@ export default class QueryController {
             return avg;
         }
 
-        if (field == 'COUNT') {
+        //     let query: QueryRequest = {
+        //         "GET": ["courses_dept", "courses_id", "numSections"],
+        //         "WHERE": {"IS": {"courses_dept": "cpsc"}},
+        //         "GROUP": [ "courses_dept", "courses_id" ],
+        //         "APPLY": [ {"numSections": {"COUNT": "courses_uuid"}} ],
+        //         "ORDER": { "dir": "UP", "keys": ["numSections", "courses_dept", "courses_id"]},
+        //         "AS":"TABLE"
+        //     };
+
+        if (field == 'COUNT') { // value = courses_id, group = the group in data
             let count: number = 0;
             let compareArray: any = [];
+
             for (let obj of group) {
                 let compareVal: any = obj[value];
                 compareArray.push(compareVal);
@@ -642,6 +652,7 @@ export default class QueryController {
             for (var i = 0; i < compareArray.length; i++) {
                 counts[compareArray[i]] = 1 + (counts[compareArray[i]] || 0);
             }
+
             let key = Object.keys(counts)[0];
             let result: any = counts[key];
 
@@ -668,14 +679,13 @@ export default class QueryController {
         let applyArray: any = query.APPLY;
 
         for (let group of data) {
-
             for (let obj of applyArray) {
-                let applyProp: any = Object.keys(obj)[0];
+                let applyProp: any = Object.keys(obj)[0]; // courseAverage
                 for (let prop in obj) {
                     let innerObj: any = obj[prop];
                     for (let innerProp in innerObj) {
-                        var field: any = innerProp;
-                        var value: any = innerObj[innerProp];
+                        var field: any = innerProp; // field = MIN
+                        var value: any = innerObj[innerProp]; // value = courseAverage
                     }
                 }
                 let result: any = this.applyFields(field, value, group, query);
@@ -720,7 +730,7 @@ export default class QueryController {
             var GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-        var groupedData = this.group(query, GET_results, 0);
+        var groupedData = this.group(query, GET_results);
 
         let appliedData: any = this.apply(query, groupedData);
 
