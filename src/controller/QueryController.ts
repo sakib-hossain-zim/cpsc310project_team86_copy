@@ -48,7 +48,6 @@ export default class QueryController {
 
     constructor(datasets: Datasets) {
         this.datasets = datasets;
-
     }
 
     /**
@@ -57,24 +56,29 @@ export default class QueryController {
      * @returns {boolean}
      */
     public isValid(query: QueryRequest): boolean {
+        // Undefined query and no AS value
+        if (typeof query === 'undefined' || query.AS != 'TABLE') {
+            return false;
+        }
 
-        //console.log(query.GET.includes(query.ORDER));
-        if (typeof query === 'undefined') return false;
-        if (query.AS != 'TABLE') return false;
-
+        // No keys in GROUP
         if (typeof query.GROUP != 'undefined') {
             if ((query.GROUP.length) == 0) {
                 return false;
             }
         }
+
+        // APPLY is defined but GROUP is undefined
         if ((typeof query.APPLY !== 'undefined') && (typeof query.GROUP == 'undefined')) {
             return false;
         }
+
+        // GROUP is defined but APPLY is undefined
         if ((typeof query.GROUP !== 'undefined') && (typeof query.APPLY == 'undefined')) {
             return false;
         }
 
-        //Firefly: a query ORDER by a key not in GET should not be valid.
+        // Firefly: a query ORDER by a key not in GET should not be valid.
         if (typeof query.ORDER !== 'undefined') {
             if (typeof query.ORDER === 'string') {
                 let is_ORDER_key_in_GET: boolean = false;
@@ -87,6 +91,7 @@ export default class QueryController {
                     return false;
                 }
             }
+
             if (typeof query.ORDER == 'object') {
                 let is_ORDER_key_in_GET: boolean = false;
                 if (Object.keys(query.ORDER).length !== 0) {
@@ -106,7 +111,7 @@ export default class QueryController {
             }
         }
 
-        //Kryptonite: All keys in GROUP should be present in GET.
+        // Kryptonite: All keys in GROUP should be present in GET.
         if (typeof query.GROUP !== 'undefined'){
             for (let groupKey of query.GROUP) {
                 let is_in_GROUP_and_GET: boolean = false;
@@ -118,10 +123,11 @@ export default class QueryController {
 
                 if (!is_in_GROUP_and_GET) {
                     return false;
-                }}
+                }
+            }
         }
 
-        //Kwyjibo: All keys in GET should be in either GROUP or APPLY.
+        // Kwyjibo: All keys in GET should be in either GROUP or APPLY.
         if (typeof query.GROUP !== 'undefined') {
             for (let getKey of query.GET) {
                 let is_in_GROUP_or_APPLY: boolean = false;
@@ -143,14 +149,12 @@ export default class QueryController {
             }
         }
 
-        //LAGUNA keys in GROUP cannot occur in APPLY and vice versa
+        // Laguna: keys in GROUP cannot occur in APPLY and vice versa
         if (typeof query.GROUP !== 'undefined' && typeof query.APPLY !== 'undefined') {
             for (let groupKey of query.GROUP) {
-                //  console.log(groupKey);
                 for (let applyObj of query.APPLY) {
                     let applyKeys = Object.keys(applyObj);
                     for (let key of applyKeys) {
-                        //   console.log(key);
                         if (key == groupKey) {
                             return false;
                         }
@@ -166,7 +170,8 @@ export default class QueryController {
                 }
             }
         }
-        //Liberation: Group should contains only valid keys (separated by underscore).
+
+        // Liberation: Group should contains only valid keys (separated by underscore).
         if (typeof query.GROUP !== 'undefined') {
             for (let key of query.GROUP) {
                 if (key !== 'courses_dept' && key !== 'courses_avg' && key !== 'courses_instructor' && key !== 'courses_pass'
@@ -175,7 +180,8 @@ export default class QueryController {
                 }
             }
         }
-        //Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
+
+        // Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
              if (query.APPLY.length > 0) {
 
@@ -222,7 +228,7 @@ export default class QueryController {
     }
 
     /**
-     * Check is dataset is empty
+     * Check if dataset is empty
      * @param data
      * @returns {boolean}
      */
@@ -244,6 +250,8 @@ export default class QueryController {
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
+        // If GROUP is present, all GET terms must correspond to either GROUP terms or to terms defined in the APPLY block.
+        // GET terms with underscores must occur in GROUP while GET terms without underscores must be defined in APPLY.
         if (typeof query.APPLY !== "undefined") {
             if (query.APPLY.length > 0) {
                 for (let objApply of query.APPLY) {
@@ -292,9 +300,11 @@ export default class QueryController {
                     respObj.courses_uuid = obj.courses_uuid;
                 }
             }
+
             for (let applyKey of applyKeyArray) {
                 respObj[applyKey] = obj[applyKey];
             }
+
             if (typeof query.APPLY !== 'undefined' && query.APPLY.length > 0) {
                 for (let obj of query.APPLY) {
                     let newProp: any = Object.keys(obj)[0];
@@ -303,6 +313,7 @@ export default class QueryController {
             }
             respObjArray.push(respObj);
         });
+
         return respObjArray; // object with only the GET columns
     }
 
@@ -340,12 +351,8 @@ export default class QueryController {
 
         let that = this;
         let key:any = query.ORDER;
-        // console.log(Object.keys(key).length);
-
-        // let properties = (Object.keys(key).length);
 
         if (typeof query.ORDER == "string") {
-            console.log("in orderResponse if branch");
             return data.sort(function (result1: any, result2: any) {
                 if (result1[key] < result2[key]) {
                     return -1;
@@ -356,6 +363,7 @@ export default class QueryController {
                 return 0;
             });
         }
+
         let dir: any = Object.keys(key)[0];
         let keys: any = Object.keys(key)[1];
         let dirValue: any = key[dir];
@@ -397,7 +405,6 @@ export default class QueryController {
      */
     public compare(field: string, value: any, threshold?: any) {
         var res: Boolean;
-        // console.log("in compare method");
         if (!this.is_NOT) {
             switch (field) {
                 case "GT":
@@ -419,6 +426,7 @@ export default class QueryController {
             }
             return res;
         }
+
         if (this.is_NOT) {
             switch (field) {
                 case "GT":
@@ -477,7 +485,6 @@ export default class QueryController {
         else if (field == 'OR') {
             var ORFilteredData: any;
             var ORReturnData: any = [];
-            // console.log(queryData);
             for (let obj of queryData) {
                 var key: any;
                 var value: any;
@@ -493,6 +500,7 @@ export default class QueryController {
             }
             return ORReturnData;
         }
+
         else if (field == "NOT") {
             if (this.is_NOT) {
                 this.is_NOT = false;
@@ -503,11 +511,10 @@ export default class QueryController {
             var value: any;
             var NOTfilteredData: any;
 
-            console.log(queryData);
             for (let prop in queryData) {
                 key = prop;
                 value = queryData[key];
-                NOTfilteredData =this.filterRows(key, value, data);
+                NOTfilteredData = this.filterRows(key, value, data);
             }
             return NOTfilteredData;
         } else {
@@ -529,6 +536,11 @@ export default class QueryController {
         }
     }
 
+    /**
+     * Make an array from an object
+     * @param obj
+     * @returns {Array}
+     */
     public arrayFromObject(obj) {
         var arr = [];
         for (var i in obj) {
@@ -536,8 +548,9 @@ export default class QueryController {
         }
         return arr;
     }
+
     /**
-     * Group the list of results into sets by some matching criteria (an Array of groups, each of which is an array)
+     * Group the list of results into sets by some matching criteria (an array of groups, each of which is an array)
      * @param query
      * @param data
      * @returns {any}
@@ -546,6 +559,7 @@ export default class QueryController {
         if (typeof query.GROUP == 'undefined') {
             return data;
         }
+
         let groupKeys: any = query.GROUP;
 
         var hash = {};
@@ -555,6 +569,7 @@ export default class QueryController {
             for (let key of groupKeys) {
                 keyArray.push(obj[key]);
             }
+
             let property: string = keyArray.join('');
 
             if (hash.hasOwnProperty(property)) {
@@ -615,6 +630,7 @@ export default class QueryController {
             avg = +avg.toFixed(2);
             return avg;
         }
+
         if (field == 'COUNT') {
             let count: number = 0;
             let compareArray: any = [];
@@ -629,7 +645,7 @@ export default class QueryController {
             let key = Object.keys(counts)[0];
             let result: any = counts[key];
 
-            for (let obj in group)  {
+            for (let obj of group)  {
                 if(!query.GET.hasOwnProperty(value)) {
                     delete obj[value];
                 }
@@ -648,7 +664,6 @@ export default class QueryController {
         if (typeof query.APPLY == 'undefined') {
             return data;
         }
-        console.log("in apply method");
         let respArray: any = [];
         let applyArray: any = query.APPLY;
 
@@ -705,7 +720,7 @@ export default class QueryController {
             var GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-        var groupedData = this.group(query, GET_results,0);
+        var groupedData = this.group(query, GET_results, 0);
 
         let appliedData: any = this.apply(query, groupedData);
 

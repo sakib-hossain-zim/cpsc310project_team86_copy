@@ -78,7 +78,6 @@ export default class DatasetController {
 
         let that = this;
         let processedDataset : toBeAdded[] = [];
-        console.log(this.datasets);
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -92,20 +91,13 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
-                    //  console.log(zip.folder('courses'));
                     zip.folder('courses').forEach(function(relativePath, file) {
                         var p : Promise<string> = file.async("string");
                         promises.push(p);
                     });
                     Promise.all(promises).then(function(files: any[]) {
-
-                        console.log("typeof files is " + typeof files);
-
                         if (typeof files === 'undefined' || files.length < 1) {
-                            console.log("made it here = typeof files undefined or length < 1");
                             that.invalidDataSet = true;
-                            console.log("dataset is invalid");
-                            //throw error("Invalid dataset");
                         }
                         files.forEach(function (file) {
 
@@ -117,7 +109,6 @@ export default class DatasetController {
 
                             if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
                                 that.invalidDataSet = true;
-                                console.log ("still invalid");
                             }
                             if (results.length > 0) {
 
@@ -137,11 +128,8 @@ export default class DatasetController {
                                 });
                             }
                         });
-                        console.log ("about to save id");
                         that.save(id, processedDataset);
-                        //fulfill(true);
                     });
-                    console.log("hits fulfill");
                     fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
@@ -164,7 +152,6 @@ export default class DatasetController {
     private save(id: string, processedDataset: any) {
         // add it to the memory model
         try {
-            // let stats =  fs.statSync('./data/');
             var dirExist = fs.existsSync('./data');
             if (!dirExist) {
                 fs.mkdirSync('./data/');
