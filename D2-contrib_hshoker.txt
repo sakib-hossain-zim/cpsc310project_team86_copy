@@ -29,4 +29,4 @@ Write test for QueryControllerSpec
 
 https://github.com/CS310-2016Fall/cpsc310project_team86/commit/020169d827122f362bd0b67824c3d1c3b8e3c2e6
 https://github.com/CS310-2016Fall/cpsc310project_team86/commit/608cf092d937658beac735fe62fca010dc49b935
-https://github.com/CS310-2016Fall/cpsc310project_team86/blob/b4a342e05373816647a55f03d5f6b64bcadd5ab1/test/QueryControllerSpec.ts
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/fe5462069a3407a5f66673b4c93fd6b3ac6f969a
