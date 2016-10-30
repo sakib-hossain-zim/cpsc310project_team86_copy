@@ -441,16 +441,13 @@ export default class QueryController {
                     if (threshold.includes("*")) {
                         let stringKeys: string[] = threshold.split("*");
                         if (stringKeys.length == 3 ) {
-                            console.log("first first")
                             if (value.includes(stringKeys[1])) {
                                 res = true;
                             }
                         } else if (stringKeys[0] == "" && stringKeys[1] == "") {
-                            console.log("in first if");
                             res = true;
 
                         }  else if (stringKeys[0] == "") {
-                            console.log("in second if");
                             let endKey = stringKeys[1];
                             if (value.endsWith(endKey)) {
                                 res = true;
@@ -458,7 +455,6 @@ export default class QueryController {
                                 res = false;
                             }
                         } else if (stringKeys[1] == "") {
-                            console.log("in third if");
                             let beforeKey = stringKeys[0];
                             if (value.startsWith(beforeKey)) {
                                 res = true;
@@ -495,10 +491,37 @@ export default class QueryController {
                     res = value != threshold;
                     break;
                 case 'IS':
-                   let stringKeys: string[] = threshold.split("*");
-                    console.log(stringKeys);
-                   // console.log(stringKeys[1]);
-                    res = value.includes(threshold);
+                    if (threshold.includes("*")) {
+                        let stringKeys: string[] = threshold.split("*");
+                        if (stringKeys.length == 3 ) {
+                            if (value.includes(stringKeys[1])) {
+                                res = false;
+                            }
+                        } else if (stringKeys[0] == "" && stringKeys[1] == "") {
+                            res = false;
+
+                        }  else if (stringKeys[0] == "") {
+                            let endKey = stringKeys[1];
+                            if (value.endsWith(endKey)) {
+                                res = false;
+                            } else {
+                                res = true;
+                            }
+                        } else if (stringKeys[1] == "") {
+                            let beforeKey = stringKeys[0];
+                            if (value.startsWith(beforeKey)) {
+                                res = false;
+                            } else {
+                                res = true;
+                            }
+                        }
+                    } else {
+                        if (threshold === value) {
+                            res = false;
+                        } else {
+                            res = true;
+                        }
+                    }
                     break;
                 default:
                     res = true;
