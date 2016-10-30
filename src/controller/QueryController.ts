@@ -649,37 +649,24 @@ export default class QueryController {
             return avg;
         }
 
-        //     let query: QueryRequest = {
-        //         "GET": ["courses_dept", "courses_id", "numSections"],
-        //         "WHERE": {"IS": {"courses_dept": "cpsc"}},
-        //         "GROUP": [ "courses_dept", "courses_id" ],
-        //         "APPLY": [ {"numSections": {"COUNT": "courses_uuid"}} ],
-        //         "ORDER": { "dir": "UP", "keys": ["numSections", "courses_dept", "courses_id"]},
-        //         "AS":"TABLE"
-        //     };
-
-        if (field == 'COUNT') { // value = courses_id, group = the group in data
+        if (field == 'COUNT') { // value = courses_id, group = the group in data, obj
             let count: number = 0;
-            let compareArray: any = [];
+            var alreadyInObject: any = {};
 
             for (let obj of group) {
-                let compareVal: any = obj[value];
-                compareArray.push(compareVal);
+                var currentValue = obj[value];
+                if (!alreadyInObject.hasOwnProperty(currentValue)) {
+                    alreadyInObject[currentValue] = 1;
+                    count++;
+                }
             }
-            var counts = {};
-            for (var i = 0; i < compareArray.length; i++) {
-                counts[compareArray[i]] = 1 + (counts[compareArray[i]] || 0);
-            }
-
-            let key = Object.keys(counts)[0];
-            let result: any = counts[key];
 
             for (let obj of group)  {
                 if(!query.GET.hasOwnProperty(value)) {
                     delete obj[value];
                 }
             }
-            return result;
+            return count;
         }
     }
 
