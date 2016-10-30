@@ -1,7 +1,6 @@
 /**
  * Created by rtholmes on 2016-10-31.
  */
-
 import {Datasets, default as DatasetController} from "../src/controller/DatasetController";
 import QueryController from "../src/controller/QueryController";
 import {QueryRequest} from "../src/controller/QueryController";
