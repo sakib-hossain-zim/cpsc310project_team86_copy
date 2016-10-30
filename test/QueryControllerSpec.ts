@@ -82,7 +82,7 @@ describe("QueryController", function () {
         expect(isValid).to.equal(false);
     });
 
-    it("Should be able a valid query for empty apply", function () {
+    it("Should be a valid query for empty apply", function () {
         let query: QueryRequest = {
             "GET": ["courses_dept"],
             "WHERE": {},
@@ -280,6 +280,40 @@ describe("QueryController", function () {
         Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
         expect(ret).not.to.be.equal(null);
     });
+
+    // it("Duraflame: sorting by courses_dept should be supported", function () {
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_id", "courses_dept"],
+    //         "WHERE": {"EQ": {"courses_avg": 90}},
+    //         "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_id"]},
+    //         "AS": "TABLE"
+    //     };
+    //     let datasetController = new DatasetController();
+    //     let datasets: Datasets = datasetController.getDatasets();
+    //     let controller = new QueryController(datasets);
+    //     let ret = controller.query(query);
+    //     let expectedResult =
+    //     {render: 'TABLE',
+    //         result:
+    //             [{courses_dept: "apsc", courses_id: 279},
+    //                 {courses_dept: "arch", courses_id: 598},
+    //                 {courses_dept: "arch", courses_id: 598},
+    //                 {courses_dept: "arth", courses_id: 599},
+    //                 {courses_dept: "arth", courses_id: 599},
+    //                 {courses_dept: "arth", courses_id: 599},
+    //                 {courses_dept: "arth", courses_id: 599},
+    //                 {courses_dept: "audi", courses_id: 515},
+    //                 {courses_dept: "audi", courses_id: 515},
+    //                 {courses_dept: "ceen", courses_id: 596},
+    //                 {courses_dept: "chem", courses_id: 407},
+    //                 {courses_dept: "chem", courses_id: 407},
+    //                 {courses_dept: "chil", courses_id: 599},
+    //                 {courses_dept: "chil", courses_id: 599},
+    //                 {courses_dept: "crwr", courses_id: 599}]};
+    //     Log.test('In: ' + JSON.stringify(query) + ', out: ' + JSON.stringify(ret));
+    //     expect(ret).not.to.be.equal(null);
+    //     expect(JSON.stringify(ret)).to.contain(JSON.stringify(expectedResult));
+    // });
 
     it("Should be able to query with OLD QUERY EXAMPLE 1", function () {
         let query: QueryRequest = {

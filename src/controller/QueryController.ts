@@ -324,13 +324,15 @@ export default class QueryController {
      * @param i
      * @returns {any}
      */
-    public sortUpFunction (value1: any, value2: any, keys: any, i: number) {
-        if (value1[keys[i]] < value2[keys[i]]) {
-            return -1;
-        } else if (value1[keys[i]] > value2[keys[i]]) {
-            return 1;
-        } else {
-            return this.sortUpFunction (value1, value2, keys, i + 1);
+    public sortUpFunction (value1: any, value2: any, keys: any, i: number, data: any) {
+        if (i != data.length) {
+            if (value1[keys[i]] < value2[keys[i]]) {
+                return -1;
+            } else if (value1[keys[i]] > value2[keys[i]]) {
+                return 1;
+            } else {
+                return this.sortUpFunction(value1, value2, keys, i + 1, data);
+            }
         }
     }
 
@@ -342,13 +344,15 @@ export default class QueryController {
      * @param i
      * @returns {any}
      */
-    public sortDownFunction (value1: any, value2: any, keys: any, i: number) {
-        if (value1[keys[i]] > value2[keys[i]]) {
-            return -1;
-        } else if (value1[keys[i]] < value2[keys[i]]) {
-            return 1;
-        } else {
-            return this.sortDownFunction (value1, value2, keys, i + 1);
+    public sortDownFunction (value1: any, value2: any, keys: any, i: number, data: any) {
+        if (i != data.length) {
+            if (value1[keys[i]] > value2[keys[i]]) {
+                return -1;
+            } else if (value1[keys[i]] < value2[keys[i]]) {
+                return 1;
+            } else {
+                return this.sortDownFunction(value1, value2, keys, i + 1, data);
+            }
         }
     }
 
@@ -399,13 +403,13 @@ export default class QueryController {
         if (i < keysValue.length) {
             if (dirValue == 'UP') {
                 return data.sort(function (result1: any, result2: any) {
-                    return that.sortUpFunction(result1, result2, keysValue, i);
+                    return that.sortUpFunction(result1, result2, keysValue, i, data);
                 });
             }
 
             if (dirValue == 'DOWN') {
                 return data.sort(function (result1: any, result2: any) {
-                    return that.sortDownFunction(result1, result2, keysValue, i);
+                    return that.sortDownFunction(result1, result2, keysValue, i, data);
                 });
             }
         }
