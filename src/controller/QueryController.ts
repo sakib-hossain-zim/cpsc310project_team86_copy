@@ -544,6 +544,8 @@ export default class QueryController {
         var filteredData: any = [];
         var ANDFilteredData: any;
         var count: number = 0;
+        var ORFilteredData: any;
+        var ORReturnData: any = [];
 
         if (field == 'AND') {
             for (let obj of queryData) {
@@ -565,8 +567,7 @@ export default class QueryController {
         }
 
         else if (field == 'OR') {
-            var ORFilteredData: any;
-            var ORReturnData: any = [];
+
             for (let obj of queryData) {
                 var key: any;
                 var value: any;
