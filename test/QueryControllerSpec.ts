@@ -1120,4 +1120,82 @@ describe("QueryController", function () {
 
     })
 
+    // it("New Order supported", function () {
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_id", "courses_avg"],
+    //     "WHERE": {
+    //     "GT": {
+    //         "courses_avg": 90
+    //     }
+    // },
+    // "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_id"]},
+    // "AS": "TABLE"
+    //     };
+    //     let datasetController = new DatasetController();
+    //     let datasets: Datasets = datasetController.getDatasets();
+    //     let controller = new QueryController(datasets);
+    //     let ret = controller.query(query);
+    //     console.log (ret);
+    //     let expectedResult: any =
+    //     {
+    //         render: 'TABLE',
+    //         result: [{courses_dept: 'cpsc', courses_id: '527', numSections: 2},
+    //             {courses_dept: 'cpsc', courses_id: '547', numSections: 2},
+    //             {courses_dept: 'cpsc', courses_id: '418', numSections: 4},
+    //             {courses_dept: 'cpsc', courses_id: '515', numSections: 4},
+    //             {courses_dept: 'cpsc', courses_id: '261', numSections: 6},
+    //             {courses_dept: 'cpsc', courses_id: '503', numSections: 6},
+    //             {courses_dept: 'cpsc', courses_id: '507', numSections: 6},
+    //             {courses_dept: 'cpsc', courses_id: '522', numSections: 6},
+    //             {courses_dept: 'cpsc', courses_id: '259', numSections: 8},
+    //             {courses_dept: 'cpsc', courses_id: '444', numSections: 8},
+    //             {courses_dept: 'cpsc', courses_id: '501', numSections: 8},
+    //             {courses_dept: 'cpsc', courses_id: '502', numSections: 8},
+    //             {courses_dept: 'cpsc', courses_id: '509', numSections: 8},
+    //             {courses_dept: 'cpsc', courses_id: '543', numSections: 8},
+    //             {courses_dept: 'cpsc', courses_id: '449', numSections: 10},
+    //             {courses_dept: 'cpsc', courses_id: '490', numSections: 10},
+    //             {courses_dept: 'cpsc', courses_id: '521', numSections: 10},
+    //             {courses_dept: 'cpsc', courses_id: '540', numSections: 10},
+    //             {courses_dept: 'cpsc', courses_id: '301', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '302', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '303', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '311', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '312', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '319', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '340', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '410', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '411', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '415', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '416', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '420', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '421', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '422', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '425', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '445', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '500', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '513', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '544', numSections: 12},
+    //             {courses_dept: 'cpsc', courses_id: '344', numSections: 13},
+    //             {courses_dept: 'cpsc', courses_id: '589', numSections: 14},
+    //             {courses_dept: 'cpsc', courses_id: '430', numSections: 16},
+    //             {courses_dept: 'cpsc', courses_id: '314', numSections: 18},
+    //             {courses_dept: 'cpsc', courses_id: '317', numSections: 18},
+    //             {courses_dept: 'cpsc', courses_id: '404', numSections: 18},
+    //             {courses_dept: 'cpsc', courses_id: '322', numSections: 22},
+    //             {courses_dept: 'cpsc', courses_id: '320', numSections: 23},
+    //             {courses_dept: 'cpsc', courses_id: '310', numSections: 26},
+    //             {courses_dept: 'cpsc', courses_id: '313', numSections: 26},
+    //             {courses_dept: 'cpsc', courses_id: '304', numSections: 30},
+    //             {courses_dept: 'cpsc', courses_id: '213', numSections: 31},
+    //             {courses_dept: 'cpsc', courses_id: '221', numSections: 37},
+    //             {courses_dept: 'cpsc', courses_id: '210', numSections: 39},
+    //             {courses_dept: 'cpsc', courses_id: '121', numSections: 43},
+    //             {courses_dept: 'cpsc', courses_id: '110', numSections: 49}]
+    //     };
+    //     expect(ret).not.to.be.equal(null);
+    //     expect(ret).to.deep.equal(expectedResult);
+    //
+    // });
+
 });
