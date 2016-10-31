@@ -10,7 +10,7 @@ import filter = require("core-js/library/fn/array/filter");
 export interface QueryRequest {
     GET: string|string[];
     WHERE: {};
-    ORDER: {};
+    ORDER?: {};
     AS: string;
     APPLY?: {}[];
     GROUP?: string[];
