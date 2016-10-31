@@ -809,8 +809,9 @@ export default class QueryController {
 
         // let i: number = 0;
         // new order should be able to work on D1 queries that don't contain GROUP or APPLY
-        if (typeof query.GROUP == 'undefined'  &&
+        if (typeof query.GROUP == 'undefined'  ||
             typeof query.APPLY == 'undefined' ) {
+            console.log("typeof group is " + typeof query.GROUP);
             console.log ("group and apply don't exist branch");
             var orderedResults = this.orderResponse(query, GET_results, 0);
         }
@@ -819,7 +820,6 @@ export default class QueryController {
             console.log ("group and apply do exist branch");
         var orderedResults = this.orderResponse(query, appliedData, 0);
     }
-
         var response: QueryResponse = {render: query.AS, result: orderedResults};
         return response;
     }
