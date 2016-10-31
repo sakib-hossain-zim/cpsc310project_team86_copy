@@ -64,8 +64,6 @@ export default class DatasetController {
 
         return that.datasets;
     }
-
-
     /**
      * Process the dataset; save it to disk when complete.
      *
