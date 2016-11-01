@@ -577,7 +577,16 @@ export default class QueryController {
                     value = obj[i];
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
                     for (let obj of ORFilteredData) {
-                        ORReturnData.push(obj);
+                        let is_in_retArray: boolean = false;
+                        for (let retObj of ORReturnData) {
+                            if (retObj["courses_uuid"] == obj["courses_uuid"]) {
+                                is_in_retArray = true;
+                            }
+                        }
+                        if (!is_in_retArray) {
+                            ORReturnData.push(obj);
+
+                        }
                     }
                 }
             }
@@ -807,16 +816,6 @@ export default class QueryController {
 
         let appliedData: any = this.apply(query, groupedData);
 
-        // let i: number = 0;
-        // new order should be able to work on D1 queries that don't contain GROUP or APPLY
-        // if (typeof query.GROUP == 'undefined') {
-        //     // console.log("typeof group is " + typeof query.GROUP);
-        //     console.log ("group and apply don't exist branch");
-        //     var orderedResults = this.orderResponse(query, GET_results, 0);
-        // }
-        // if GROUP and APPLY exist then use this order:
-        // else {
-        //     console.log ("group and apply do exist branch");
         var orderedResults = this.orderResponse(query, appliedData, 0);
     // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
