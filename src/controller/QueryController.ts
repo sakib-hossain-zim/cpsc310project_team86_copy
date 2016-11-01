@@ -576,20 +576,14 @@ export default class QueryController {
                     key = i;
                     value = obj[i];
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
-                    for (let obj of ORFilteredData) {
-                        let is_in_retArray: boolean = false;
-                        for (let retObj of ORReturnData) {
-                            if (retObj["courses_uuid"] == obj["courses_uuid"]) {
-                                is_in_retArray = true;
-                            }
-                        }
-                        if (!is_in_retArray) {
-                            ORReturnData.push(obj);
-
-                        }
-                    }
+                     for (let obj of ORFilteredData) {
+                             if (typeof obj["duplicate"] == "undefined") {
+                                 obj["duplicate"] = 0;
+                                 ORReturnData.push(obj);
+                         }
+                         }
                 }
-            }
+        }
             return ORReturnData;
         }
 
@@ -620,12 +614,11 @@ export default class QueryController {
             for (let i in queryData) {
                 Cvalue = queryData[i];
             }
-
-            data.forEach(function (x: any) {
-                if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
-                    filteredData.push(x);
-                }
-            });
+                 data.forEach(function (x: any) {
+                     if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
+                             filteredData.push(x);
+                     }
+                     });
             return filteredData;
         }
     }
@@ -819,6 +812,7 @@ export default class QueryController {
         var orderedResults = this.orderResponse(query, appliedData, 0);
     // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
+        console.log("made it here");
         return response;
     }
 }
