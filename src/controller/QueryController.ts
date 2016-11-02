@@ -577,10 +577,10 @@ export default class QueryController {
                     value = obj[i];
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
                      for (let obj of ORFilteredData) {
-                             if (typeof obj["duplicate"] == "undefined") {
-                                 obj["duplicate"] = 0;
+                             // if (typeof obj["duplicate"] == "undefined") {
+                             //     obj["duplicate"] = 0;
                                  ORReturnData.push(obj);
-                         }
+                       //  }
                          }
                 }
         }
@@ -592,7 +592,6 @@ export default class QueryController {
             var value: any;
             var NOTfilteredData: any;
 
-            console.log(queryData);
             for (let prop in queryData) {
                 key = prop;
                 value = queryData[key];
