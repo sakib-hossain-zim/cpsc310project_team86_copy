@@ -578,7 +578,7 @@ export default class QueryController {
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
                      for (let obj of ORFilteredData) {
                              // if (typeof obj["duplicate"] == "undefined") {
-                             //     obj["duplicate"] = 0;
+                            //      obj["duplicate"] = 0;
                                  ORReturnData.push(obj);
                        //  }
                          }
@@ -615,7 +615,10 @@ export default class QueryController {
             }
                  data.forEach(function (x: any) {
                      if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
+                         if (typeof x["duplicate"] == "undefined") {
+                             x["duplicate"] = 0;
                              filteredData.push(x);
+                         }
                      }
                      });
             return filteredData;
