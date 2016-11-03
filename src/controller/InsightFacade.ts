@@ -89,6 +89,7 @@ export default class InsightFacade implements IInsightFacade {
                     if (!fs.existsSync('./data/' + id + '.json')) {
                         reject({code: 424, body: {missing: [id]}});
                     } else {
+                        console.log("made it to 200");
                         fulfill({code: 200, body: result});
                     }
                 } else {

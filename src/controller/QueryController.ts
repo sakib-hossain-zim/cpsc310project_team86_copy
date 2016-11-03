@@ -368,10 +368,6 @@ export default class QueryController {
             return data;
         }
 
-        if (data.length < 2) {
-            return data;
-        }
-
         let that = this;
         let key:any = query.ORDER;
 
