@@ -469,7 +469,6 @@ export default class QueryController {
                             res = false;
                         }
                     }
-
                     break;
                 default:
                     res = true;
@@ -546,6 +545,11 @@ export default class QueryController {
         var count: number = 0;
         var ORFilteredData: any;
         var ORReturnData: any = [];
+        var ORretValues: any = [];
+        var ORReturnData2: any = [];
+        for (let dataObj of data) {
+            ORretValues.push(dataObj["courses_uuid"]);
+        }
 
         if (field == 'AND') {
             for (let obj of queryData) {
@@ -584,7 +588,16 @@ export default class QueryController {
                          }
                 }
         }
-            return ORReturnData;
+        for (let retObj of ORReturnData) {
+            for (let value of ORretValues) {
+                if (retObj["courses_uuid"] == value) {
+                ORReturnData2.push(retObj);
+                    let index = ORretValues.indexOf(value);
+                    ORretValues.splice(index, 1);
+                }
+        }
+}
+            return ORReturnData2;
         }
 
         else if (field == "NOT") {
@@ -615,10 +628,7 @@ export default class QueryController {
             }
                  data.forEach(function (x: any) {
                      if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
-                         if (typeof x["duplicate"] == "undefined") {
-                             x["duplicate"] = 0;
                              filteredData.push(x);
-                         }
                      }
                      });
             return filteredData;
