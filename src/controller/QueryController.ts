@@ -10,7 +10,7 @@ import filter = require("core-js/library/fn/array/filter");
 export interface QueryRequest {
     GET: string|string[];
     WHERE: {};
-    ORDER?: {};
+    ORDER: {};
     AS: string;
     APPLY?: {}[];
     GROUP?: string[];
@@ -412,6 +412,7 @@ export default class QueryController {
                     return that.sortDownFunction(result1, result2, keysValue, i, data);
                 });
             }
+
         }
     }
 
@@ -576,14 +577,11 @@ export default class QueryController {
                     key = i;
                     value = obj[i];
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
-                     for (let obj of ORFilteredData) {
-                             // if (typeof obj["duplicate"] == "undefined") {
-                            //      obj["duplicate"] = 0;
-                                 ORReturnData.push(obj);
-                       //  }
-                         }
+                    for (let obj of ORFilteredData) {
+                        ORReturnData.push(obj);
+                    }
                 }
-        }
+            }
             return ORReturnData;
         }
 
@@ -592,6 +590,7 @@ export default class QueryController {
             var value: any;
             var NOTfilteredData: any;
 
+            console.log(queryData);
             for (let prop in queryData) {
                 key = prop;
                 value = queryData[key];
@@ -613,14 +612,12 @@ export default class QueryController {
             for (let i in queryData) {
                 Cvalue = queryData[i];
             }
-                 data.forEach(function (x: any) {
-                     if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
-                         if (typeof x["duplicate"] == "undefined") {
-                             x["duplicate"] = 0;
-                             filteredData.push(x);
-                         }
-                     }
-                     });
+
+            data.forEach(function (x: any) {
+                if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
+                    filteredData.push(x);
+                }
+            });
             return filteredData;
         }
     }
@@ -811,10 +808,10 @@ export default class QueryController {
 
         let appliedData: any = this.apply(query, groupedData);
 
+        // let i: number = 0;
         var orderedResults = this.orderResponse(query, appliedData, 0);
-    // }
+
         var response: QueryResponse = {render: query.AS, result: orderedResults};
-        console.log("made it here");
         return response;
     }
 }
