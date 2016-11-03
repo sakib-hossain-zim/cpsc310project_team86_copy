@@ -658,7 +658,6 @@ export default class QueryController {
         if (typeof query.GROUP == 'undefined') {
             return data;
         }
-
         let groupKeys: any = query.GROUP;
 
         var hash = {};
