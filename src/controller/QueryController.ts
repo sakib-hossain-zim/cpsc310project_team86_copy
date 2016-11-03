@@ -364,7 +364,11 @@ export default class QueryController {
      * @returns {T[]|Uint32Array|Float32Array|Int32Array|any|Uint16Array}
      */
     public orderResponse(query: QueryRequest, data: any, i: number) { // i always starts 0
-        if (typeof query.ORDER === 'undefined') {
+        if (typeof query.ORDER == 'undefined') {
+            return data;
+        }
+
+        if (data.length < 2) {
             return data;
         }
 
