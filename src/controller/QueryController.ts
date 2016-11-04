@@ -369,9 +369,9 @@ export default class QueryController {
         }
 
         let that = this;
-        let key:any = query.ORDER;
+        let key: any = query.ORDER;
 
-        if (typeof query.ORDER === "string") {
+        if (typeof query.ORDER === 'string') {
             return data.sort(function (result1: any, result2: any) {
                 if (result1[key] < result2[key]) {
                     return -1;
@@ -381,36 +381,37 @@ export default class QueryController {
                 }
                 return 0;
             });
-        }
+        } else {
 
-        let dir: any = Object.keys(key)[0];
-        let keys: any = Object.keys(key)[1];
-        let dirValue: any = key[dir];
-        let keysValue: any = key[keys];
+            let dir: any = Object.keys(key)[0];
+            let keys: any = Object.keys(key)[1];
+            let dirValue: any = key[dir];
+            let keysValue: any = key[keys];
 
-        if (keysValue.length === 1) {
-            return data.sort(function (result1: any, result2: any) {
-                if (result1[keysValue[0]] < result2[keysValue[0]]) {
-                    return -1;
+            // if (keysValue.length === 1) {
+            //     return data.sort(function (result1: any, result2: any) {
+            //         if (result1[keysValue[0]] < result2[keysValue[0]]) {
+            //             return that.
+            //         }
+            //         else if (result1[keysValue[0]] > result2[keysValue[0]]) {
+            //             return 1;
+            //         }
+            //         return 0;
+            //     });
+            // }
+
+            if (i < keysValue.length) {
+                if (dirValue == 'UP') {
+                    return data.sort(function (result1: any, result2: any) {
+                        return that.sortUpFunction(result1, result2, keysValue, i, data);
+                    });
                 }
-                else if (result1[keysValue[0]] > result2[keysValue[0]]) {
-                    return 1;
+
+                if (dirValue == 'DOWN') {
+                    return data.sort(function (result1: any, result2: any) {
+                        return that.sortDownFunction(result1, result2, keysValue, i, data);
+                    });
                 }
-                return 0;
-            });
-        }
-
-        if (i < keysValue.length) {
-            if (dirValue == 'UP') {
-                return data.sort(function (result1: any, result2: any) {
-                    return that.sortUpFunction(result1, result2, keysValue, i, data);
-                });
-            }
-
-            if (dirValue == 'DOWN') {
-                return data.sort(function (result1: any, result2: any) {
-                    return that.sortDownFunction(result1, result2, keysValue, i, data);
-                });
             }
         }
     }
