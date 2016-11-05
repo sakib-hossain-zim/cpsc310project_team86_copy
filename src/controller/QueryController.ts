@@ -653,13 +653,12 @@ export default class QueryController {
 
     public getWhereKeys (obj:any, next:any, key:any) {
 
-        // console.log('key is ' + key);
         let isBoolean: boolean = false;
 
         if (key !== null) {
-            // console.log ('checking key');
+
             let id = key.split('_')[0]
-            console.log("id is " + id);
+
             if (fs.existsSync('./data/' + id + '.json')){
                 isBoolean = true;
             }
@@ -671,74 +670,43 @@ export default class QueryController {
             }
         }
 
-        // console.log('next is ');
-        // console.log(next);
-        // console.log('object is ');
-        // console.log(obj);
-
         if (obj.length > 0){
             obj = obj[0];
-            // console.log(obj);
+
         }
         else {
-            // console.log('obj is not an array');
             obj = obj;
         }
 
         for (let prop in obj) {
-            // console.log('hi');
             let arr = obj[prop];
-            // console.log('what is arr');
-            // console.log(arr);
-
             let arrlength = arr.length;
             if (arrlength > 0){
-                // console.log('in array branch')
                 for (let i = 0; arrlength > 0; i++) {
                     arrlength = arrlength - 1;
-                    // console.log('arr');
-                    // console.log(arr[i]);
-                    // console.log('next');
                     next.push(arr[i+1]);
-                    // console.log(next);
                     let x = null;
                     return this.getWhereKeys(arr[i], next, x);
                 }
 
             }
             else {
-                console.log('no longer an array of objects');
                 for (let key in arr){
-
-                    // console.log("next is " + next);
-
                     let empty: any = [];
-
                     let nextlength = next.length;
-
-                    // console.log(nextlength);
-                    // console.log('empty is ' + empty);
-
                     if (nextlength > 1){                             // if next length is greater than one
-                        // console.log('length is bigger than 1');
-                        // console.log(next);
                         for (let a =1 ; nextlength > 0; a ++){
                             let ele = next[a];
                             empty.push(ele);
-                            // console.log(empty);
                             nextlength = nextlength -2;
                         }
 
                         return this.getWhereKeys(next, empty, key)
                     }
                     else {
-                        // console.log ('sike');
                         return this.getWhereKeys(next, empty, key);
                     }
-
                 }
-
-
             }
         }
 
