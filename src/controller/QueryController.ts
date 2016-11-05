@@ -659,7 +659,7 @@ export default class QueryController {
 
             let id = key.split('_')[0]
 
-            if (fs.existsSync('./data/' + id + '.json')){
+            if (fs.existsSync('./data/' + id + '.json') || id == 'NOT'){
                 isBoolean = true;
             }
             else {
