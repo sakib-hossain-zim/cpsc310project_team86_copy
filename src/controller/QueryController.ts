@@ -387,11 +387,12 @@ export default class QueryController {
             let keys: any = Object.keys(key)[1];
             let dirValue: any = key[dir];
             let keysValue: any = key[keys];
+            console.log(keysValue);
 
             // if (keysValue.length === 1) {
             //     return data.sort(function (result1: any, result2: any) {
             //         if (result1[keysValue[0]] < result2[keysValue[0]]) {
-            //             return that.
+            //             return -1;
             //         }
             //         else if (result1[keysValue[0]] > result2[keysValue[0]]) {
             //             return 1;
@@ -403,11 +404,10 @@ export default class QueryController {
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
                     return data.sort(function (result1: any, result2: any) {
+                        console.log (i);
                         return that.sortUpFunction(result1, result2, keysValue, i, data);
                     });
-                }
-
-                if (dirValue == 'DOWN') {
+                } else  {
                     return data.sort(function (result1: any, result2: any) {
                         return that.sortDownFunction(result1, result2, keysValue, i, data);
                     });

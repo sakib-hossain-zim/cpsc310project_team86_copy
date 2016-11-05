@@ -87,13 +87,11 @@ export default class InsightFacade implements IInsightFacade {
                 let obj = query.WHERE;
                 let empty:any =[];
                 let x = null;
-                let id = queryController.getWhereKeys(obj, empty, x);
-                console.log('my id is' + [id] );
-                console.log('my id is' + id);
-                console.log(typeof id);
-
 
                 if (isValid === true) {
+                    if (query.WHERE !== null) {
+                        var id = queryController.getWhereKeys(obj, empty, x);
+                    }
                     let result = queryController.query(query);
                     if (typeof id !== 'boolean') {
                         reject({code: 424, body: {missing: [id]}});
