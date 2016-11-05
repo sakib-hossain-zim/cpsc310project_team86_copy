@@ -83,7 +83,6 @@ export default class InsightFacade implements IInsightFacade {
                 let queryController = new QueryController(datasets);
                 //let id = query.GET[0].split('_')[0];
                 let isValid = queryController.isValid(query);
-
                 let obj = query.WHERE;
                 let empty:any =[];
                 let x = null;
