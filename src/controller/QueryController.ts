@@ -2,7 +2,7 @@
  * Created by rtholmes on 2016-06-19.
  */
 
-import {Datasets, default as DatasetController} from "./DatasetController";
+import {Datasets, default as DatasetController} from "./JSONDatasetController";
 import Log from "../Util";
 import fs = require('fs');
 import filter = require("core-js/library/fn/array/filter");

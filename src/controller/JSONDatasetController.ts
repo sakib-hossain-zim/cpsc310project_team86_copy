@@ -6,6 +6,9 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
+import {IDatasetController} from "./IDatasetController";
+import {Datasets} from "./IDatasetController";
+
 import {stringify} from "querystring";
 import {error} from "util";
 
@@ -29,7 +32,7 @@ interface toBeAdded {
 }
 
 
-export default class DatasetController {
+export default class JSONDatasetController implements IDatasetController {
 
     private datasets: Datasets = {};
     public invalidDataSet: boolean = false;

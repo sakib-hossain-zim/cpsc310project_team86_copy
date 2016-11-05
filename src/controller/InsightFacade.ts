@@ -3,7 +3,7 @@
  */
 import {QueryRequest, default as QueryController} from "./QueryController";
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
-import DatasetController from "./DatasetController";
+import DatasetController from "./JSONDatasetController";
 import fs = require('fs');
 
 
