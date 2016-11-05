@@ -17,7 +17,8 @@ describe("InsightFacade", function () {
     before(function () {
         Log.info('InsightController::before() - start');
         // this zip might be in a different spot for you
-        zipFileContents = new Buffer(fs.readFileSync('310courses.1.0.zip')).toString('base64');
+        // zipFileContents = new Buffer(fs.readFileSync('310courses.1.0.zip')).toString('base64');
+        zipFileContents = new Buffer(fs.readFileSync('310rooms.1.1.zip')).toString('base64');
         try {
             // what you delete here is going to depend on your impl, just make sure
             // all of your temporary files and directories are deleted
@@ -178,7 +179,7 @@ describe("InsightFacade", function () {
         return facade.performQuery(query).then(function (response: InsightResponse) {
             expect(response.code).to.equal(200);
         }).catch(function (response: InsightResponse) {
-            expect.fail('Should not happen');;
+            expect.fail('Should not happen');
         });
     });
 

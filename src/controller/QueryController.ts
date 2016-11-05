@@ -387,7 +387,7 @@ export default class QueryController {
             let keys: any = Object.keys(key)[1];
             let dirValue: any = key[dir];
             let keysValue: any = key[keys];
-            console.log(keysValue);
+            // console.log(keysValue);
 
             // if (keysValue.length === 1) {
             //     return data.sort(function (result1: any, result2: any) {
@@ -404,7 +404,7 @@ export default class QueryController {
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
                     return data.sort(function (result1: any, result2: any) {
-                        console.log (i);
+                        // console.log (i);
                         return that.sortUpFunction(result1, result2, keysValue, i, data);
                     });
                 } else  {

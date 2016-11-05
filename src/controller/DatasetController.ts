@@ -6,6 +6,8 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
+import ProcessJson from "./ProcessJson";
+import ProcessHtml from "./ProcessHtml";
 
 /**
  * In memory representation of all datasets.
@@ -14,18 +16,31 @@ export interface Datasets {
     [id: string]: {};
 }
 
-interface toBeAdded {
-    courses_dept: string;
-    courses_id: string;
-    courses_avg: number;
-    courses_instructor: string;
-    courses_title: string;
-    courses_pass: number;
-    courses_fail: number;
-    courses_uuid: string;
-    courses_audit: number;
-}
-
+// interface toBeAddedJson {
+//     courses_dept: string;
+//     courses_id: string;
+//     courses_avg: number;
+//     courses_instructor: string;
+//     courses_title: string;
+//     courses_pass: number;
+//     courses_fail: number;
+//     courses_uuid: string;
+//     courses_audit: number;
+// }
+//
+// interface toBeAddedHtml {
+//     rooms_fullname: string;
+//     rooms_shortname: string;
+//     rooms_number: string;
+//     rooms_name: string;
+//     rooms_address: string;
+//     rooms_lat: number;
+//     rooms_lon: number;
+//     rooms_seats: number;
+//     rooms_type: string;
+//     rooms_furniture: string;
+//     rooms_href: string;
+// }
 
 export default class DatasetController {
 
@@ -73,7 +88,12 @@ export default class DatasetController {
         Log.trace('DatasetController::process( ' + id + '... )');
 
         let that = this;
-        let processedDataset : toBeAdded[] = [];
+
+        //if filetype is json:
+        let processedDataset = [];
+        let fileType: string = "";
+        // else:
+        // let processedDataset : toBeAddedHtml[] = [];
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -87,43 +107,37 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
-                    zip.folder('courses').forEach(function(relativePath, file) {
-                        var p : Promise<string> = file.async("string");
-                        promises.push(p);
-                    });
+
+                    if (zip.files.hasOwnProperty('index.htm')) {
+                        fileType = 'html';
+                        zip.folder('310rooms.1.1').forEach(function(relativePath, file) {
+                            var p : Promise<string> = file.async("string");
+                            promises.push(p);
+                        });
+                    } else {
+                        fileType = 'json';
+                        zip.folder('courses').forEach(function(relativePath, file) {
+                            var p : Promise<string> = file.async("string");
+                            promises.push(p);
+                        });
+                    }
+
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
-                        files.forEach(function (file) {
 
-                            let results: any[];
-                            if (file !== null) {
-                                var o = JSON.parse(file);
-                                results = o.result;
-                            }
+                        if (fileType === 'json') {
+                            // if filetype is json
+                            var jsonProcess = new ProcessJson();
+                            jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                        } else {
+                            var htmlProcess = new ProcessHtml();
+                            htmlProcess.process(files, processedDataset, that.invalidDataSet);
+                        }
 
-                            if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-                                that.invalidDataSet = true;
-                            }
-                            if (results.length > 0) {
+                        // else if filetype is html
 
-                                results.forEach(function (arrObject: any) {
-                                    let tba: toBeAdded = <any>{};
-
-                                    tba.courses_dept = arrObject['Subject'];
-                                    tba.courses_id = arrObject['Course'];
-                                    tba.courses_avg = arrObject['Avg'];
-                                    tba.courses_instructor = arrObject['Professor'];
-                                    tba.courses_title = arrObject['Title'];
-                                    tba.courses_pass = arrObject['Pass'];
-                                    tba.courses_fail = arrObject['Fail'];
-                                    tba.courses_uuid = arrObject['id'];
-                                    tba.courses_audit = arrObject['Audit'];
-                                    processedDataset.push(tba);
-                                });
-                            }
-                        });
                         that.save(id, processedDataset);
                     });
                     fulfill(true);
@@ -162,3 +176,33 @@ export default class DatasetController {
         }
     }
 }
+
+// files.forEach(function (file) {
+//
+//     let results: any[];
+//     if (file !== null) {
+//         var o = JSON.parse(file);
+//         results = o.result;
+//     }
+//
+//     if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
+//         that.invalidDataSet = true;
+//     }
+//
+//     if (results.length > 0) {
+//         results.forEach(function (arrObject: any) {
+//             let tba: toBeAdded = <any>{};
+//
+//             tba.courses_dept = arrObject['Subject'];
+//             tba.courses_id = arrObject['Course'];
+//             tba.courses_avg = arrObject['Avg'];
+//             tba.courses_instructor = arrObject['Professor'];
+//             tba.courses_title = arrObject['Title'];
+//             tba.courses_pass = arrObject['Pass'];
+//             tba.courses_fail = arrObject['Fail'];
+//             tba.courses_uuid = arrObject['id'];
+//             tba.courses_audit = arrObject['Audit'];
+//             processedDataset.push(tba);
+//         });
+//     }
+// });
