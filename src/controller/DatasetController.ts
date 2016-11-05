@@ -6,8 +6,6 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
-import {stringify} from "querystring";
-import {error} from "util";
 
 /**
  * In memory representation of all datasets.
