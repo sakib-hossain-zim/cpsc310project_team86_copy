@@ -83,7 +83,8 @@ describe("InsightFacade", function () {
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('courses', zipFileContents).then(function() {
             return facade.performQuery(query).then(function (response: InsightResponse) {
-                expect(response.code).to.equal(201);
+                console.log(response.code);
+                expect(response.code).to.equal(200);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
             });
@@ -110,6 +111,100 @@ describe("InsightFacade", function () {
             expect(response.code).to.equal(424);
         });
     });
+
+    it("424 error", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courses_dept", "courses_avg"],
+            "WHERE": {
+                "OR": [
+
+                    {"IS": {"foo_dept": "adhe"}}
+                    ,
+                    {"EQ": {"courses_avg": 90}}
+                ]
+            },
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        return facade.performQuery(query).then(function (response: InsightResponse) {
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            expect(response.code).to.equal(424);
+        });
+    });
+
+    it("424 error for nested query", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["courses_dept", "courses_id", "courses_avg"],
+            "WHERE": {
+                "OR": [
+                    {"AND": [
+                        {"GT": {"courses_avg": 70}},
+                        {"IS": {"foo_dept": "adhe"}}
+                    ]},
+                    {"EQ": {"courses_avg": 90}}
+                ]
+            },
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        return facade.performQuery(query).then(function (response: InsightResponse) {
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            expect(response.code).to.equal(424);
+        });
+    });
+
+    it("give 200", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["courses_id", "courses_dept", "courses_avg"],
+            "WHERE": {
+                "OR": [
+
+                    {"IS": {"courses_dept": "adhe"}}
+                    ,
+                    {"EQ": {"courses_avg": 90}}
+                ]
+            },
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        return facade.performQuery(query).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(200);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');;
+        });
+    });
+
+    // it("424 error for 5 level nested query", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_dept", "courses_id", "courses_avg", "courses_instructor"],
+    //         "WHERE": {
+    //             "OR": [
+    //                 {"AND": [
+    //                     {"OR": [
+    //                             {"GT": {"courses_avg": 70}},
+    //                             {"IS": {"foo_instructor": "gregor"}}]},
+    //                     {"IS": {"course_dept": "cpsc"}}]} ,
+    //                 {"EQ": {"courses_avg": 90}}]
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(424);
+    //     });
+    // });
 
     it("Should be able to delete a dataset (204)", function () {
         var that = this;
