@@ -3,12 +3,14 @@
  */
 import {QueryRequest, default as QueryController} from "./QueryController";
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
-import DatasetController from "./JSONDatasetController";
+import JSONDatasetController from "./JSONDatasetController";
+import HTMLDatasetController from "./HTMLDatasetController";
 import fs = require('fs');
 
 
 export default class InsightFacade implements IInsightFacade {
-    private static datasetController = new DatasetController();
+    private static JSONdatasetController = new JSONDatasetController();
+    private static HTMLdatasetController = new HTMLDatasetController();
 
     /**
      *
@@ -17,11 +19,12 @@ export default class InsightFacade implements IInsightFacade {
      * @returns {Promise<InsightResponse>}
      */
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
+
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
         return new Promise(function (fulfill, reject) {
             try {
-                var controller = InsightFacade.datasetController;
+                var controller = InsightFacade.JSONdatasetController;
 
                 controller.process(id, content).then(function (result) {
                     try {
@@ -54,7 +57,7 @@ export default class InsightFacade implements IInsightFacade {
     public removeDataset (id:string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
             try {
-                let controller = InsightFacade.datasetController;
+                let controller = InsightFacade.JSONdatasetController;
                 let datasets = controller.getDatasets();
 
                 if (fs.existsSync('./data/' + id + '.json')){
@@ -79,7 +82,7 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             try {
 
-                let datasets = InsightFacade.datasetController.getDatasets();
+                let datasets = InsightFacade.JSONdatasetController.getDatasets();
                 let queryController = new QueryController(datasets);
                 //let id = query.GET[0].split('_')[0];
                 let isValid = queryController.isValid(query);

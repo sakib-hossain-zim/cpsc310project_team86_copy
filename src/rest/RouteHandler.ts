@@ -31,6 +31,12 @@ export default class RouteHandler {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
+            res.contentType
+            console.log(res.contentType);
+           // console.log(req.contentType());
+            console.log(req.getHref());
+            console.log(req.is('text/html'));
+            console.log(req.is('application/json'));
             // stream bytes from request into buffer and convert to base64
             // adapted from: https://github.com/restify/node-restify/issues/880#issuecomment-133485821
             let buffer: any = [];
@@ -38,7 +44,6 @@ export default class RouteHandler {
                 Log.trace('RouteHandler::postDataset(..) on data; chunk length: ' + chunk.length);
                 buffer.push(chunk);
             });
-
             req.once('end', function () {
                 let concated = Buffer.concat(buffer);
                 req.body = concated.toString('base64');
