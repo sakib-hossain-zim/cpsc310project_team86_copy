@@ -12,12 +12,14 @@ import {QueryRequest} from "../src/controller/QueryController";
 describe("InsightFacade", function () {
 
     var zipFileContents: string = null;
+    var zipFileContents_room: string = null;
     var facade: InsightFacade = null;
 
     before(function () {
         Log.info('InsightController::before() - start');
         // this zip might be in a different spot for you
         zipFileContents = new Buffer(fs.readFileSync('310courses.1.0.zip')).toString('base64');
+        zipFileContents_room = new Buffer(fs.readFileSync('310rooms.1.1.zip')).toString('base64');
         // zipFileContents = new Buffer(fs.readFileSync('310rooms.1.1.zip')).toString('base64');
         try {
             // what you delete here is going to depend on your impl, just make sure
@@ -202,4 +204,16 @@ describe("InsightFacade", function () {
             expect(response.code).to.equal(404);
         });
     });
+
+
+    it("Should be able to add a new HTML dataset (204)", function () {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        return facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(204);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');
+        });
+    });
+
 });

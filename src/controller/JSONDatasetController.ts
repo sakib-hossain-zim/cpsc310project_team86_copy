@@ -129,9 +129,11 @@ export default class DatasetController {
                         }
                         if (fileType === 'json') {
                             // if filetype is json
+                            console.log ('filetype is json');
                             var jsonProcess = new ProcessJson();
                             jsonProcess.process(files, processedDataset, that.invalidDataSet);
                         } else {
+                            console.log ('filetype is html');
                             var htmlProcess = new ProcessHtml();
                             htmlProcess.process(files, processedDataset, that.invalidDataSet);
                         }

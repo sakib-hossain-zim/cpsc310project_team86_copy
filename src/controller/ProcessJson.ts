@@ -12,6 +12,8 @@ interface toBeAddedJson {
 
 export default class ProcessJson {
     public process(files: any, processedDataset: any, invalidDataset: any): any {
+
+        console.log('parsing json');
         files.forEach(function (file) {
 
             let results: any[];
@@ -38,6 +40,7 @@ export default class ProcessJson {
                     tba.courses_uuid = arrObject['id'];
                     tba.courses_audit = arrObject['Audit'];
                     processedDataset.push(tba);
+
                 });
             }
         });
