@@ -24,8 +24,6 @@ export default class ProcessHtml {
         let buildingAddress: string;
         let count: number = 0;
         for (let file of files) {
-            let tba: toBeAddedHtml = <any>{};
-
 
             var document: ASTNode = parse5.parse(file);
             for (let child of document.childNodes) {
@@ -43,29 +41,32 @@ export default class ProcessHtml {
                     } else {
                        // console.log(bodyNode.childNodes[31]);
 
-                        tba.rooms_fullname = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
-                        tba.rooms_address = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
+                        var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
+                        var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                         var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
                         if (typeof room_info_path == 'undefined') {
                             break;
                         }
-                        tba.rooms_number = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[0].value;
+                        var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
+                        console.log(tbody.nodeName);
+                        for (let child of tbody.childNodes) {
 
-                        tba.rooms_seats = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[0].value.trim();
-
-                        tba.rooms_furniture = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[0].value.trim();
-                        tba.rooms_type = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[7].childNodes[0].value.trim();
-                        //tba.rooms_furniture.trim();
-                        //tba.rooms_type.trim();
-
-
-                        console.log(tba);
-                        processedDataset.push(tba);
+                            if (child.nodeName == 'tr') {
+                                let tba: toBeAddedHtml = <any>{};
+                                tba.rooms_fullname = roomsFullName;
+                                tba.rooms_address = roomsAddress;
+                                tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                                tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                                tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                processedDataset.push(tba);
+                            }
+                        }
+                       // console.log(tba);
                         console.log(processedDataset);
                     }
                 }
             }
-
         }
     }
 }
@@ -285,40 +286,4 @@ export default class ProcessHtml {
 //         }
 //        // console.log(HTMLprocessedDataset);
 //
-// }
-
-
-//         files.forEach(function (file) {
-//
-//             let results: any[];
-//             if (file !== null) {
-//                 var o = JSON.parse(file);
-//                 results = o.result;
-//             }
-//
-//             if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-//                 invalidDataset = true;
-//             }
-//
-//             if (results.length > 0) {
-//                 results.forEach(function (arrObject: any) {
-//                     let tba: toBeAddedHtml = <any>{};
-//
-//                     tba.rooms_fullname = arrObject['Subject'];
-//                     tba.rooms_shortname = arrObject['Course'];
-//                     tba.rooms_number = arrObject['Avg'];
-//                     tba.rooms_name = arrObject['Professor'];
-//                     tba.rooms_address = arrObject['Title'];
-//                     tba.rooms_lat = arrObject['Pass'];
-//                     tba.rooms_lon = arrObject['Fail'];
-//                     tba.rooms_seats = arrObject['id'];
-//                     tba.rooms_type = arrObject['Audit'];
-//                     tba.rooms_furniture = arrObject['idk'];
-//                     tba.rooms_href = arrObject['idk url'];
-//                     processedDataset.push(tba);
-//                 });
-//             }
-//         });
-//         console.log("parsing html");
-//     }
 // }

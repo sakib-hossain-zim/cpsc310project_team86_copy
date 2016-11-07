@@ -112,6 +112,7 @@ export default class DatasetController {
                         let zip1 = zip.folder('campus');
                         let zip2 = zip1.folder('discover');
                         zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                            file.name;
                             var p : Promise<string> = file.async("string");
                             promises.push(p);
                         });
