@@ -1,4 +1,7 @@
 /**
+ * Created by Sp05_ on 2016-11-05.
+ */
+/**
  * Created by rtholmes on 2016-09-03.
  */
 import Log from "../Util";
@@ -6,8 +9,11 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
-import ProcessJson from "./ProcessJson";
-import ProcessHtml from "./ProcessHtml";
+import {IDatasetController} from "./IDatasetController";
+import {Datasets} from "./IDatasetController";
+
+import {stringify} from "querystring";
+import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -16,33 +22,20 @@ export interface Datasets {
     [id: string]: {};
 }
 
-// interface toBeAddedJson {
-//     courses_dept: string;
-//     courses_id: string;
-//     courses_avg: number;
-//     courses_instructor: string;
-//     courses_title: string;
-//     courses_pass: number;
-//     courses_fail: number;
-//     courses_uuid: string;
-//     courses_audit: number;
-// }
-//
-// interface toBeAddedHtml {
-//     rooms_fullname: string;
-//     rooms_shortname: string;
-//     rooms_number: string;
-//     rooms_name: string;
-//     rooms_address: string;
-//     rooms_lat: number;
-//     rooms_lon: number;
-//     rooms_seats: number;
-//     rooms_type: string;
-//     rooms_furniture: string;
-//     rooms_href: string;
-// }
+interface toBeAdded {
+    courses_dept: string;
+    courses_id: string;
+    courses_avg: number;
+    courses_instructor: string;
+    courses_title: string;
+    courses_pass: number;
+    courses_fail: number;
+    courses_uuid: string;
+    courses_audit: number;
+}
 
-export default class DatasetController {
+
+export default class HTMLDatasetController implements IDatasetController {
 
     private datasets: Datasets = {};
     public invalidDataSet: boolean = false;
@@ -88,11 +81,7 @@ export default class DatasetController {
         Log.trace('DatasetController::process( ' + id + '... )');
 
         let that = this;
-
-        //if filetype is json:
-        let processedDataset = [];
-        let fileType: string = "";
-
+        let processedDataset : toBeAdded[] = [];
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -106,38 +95,43 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
-
-                    if (zip.files.hasOwnProperty('index.htm')) {
-                        fileType = 'html';
-                        let zip1 = zip.folder('campus');
-                        let zip2 = zip1.folder('discover');
-                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
-                            var p : Promise<string> = file.async("string");
-                            promises.push(p);
-                        });
-                    } else {
-                        fileType = 'json';
-                        zip.folder('courses').forEach(function(relativePath, file) {
-                            var p : Promise<string> = file.async("string");
-                            promises.push(p);
-                        });
-                    }
-
+                    zip.folder('courses').forEach(function(relativePath, file) {
+                        var p : Promise<string> = file.async("string");
+                        promises.push(p);
+                    });
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
-                        if (fileType === 'json') {
-                            // if filetype is json
-                            var jsonProcess = new ProcessJson();
-                            jsonProcess.process(files, processedDataset, that.invalidDataSet);
-                        } else {
-                            var htmlProcess = new ProcessHtml();
-                            htmlProcess.process(files, processedDataset, that.invalidDataSet);
-                        }
+                        files.forEach(function (file) {
 
-                        // else if filetype is html
+                            let results: any[];
+                            if (file !== null) {
+                                var o = JSON.parse(file);
+                                results = o.result;
+                            }
 
+                            if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
+                                that.invalidDataSet = true;
+                            }
+                            if (results.length > 0) {
+
+                                results.forEach(function (arrObject: any) {
+                                    let tba: toBeAdded = <any>{};
+
+                                    tba.courses_dept = arrObject['Subject'];
+                                    tba.courses_id = arrObject['Course'];
+                                    tba.courses_avg = arrObject['Avg'];
+                                    tba.courses_instructor = arrObject['Professor'];
+                                    tba.courses_title = arrObject['Title'];
+                                    tba.courses_pass = arrObject['Pass'];
+                                    tba.courses_fail = arrObject['Fail'];
+                                    tba.courses_uuid = arrObject['id'];
+                                    tba.courses_audit = arrObject['Audit'];
+                                    processedDataset.push(tba);
+                                });
+                            }
+                        });
                         that.save(id, processedDataset);
                     });
                     fulfill(true);
@@ -159,7 +153,7 @@ export default class DatasetController {
      * @param id
      * @param processedDataset
      */
-    private save(id: string, processedDataset: any) {
+    public save(id: string, processedDataset: any) {
         // add it to the memory model
         try {
             var dirExist = fs.existsSync('./data');
@@ -176,33 +170,3 @@ export default class DatasetController {
         }
     }
 }
-
-// files.forEach(function (file) {
-//
-//     let results: any[];
-//     if (file !== null) {
-//         var o = JSON.parse(file);
-//         results = o.result;
-//     }
-//
-//     if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-//         that.invalidDataSet = true;
-//     }
-//
-//     if (results.length > 0) {
-//         results.forEach(function (arrObject: any) {
-//             let tba: toBeAdded = <any>{};
-//
-//             tba.courses_dept = arrObject['Subject'];
-//             tba.courses_id = arrObject['Course'];
-//             tba.courses_avg = arrObject['Avg'];
-//             tba.courses_instructor = arrObject['Professor'];
-//             tba.courses_title = arrObject['Title'];
-//             tba.courses_pass = arrObject['Pass'];
-//             tba.courses_fail = arrObject['Fail'];
-//             tba.courses_uuid = arrObject['id'];
-//             tba.courses_audit = arrObject['Audit'];
-//             processedDataset.push(tba);
-//         });
-//     }
-// });
