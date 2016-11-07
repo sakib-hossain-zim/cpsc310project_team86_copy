@@ -50,13 +50,22 @@ export default class ProcessHtml {
                             break;
                         }
                         tba.rooms_number = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[0].value;
-                        tba.rooms_seats = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[0].value;
-                        tba.rooms_furniture = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[0].value;
-                        tba.rooms_type = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[7].childNodes[0].value;
+
+                        tba.rooms_seats = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[0].value.trim();
+
+                        tba.rooms_furniture = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[0].value.trim();
+                        tba.rooms_type = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[7].childNodes[0].value.trim();
+                        //tba.rooms_furniture.trim();
+                        //tba.rooms_type.trim();
+
+
                         console.log(tba);
+                        processedDataset.push(tba);
+                        console.log(processedDataset);
                     }
                 }
             }
+
         }
     }
 }
