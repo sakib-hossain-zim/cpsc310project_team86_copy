@@ -19,6 +19,8 @@ interface toBeAddedHtml {
 export default class ProcessHtml {
     public process(files: any, processedDataset: any, invalidDataset: any): any {
         let HTMLprocessedDataset: any = [];
+        let buildingFullName: string;
+        let buildingAddress: string;
 
         for (let file of files) {
             console.log("newfile");
@@ -88,10 +90,14 @@ export default class ProcessHtml {
                         break;
                     }
                 }
+                // where we need to extract building information as well
                 let count4: number = 0;
                 for (let child of div4.childNodes) {
                     if (child.nodeName == 'div') {
                         count4++;
+                        if (count4 == 2) {
+                            var buildingDiv = child;
+                        }
                         if (count4 == 3) {
                             console.log("made it to div5");
                             var div5 = child;
@@ -99,6 +105,60 @@ export default class ProcessHtml {
                         }
                     }
                 }
+                //get building info
+                for (let child of buildingDiv.childNodes) {
+                    if (child.nodeName == 'div') {
+                        var buildingDiv2 = child;
+                        break;
+                    }
+                }
+                for (let child of buildingDiv2.childNodes) {
+                    if (child.nodeName == 'div') {
+                        var buildingDiv3 = child;
+                        break;
+                    }
+                }
+                for (let child of buildingDiv3.childNodes) {
+                    if (child.nodeName == 'div') {
+                        var buildingDiv4 = child;
+                        break;
+                    }
+                }
+                for (let child of buildingDiv4.childNodes) {
+                    if (child.nodeName == 'h2') {
+                        var h2 = child;
+                    }
+                    if (child.nodeName == 'div') {
+                        var buildingDiv5 = child;
+                    }
+                }
+                // extracting building full name
+                for (let child of h2.childNodes) {
+                    if (child.nodeName == 'span') {
+                        var span = child;
+                        break;
+                    }
+                }
+                for (let child of span.childNodes) {
+                    if (child.nodeName == '#text') {
+                        buildingFullName = child.value;
+                    }
+                }
+                // extracting building address
+
+                for (let child of buildingDiv5.childNodes) {
+                    if (child.nodeName == 'div') {
+                        var buildingDiv6 = child;
+                        break;
+                    }
+                }
+                for (let child of buildingDiv6.childNodes) {
+                    if (child.nodeName == '#text') {
+                        buildingAddress = child.value;
+                    }
+                }
+
+// end of extracting building info
                 for (let child of div5.childNodes) {
                     if (child.nodeName == 'div') {
                         console.log("made it to div6");
@@ -135,6 +195,8 @@ export default class ProcessHtml {
                     }
                     for (let child of tbody.childNodes) {
                         let tba: toBeAddedHtml = <any>{};
+                        tba.rooms_fullname = buildingFullName;
+                        tba.rooms_address = buildingAddress;
 
                         if (child.nodeName == 'tr') {
                             console.log("made it to tr");
