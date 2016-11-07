@@ -33,6 +33,17 @@ export default class ProcessHtml {
                 }
             }
             for (let child of htmlNode.childNodes) {
+
+                if (child.nodeName == 'head'){
+                    // console.log('made it here');
+                    var headNode = child;
+                    var headAttrs = headNode.childNodes[9];
+                    if (typeof headAttrs !== 'undefined'){
+                        // console.log(headAttrs.attrs[1].value);
+                        var shortName= headAttrs.attrs[1].value;
+                    }
+                }
+
                 if (child.nodeName == 'body') {
                     var bodyNode = child;
                     if (count == 0) {
@@ -48,14 +59,17 @@ export default class ProcessHtml {
                             break;
                         }
                         var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
-                        console.log(tbody.nodeName);
+                        //console.log(tbody.nodeName);
                         for (let child of tbody.childNodes) {
 
                             if (child.nodeName == 'tr') {
                                 let tba: toBeAddedHtml = <any>{};
                                 tba.rooms_fullname = roomsFullName;
+                                tba.rooms_shortname = shortName;
                                 tba.rooms_address = roomsAddress;
                                 tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                var roomnumber= tba.rooms_number;
+                                tba.rooms_name = shortName+"_"+roomnumber;
                                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
                                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
