@@ -68,6 +68,7 @@ export default class ProcessHtml {
                                 tba.rooms_shortname = shortName;
                                 tba.rooms_address = roomsAddress;
                                 tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
                                 var roomnumber= tba.rooms_number;
                                 tba.rooms_name = shortName+"_"+roomnumber;
                                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
