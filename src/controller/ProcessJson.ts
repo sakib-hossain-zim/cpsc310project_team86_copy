@@ -40,7 +40,6 @@ export default class ProcessJson {
                     tba.courses_uuid = arrObject['id'];
                     tba.courses_audit = arrObject['Audit'];
                     processedDataset.push(tba);
-
                 });
             }
         });

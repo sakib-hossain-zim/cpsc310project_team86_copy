@@ -18,6 +18,54 @@ interface toBeAddedHtml {
 }
 
 export default class ProcessHtml {
+    private sendLocationRequest (url: string): any {
+        // http://skaha.cs.ubc.ca:8022/api/v1/team<YOUR-TEAM-NUMBER>/<ADDRESS>
+        // var encodedAddress = encodeURIComponent(roomAddress);
+        // var buildURL = "http://skaha.cs.ubc.ca:8022/api/v1/team86/" + encodedAddress;
+        // // var response;
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('GET', buildURL, false);
+        // xhr.send(null);
+        // return xhr.responseText;
+
+        // var request = new XMLHttpRequest();
+        // request.onreadystatechange = function() {
+        //     if (request.readyState === 4) {
+        //         if (request.status === 200) {
+        //             document.body.className = 'ok';
+        //             console.log(request.responseText);
+        //         } else {
+        //             document.body.className = 'error';
+        //         }
+        //     }
+        // };
+        // request.open("GET", buildURL , true);
+        // request.send(null);
+        // function httpGetAsync(url, callback) {
+        //     var xmlHttp = new XMLHttpRequest();
+        //     xmlHttp.onreadystatechange = function() {
+        //         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+        //             callback(xmlHttp.responseText);
+        //     };
+        //     xmlHttp.open("GET", url, true); // true for asynchronous
+        //     xmlHttp.send(null);
+        // }
+    }
+
+    private httpGetAsync (url, callback) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                callback(xmlHttp.responseText);
+        };
+        xmlHttp.open("GET", url, true); // true for asynchronous
+        xmlHttp.send(null);
+    }
+
+    // private getResponse (text: string) {
+    //     return text;
+    // }
+
     public process(files: any, processedDataset: any, invalidDataset: any): any {
         let buildingFullName: string;
         let buildingShortName: string;
@@ -27,13 +75,12 @@ export default class ProcessHtml {
 
             var document: ASTNode = parse5.parse(file);
             for (let child of document.childNodes) {
-
                 if (child.nodeName == 'html') {
                     var htmlNode = child;
                 }
             }
-            for (let child of htmlNode.childNodes) {
 
+            for (let child of htmlNode.childNodes) {
                 if (child.nodeName == 'head'){
                     // console.log('made it here');
                     var headNode = child;
@@ -51,7 +98,6 @@ export default class ProcessHtml {
                         break;
                     } else {
                        // console.log(bodyNode.childNodes[31]);
-
                         var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                         var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                         var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
@@ -63,18 +109,50 @@ export default class ProcessHtml {
                         for (let child of tbody.childNodes) {
 
                             if (child.nodeName == 'tr') {
-                                let tba: toBeAddedHtml = <any>{};
-                                tba.rooms_fullname = roomsFullName;
-                                tba.rooms_shortname = shortName;
-                                tba.rooms_address = roomsAddress;
-                                tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-                                tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-                                var roomnumber= tba.rooms_number;
-                                tba.rooms_name = shortName+"_"+roomnumber;
-                                tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
-                                tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-                                tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-                                processedDataset.push(tba);
+                                var tba: toBeAddedHtml = <any>{};
+                                // tba.rooms_fullname = roomsFullName;
+                                // tba.rooms_shortname = shortName;
+                                // tba.rooms_address = roomsAddress;
+
+                                var encodedAddress = encodeURIComponent(roomsAddress);
+                                var buildURL = "http://skaha.cs.ubc.ca:8022/api/v1/team86/" + encodedAddress;
+                                let request = require("request");
+
+                                let req = {
+                                    url: buildURL,
+                                    method: 'GET',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                };
+
+                                request(req, function (err, res, body) {
+                                    this.config = JSON.parse(body);
+                                    if (!this.config.hasOwnProperty("error")) {
+                                        tba.rooms_fullname = roomsFullName;
+                                        tba.rooms_shortname = shortName;
+                                        tba.rooms_address = roomsAddress;
+                                        tba.rooms_lat = this.config.lat;
+                                        tba.rooms_lon = this.config.lon;
+                                        tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                        tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                                        var roomnumber= tba.rooms_number;
+                                        tba.rooms_name = shortName + "_" + roomnumber;
+                                        tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                                        tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                                        tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                        processedDataset.push(tba);
+                                    }
+                                });
+
+                                // tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                // tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                                // var roomnumber= tba.rooms_number;
+                                // tba.rooms_name = shortName + "_" + roomnumber;
+                                // tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                                // tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                                // tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                // processedDataset.push(tba);
                             }
                         }
                        // console.log(tba);

@@ -2,7 +2,7 @@
  * Created by rtholmes on 2016-06-19.
  */
 
-import {Datasets, default as DatasetController} from "./JSONDatasetController";
+import {Datasets, default as DatasetController} from "./DatasetController";
 import Log from "../Util";
 import fs = require('fs');
 import filter = require("core-js/library/fn/array/filter");
@@ -361,7 +361,7 @@ export default class QueryController {
      * @param query
      * @param data
      * @param i
-     * @returns {T[]|Uint32Array|Float32Array|Int32Array|any|Uint16Array}
+     * @returns {any}
      */
     public orderResponse(query: QueryRequest, data: any, i: number) { // i always starts 0
         if (typeof query.ORDER == 'undefined') {
@@ -382,13 +382,10 @@ export default class QueryController {
                 return 0;
             });
         } else {
-
             let dir: any = Object.keys(key)[0];
             let keys: any = Object.keys(key)[1];
             let dirValue: any = key[dir];
             let keysValue: any = key[keys];
-            // console.log(keysValue);
-
             // if (keysValue.length === 1) {
             //     return data.sort(function (result1: any, result2: any) {
             //         if (result1[keysValue[0]] < result2[keysValue[0]]) {
@@ -400,11 +397,9 @@ export default class QueryController {
             //         return 0;
             //     });
             // }
-
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
                     return data.sort(function (result1: any, result2: any) {
-                        // console.log (i);
                         return that.sortUpFunction(result1, result2, keysValue, i, data);
                     });
                 } else  {

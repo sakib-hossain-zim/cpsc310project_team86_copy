@@ -2,7 +2,7 @@
  * Created by rtholmes on 2016-09-03.
  */
 
-import DatasetController from "../src/controller/JSONDatasetController";
+import DatasetController from "../src/controller/DatasetController";
 import Log from "../src/Util";
 
 import JSZip = require('jszip');
