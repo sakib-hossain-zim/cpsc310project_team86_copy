@@ -106,13 +106,9 @@ export default class ProcessHtml {
                         }
                         var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
                         //console.log(tbody.nodeName);
-                        for (let child of tbody.childNodes) {
-
+                        tbody.childNodes.forEach(function (child) {
                             if (child.nodeName == 'tr') {
                                 var tba: toBeAddedHtml = <any>{};
-                                // tba.rooms_fullname = roomsFullName;
-                                // tba.rooms_shortname = shortName;
-                                // tba.rooms_address = roomsAddress;
 
                                 var encodedAddress = encodeURIComponent(roomsAddress);
                                 var buildURL = "http://skaha.cs.ubc.ca:8022/api/v1/team86/" + encodedAddress;
@@ -144,17 +140,58 @@ export default class ProcessHtml {
                                         processedDataset.push(tba);
                                     }
                                 });
-
-                                // tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-                                // tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-                                // var roomnumber= tba.rooms_number;
-                                // tba.rooms_name = shortName + "_" + roomnumber;
-                                // tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
-                                // tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-                                // tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-                                // processedDataset.push(tba);
                             }
-                        }
+                        });
+
+                        // for (let child of tbody.childNodes) {
+                        //
+                        //     if (child.nodeName == 'tr') {
+                        //         var tba: toBeAddedHtml = <any>{};
+                        //         // tba.rooms_fullname = roomsFullName;
+                        //         // tba.rooms_shortname = shortName;
+                        //         // tba.rooms_address = roomsAddress;
+                        //
+                        //         var encodedAddress = encodeURIComponent(roomsAddress);
+                        //         var buildURL = "http://skaha.cs.ubc.ca:8022/api/v1/team86/" + encodedAddress;
+                        //         let request = require("request");
+                        //
+                        //         let req = {
+                        //             url: buildURL,
+                        //             method: 'GET',
+                        //             headers: {
+                        //                 'Content-Type': 'application/json'
+                        //             }
+                        //         };
+                        //
+                        //         request(req, function (err, res, body) {
+                        //             this.config = JSON.parse(body);
+                        //             if (!this.config.hasOwnProperty("error")) {
+                        //                 tba.rooms_fullname = roomsFullName;
+                        //                 tba.rooms_shortname = shortName;
+                        //                 tba.rooms_address = roomsAddress;
+                        //                 tba.rooms_lat = this.config.lat;
+                        //                 tba.rooms_lon = this.config.lon;
+                        //                 tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                        //                 tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                        //                 var roomnumber= tba.rooms_number;
+                        //                 tba.rooms_name = shortName + "_" + roomnumber;
+                        //                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                        //                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                        //                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                        //                 processedDataset.push(tba);
+                        //             }
+                        //         });
+                        //
+                        //         // tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                        //         // tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                        //         // var roomnumber= tba.rooms_number;
+                        //         // tba.rooms_name = shortName + "_" + roomnumber;
+                        //         // tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                        //         // tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                        //         // tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                        //         // processedDataset.push(tba);
+                        //     }
+                        // }
                        // console.log(tba);
                         console.log(processedDataset);
                     }
