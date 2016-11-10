@@ -16,31 +16,6 @@ export interface Datasets {
     [id: string]: {};
 }
 
-// interface toBeAddedJson {
-//     courses_dept: string;
-//     courses_id: string;
-//     courses_avg: number;
-//     courses_instructor: string;
-//     courses_title: string;
-//     courses_pass: number;
-//     courses_fail: number;
-//     courses_uuid: string;
-//     courses_audit: number;
-// }
-//
-// interface toBeAddedHtml {
-//     rooms_fullname: string;
-//     rooms_shortname: string;
-//     rooms_number: string;
-//     rooms_name: string;
-//     rooms_address: string;
-//     rooms_lat: number;
-//     rooms_lon: number;
-//     rooms_seats: number;
-//     rooms_type: string;
-//     rooms_furniture: string;
-//     rooms_href: string;
-// }
 
 export default class DatasetController {
 
@@ -129,17 +104,16 @@ export default class DatasetController {
                             that.invalidDataSet = true;
                         }
                         if (fileType === 'json') {
-                            // if filetype is json
+                            // If filetype is json
                             console.log ('filetype is json');
                             var jsonProcess = new ProcessJson();
                             jsonProcess.process(files, processedDataset, that.invalidDataSet);
                         } else {
+                            // Else if filetype is html
                             console.log ('filetype is html');
                             var htmlProcess = new ProcessHtml();
                             htmlProcess.process(files, processedDataset, that.invalidDataSet);
                         }
-
-                        // else if filetype is html
 
                         that.save(id, processedDataset);
                     });
