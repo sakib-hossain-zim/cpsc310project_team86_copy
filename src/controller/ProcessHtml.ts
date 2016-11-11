@@ -31,11 +31,9 @@ export default class ProcessHtml {
         let buildingAddress: string;
         let count: number = 0;
         // let tba: toBeAddedHtml = <any>{};
-        let filecount: number = 0;
+
 
         for (let file of files) {
-            filecount++;
-
 
             var document: ASTNode = parse5.parse(file);
             for (let child of document.childNodes) {
@@ -70,7 +68,7 @@ export default class ProcessHtml {
                         var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                         var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
 
-                        for (let child of ucll_tbody.childNodes){
+                        for (let child of ucll_tbody.childNodes) {
 
                             if (child.nodeName == 'tr') {
                                 let tba: toBeAddedHtml = <any>{};
@@ -86,20 +84,37 @@ export default class ProcessHtml {
                                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
                                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                // console.log('start');
+                                this.getLatLon(ucll_roomAddress).then(function(value:any){
+                                    let geo: GeoResponse = <any>{};
+                                    if (!value.hasOwnProperty('error')){
+                                        geo.lat = value.lat;
+                                        geo.lon = value.lon;
+                                    }
+                                    else {
+                                        geo.error = value.error;
+                                    }
 
-                                processedDataset.push(tba);
+                                    tba.rooms_lat = geo.lat;
+                                    tba.rooms_lon = geo.lon;
+                                    processedDataset.push(tba);
+
+                                    // console.log('end');
+
+                                });
+
+                                // processedDataset.push(tba);
                                 // console.log(processedDataset);
 
                             }
 
                             else {
-                                console.log('nothing');
+                               // console.log('nothing');
                             }
 
 
-
                             // processedDataset.push(tba);
-                            console.log(processedDataset);
+                           // console.log(processedDataset);
                         }
                     }
 
@@ -133,8 +148,25 @@ export default class ProcessHtml {
                                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
                                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                // console.log('start');
+                                this.getLatLon(roomsAddress).then(function(value:any){
+                                    // console.log('work');
+                                    let geo: GeoResponse = <any>{};
+                                    if (!value.hasOwnProperty('error')){
+                                        geo.lat = value.lat;
+                                        geo.lon = value.lon;
+                                    }
+                                    else {
+                                       geo.error = value.error;
+                                    }
 
-                                processedDataset.push(tba);
+                                    tba.rooms_lat = geo.lat;
+                                    tba.rooms_lon = geo.lon;
+                                    processedDataset.push(tba);
+                                    console.log(processedDataset);
+                                    // console.log('end');
+                                });
+                                // processedDataset.push(tba);
                                 // console.log(processedDataset);
 
                             }
@@ -145,58 +177,39 @@ export default class ProcessHtml {
             }
         }
     }
-}
 
-    // public getLatLon (address: any){
-    //
-    //     return new Promise(function (fulfill, reject) {
-    //
-    //         let encodedAddress = encodeURI(address);
-    //         let url = "skaha.cs.ubc.ca";
-    //         let path = "/api/v1/team86/" + encodedAddress;
-    //
-    //         var options = {
-    //             host: url,
-    //             port: 8022,
-    //             path: path
-    //         };
-    //
-    //         //console.log('in promise');
-    //
-    //         http.get(options, function (res) {
-    //             //console.log('STATUS: ' + res.statusCode);
-    //             res.on("data", function (chunk) {
-    //                 //console.log("BODY: " + chunk);
-    //                 var jsonlatlon = JSON.parse(chunk);
-    //                 //console.log(jsonlatlon);
-    //                 fulfill(jsonlatlon);
-    //             });
-    //
-    //             // console.log('in here');
-    //
-    //         }).on('error', function (e: any) {
-    //             console.log("Got error: " + e.message);
-    //             fulfill(e);
-    //         });
-    //
-    //     }).then(function (value: any) {
-    //
-    //         console.log(value);
-    //
-    //         let geo: GeoResponse = <any>{};
-    //
-    //         if (value.hasOwnProperty('error')) {
-    //             geo.error = value.error;
-    //         }
-    //         else {
-    //             var lat = geo.lat = value.lat;
-    //             var lon = geo.lon = value.lon;
-    //             // console.log(lat);
-    //             // console.log(lon);
-    //
-    //
-    //         }
-    //     });
-    //
-    //
-    // }
+
+    public getLatLon(address: any) {
+
+        return new Promise(function (fulfill, reject) {
+
+            let encodedAddress = encodeURI(address);
+            let url = "skaha.cs.ubc.ca";
+            let path = "/api/v1/team86/" + encodedAddress;
+
+            var options = {
+                host: url,
+                port: 8022,
+                path: path
+            };
+
+            // console.log('in promise');
+
+            http.get(options, function (res) {
+                //console.log('STATUS: ' + res.statusCode);
+                res.on("data", function (chunk) {
+                    //console.log("BODY: " + chunk);
+                    var jsonlatlon = JSON.parse(chunk);
+                    //console.log(jsonlatlon);
+                    fulfill(jsonlatlon);
+                });
+
+                // console.log('in here');
+
+            }).on('error', function (e: any) {
+                reject(e);
+            });
+
+        });
+    }
+}
