@@ -30,7 +30,12 @@ export default class ProcessHtml {
         let buildingShortName: string;
         let buildingAddress: string;
         let count: number = 0;
+        // let tba: toBeAddedHtml = <any>{};
+        let filecount: number = 0;
+
         for (let file of files) {
+            filecount++;
+
 
             var document: ASTNode = parse5.parse(file);
             for (let child of document.childNodes) {
@@ -48,6 +53,7 @@ export default class ProcessHtml {
                     if (typeof headAttrs !== 'undefined') {
                         // console.log(headAttrs.attrs[1].value);
                         var shortName = headAttrs.attrs[1].value;
+                        //console.log(shortName);
                     }
                 }
 
@@ -56,19 +62,63 @@ export default class ProcessHtml {
                     if (count == 0) {
                         count++;
                         break;
-                    } else {
+                    }
+
+                    else if (shortName === 'UCLL') {
+
+                        var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
+                        var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
+                        var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
+
+                        for (let child of ucll_tbody.childNodes){
+
+                            if (child.nodeName == 'tr') {
+                                let tba: toBeAddedHtml = <any>{};
+                                tba.rooms_fullname = ucll_roomsFullName;
+                                tba.rooms_shortname = shortName;
+                                tba.rooms_address = ucll_roomAddress;
+                                tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                                var ucllroomnumber = tba.rooms_number;
+                                //console.log (ucllroomnumber);
+                                // console.log(roomnumber);
+                                tba.rooms_name = shortName + "_" + ucllroomnumber;
+                                tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                                tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                                tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+
+                                processedDataset.push(tba);
+                                // console.log(processedDataset);
+
+                            }
+
+                            else {
+                                console.log('nothing');
+                            }
+
+
+
+                            // processedDataset.push(tba);
+                            console.log(processedDataset);
+                        }
+                    }
+
+                    else {
                         // console.log(bodyNode.childNodes[31]);
 
                         var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                         var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                         var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
 
+                        //console.log(shortName);
+
                         if (typeof room_info_path == 'undefined') {
                             break;
                         }
 
-                        var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
 
+                        var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
+                        //console.log(tbody.nodeName);
                         for (let child of tbody.childNodes) {
 
                             if (child.nodeName == 'tr') {
@@ -78,162 +128,75 @@ export default class ProcessHtml {
                                 tba.rooms_address = roomsAddress;
                                 tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
                                 tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-                                var roomnumber= tba.rooms_number;
-                                tba.rooms_name = shortName+"_"+roomnumber;
+                                var roomnumber = tba.rooms_number;
+                                tba.rooms_name = shortName + "_" + roomnumber;
                                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
                                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-                                var val = this.getLatLon(roomsAddress);
+
                                 processedDataset.push(tba);
+                                // console.log(processedDataset);
 
                             }
                         }
-                        // console.log(tba);
-                        console.log(processedDataset);
+
                     }
                 }
             }
         }
     }
-
-    public getLatLon(address: any) {
-
-        return new Promise(function (fulfill, reject) {
-            let encodedAddress = encodeURI(address);
-            let url = "skaha.cs.ubc.ca";
-            let path = "/api/v1/team86/" + encodedAddress;
-
-            var options = {
-                host: url,
-                port: 8022,
-                path: path
-            };
-
-            //console.log('in promise');
-
-            http.get(options, function (res) {
-                //console.log('STATUS: ' + res.statusCode);
-                res.on("data", function (chunk) {
-                    //console.log("BODY: " + chunk);
-                    var jsonlatlon = JSON.parse(chunk);
-                    //console.log(jsonlatlon);
-                    fulfill(jsonlatlon);
-                });
-
-                // console.log('in here');
-
-            }).on('error', function (e: any) {
-                console.log("Got error: " + e.message);
-                fulfill(e);
-            });
-
-        }).then(function (value: any) {
-
-            console.log(value);
-
-            let geo: GeoResponse = <any>{};
-
-            if (value.hasOwnProperty('error')) {
-                geo.error = value.error;
-            }
-            else {
-                var lat = geo.lat = value.lat;
-                var lon = geo.lon = value.lon;
-                console.log(lat);
-                console.log(lon);
-
-
-            }
-        });
-    }
 }
 
-//console.log(tbody.nodeName);
-//janelle's old code
-// tbody.childNodes.forEach(function (child) {
-//     if (child.nodeName == 'tr') {
-//         var tba: toBeAddedHtml = <any>{};
-//
-//         var encodedAddress = encodeURIComponent(roomsAddress);
-//         var buildURL = "http://skaha.cs.ubc.ca:8022/api/v1/team86/" + encodedAddress;
-//         let request = require("request");
-//
-//         let req = {
-//             url: buildURL,
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             }
-//         };
-//
-//         request(req, function (err, res, body) {
-//             this.config = JSON.parse(body);
-//             if (!this.config.hasOwnProperty("error")) {
-//                 tba.rooms_fullname = roomsFullName;
-//                 tba.rooms_shortname = shortName;
-//                 tba.rooms_address = roomsAddress;
-//                 tba.rooms_lat = this.config.lat;
-//                 tba.rooms_lon = this.config.lon;
-//                 tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-//                 tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-//                 var roomnumber = tba.rooms_number;
-//                 tba.rooms_name = shortName + "_" + roomnumber;
-//                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
-//                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-//                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-//                 processedDataset.push(tba);
-//             }
-//         });
-//     }
-// });
-
-// for (let child of tbody.childNodes) {
-//
-//     if (child.nodeName == 'tr') {
-//         var tba: toBeAddedHtml = <any>{};
-//         // tba.rooms_fullname = roomsFullName;
-//         // tba.rooms_shortname = shortName;
-//         // tba.rooms_address = roomsAddress;
-//
-//         var encodedAddress = encodeURIComponent(roomsAddress);
-//         var buildURL = "http://skaha.cs.ubc.ca:8022/api/v1/team86/" + encodedAddress;
-//         let request = require("request");
-//
-//         let req = {
-//             url: buildURL,
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             }
-//         };
-//
-//         request(req, function (err, res, body) {
-//             this.config = JSON.parse(body);
-//             if (!this.config.hasOwnProperty("error")) {
-//                 tba.rooms_fullname = roomsFullName;
-//                 tba.rooms_shortname = shortName;
-//                 tba.rooms_address = roomsAddress;
-//                 tba.rooms_lat = this.config.lat;
-//                 tba.rooms_lon = this.config.lon;
-//                 tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-//                 tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-//                 var roomnumber= tba.rooms_number;
-//                 tba.rooms_name = shortName + "_" + roomnumber;
-//                 tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
-//                 tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-//                 tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-//                 processedDataset.push(tba);
-//             }
-//         });
-//
-//         // tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-//         // tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-//         // var roomnumber= tba.rooms_number;
-//         // tba.rooms_name = shortName + "_" + roomnumber;
-//         // tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
-//         // tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-//         // tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-//         // processedDataset.push(tba);
-//     }
-// }
-// console.log(tba);
+    // public getLatLon (address: any){
+    //
+    //     return new Promise(function (fulfill, reject) {
+    //
+    //         let encodedAddress = encodeURI(address);
+    //         let url = "skaha.cs.ubc.ca";
+    //         let path = "/api/v1/team86/" + encodedAddress;
+    //
+    //         var options = {
+    //             host: url,
+    //             port: 8022,
+    //             path: path
+    //         };
+    //
+    //         //console.log('in promise');
+    //
+    //         http.get(options, function (res) {
+    //             //console.log('STATUS: ' + res.statusCode);
+    //             res.on("data", function (chunk) {
+    //                 //console.log("BODY: " + chunk);
+    //                 var jsonlatlon = JSON.parse(chunk);
+    //                 //console.log(jsonlatlon);
+    //                 fulfill(jsonlatlon);
+    //             });
+    //
+    //             // console.log('in here');
+    //
+    //         }).on('error', function (e: any) {
+    //             console.log("Got error: " + e.message);
+    //             fulfill(e);
+    //         });
+    //
+    //     }).then(function (value: any) {
+    //
+    //         console.log(value);
+    //
+    //         let geo: GeoResponse = <any>{};
+    //
+    //         if (value.hasOwnProperty('error')) {
+    //             geo.error = value.error;
+    //         }
+    //         else {
+    //             var lat = geo.lat = value.lat;
+    //             var lon = geo.lon = value.lon;
+    //             // console.log(lat);
+    //             // console.log(lon);
+    //
+    //
+    //         }
+    //     });
+    //
+    //
+    // }
