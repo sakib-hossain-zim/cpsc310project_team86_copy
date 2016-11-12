@@ -107,15 +107,19 @@ export default class DatasetController {
                             // If filetype is json
                             console.log ('filetype is json');
                             var jsonProcess = new ProcessJson();
-                            jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                          var JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            that.save(id, JSONProcessedDataset);
                         } else {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             var htmlProcess = new ProcessHtml();
-                            htmlProcess.process(files, processedDataset, that.invalidDataSet);
+                            var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
+                            htmlProcessedDataset.then(function(pd) {
+                                console.log("made it here");
+                                console.log(pd);
+                                that.save(id, pd);
+                            });
                         }
-
-                        that.save(id, processedDataset);
                     });
                     fulfill(true);
                 }).catch(function (err) {
