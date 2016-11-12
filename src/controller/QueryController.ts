@@ -34,6 +34,17 @@ interface responseObject {
     courses_id: string;
     courses_audit: string;
     courses_uuid: string;
+    rooms_fullname: string;
+    rooms_shortname: string;
+    rooms_number: string;
+    rooms_name: string;
+    rooms_address: string;
+    rooms_lat: number;
+    rooms_lon: number;
+    rooms_seats: number;
+    rooms_type: string;
+    rooms_furniture: string;
+    rooms_href: string;
 }
 
 interface stringArray {
@@ -298,6 +309,39 @@ export default class QueryController {
                 }
                 if (key == "courses_uuid") {
                     respObj.courses_uuid = obj.courses_uuid;
+                }
+                if (key == "rooms_fullname") {
+                    respObj.rooms_fullname = obj.rooms_fullname;
+                }
+                if (key == "rooms_shortname") {
+                    respObj.rooms_shortname = obj.rooms_shortname;
+                }
+                if (key == "rooms_number") {
+                    respObj.rooms_number = obj.rooms_number;
+                }
+                if (key == "rooms_name") {
+                    respObj.rooms_name = obj.rooms_name;
+                }
+                if (key == "rooms_address") {
+                    respObj.rooms_address = obj.rooms_address;
+                }
+                if (key == "rooms_lat") {
+                    respObj.rooms_lat = obj.rooms_lat;
+                }
+                if (key == "rooms_lon") {
+                    respObj.rooms_lon = obj.rooms_lon;
+                }
+                if (key == "rooms_seats") {
+                    respObj.rooms_seats = obj.rooms_seats;
+                }
+                if (key == "rooms_type") {
+                    respObj.rooms_type = obj.rooms_type;
+                }
+                if (key == "rooms_furniture") {
+                    respObj.rooms_furniture = obj.rooms_furniture;
+                }
+                if (key == "rooms_href") {
+                    respObj.rooms_href = obj.rooms_href;
                 }
             }
 
