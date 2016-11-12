@@ -34,6 +34,7 @@ interface responseObject {
     courses_id: string;
     courses_audit: string;
     courses_uuid: string;
+    courses_year: number;
     rooms_fullname: string;
     rooms_shortname: string;
     rooms_number: string;
@@ -189,7 +190,7 @@ export default class QueryController {
                     && key !== 'courses_fail' && key !== 'courses_title' && key !== 'courses_id' && key !== 'courses_audit' && key !== 'courses_uuid'
                 && key !== 'rooms_fullname' && key !== 'rooms_shortname' && key !== 'rooms_fullname' && key !== 'rooms_number' && key !== 'rooms_name'
                 && key !== 'rooms_address' && key !== 'rooms_lat' && key !== 'rooms_lon' && key !== 'rooms_seats' && key !== 'rooms_type'
-                && key !== 'rooms_furniture' && key !== 'rooms_href') {
+                && key !== 'rooms_furniture' && key !== 'rooms_href' && key !== 'courses_year') {
                     return false;
                 }
             }
@@ -312,6 +313,9 @@ export default class QueryController {
                 }
                 if (key == "courses_uuid") {
                     respObj.courses_uuid = obj.courses_uuid;
+                }
+                if (key == "courses_year") {
+                    respObj.courses_year = obj.courses_year;
                 }
                 if (key == "rooms_fullname") {
                     respObj.rooms_fullname = obj.rooms_fullname;
@@ -899,7 +903,12 @@ export default class QueryController {
     public query(query: QueryRequest): any {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
+        console.log(query.GET[0]);
         let id = query.GET[0].split('_')[0];
+        //console.log(this.datasets);
+        //     console.log (Object.keys(this.datasets)[0]);
+        //     console.log(this.datasets[0]);
+        //     console.log(typeof this.datasets[0]);
         if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
             if (id === 'courses'){
                 var dataID = Object.keys(this.datasets)[0];
