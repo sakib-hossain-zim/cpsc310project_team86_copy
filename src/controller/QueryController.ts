@@ -186,7 +186,10 @@ export default class QueryController {
         if (typeof query.GROUP !== 'undefined') {
             for (let key of query.GROUP) {
                 if (key !== 'courses_dept' && key !== 'courses_avg' && key !== 'courses_instructor' && key !== 'courses_pass'
-                    && key !== 'courses_fail' && key !== 'courses_title' && key !== 'courses_id' && key !== 'courses_audit' && key !== 'courses_uuid') {
+                    && key !== 'courses_fail' && key !== 'courses_title' && key !== 'courses_id' && key !== 'courses_audit' && key !== 'courses_uuid'
+                && key !== 'rooms_fullname' && key !== 'rooms_shortname' && key !== 'rooms_fullname' && key !== 'rooms_number' && key !== 'rooms_name'
+                && key !== 'rooms_address' && key !== 'rooms_lat' && key !== 'rooms_lon' && key !== 'rooms_seats' && key !== 'rooms_type'
+                && key !== 'rooms_furniture' && key !== 'rooms_href') {
                     return false;
                 }
             }
