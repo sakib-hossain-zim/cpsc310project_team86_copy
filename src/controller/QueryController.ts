@@ -901,7 +901,6 @@ export default class QueryController {
         //define a function to process the query. use this to check
         let id = query.GET[0].split('_')[0];
         if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
-            //console.log('two');
             if (id === 'courses'){
                 var dataID = Object.keys(this.datasets)[0];
             }
@@ -910,7 +909,6 @@ export default class QueryController {
             }
         }
         else {
-            //console.log('only one');
             var dataID = Object.keys(this.datasets)[0];
         }
 
