@@ -101,7 +101,7 @@ export default class ProcessHtml {
                                     // console.log('start');
 
                                     let promise = that.getLatLon(ucll_roomAddress);
-                                        promises.push(promise);
+                                    promises.push(promise);
                                 }
 
                                 else {
@@ -162,8 +162,8 @@ export default class ProcessHtml {
                         geo.error = values[i].error;
                     }
 
-                   htmlProcessedDataset[i].rooms_lat = geo.lat;
-                   htmlProcessedDataset[i].rooms_lon = geo.lon;
+                    htmlProcessedDataset[i].rooms_lat = geo.lat;
+                    htmlProcessedDataset[i].rooms_lon = geo.lon;
 
                 }
                 fulfill(htmlProcessedDataset);

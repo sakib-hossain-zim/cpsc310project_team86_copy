@@ -197,7 +197,7 @@ export default class QueryController {
 
         // Lorax: All keys in GET that are not separated by an underscore should appear in APPLY.
         if (typeof query.APPLY !== 'undefined') {
-             if (query.APPLY.length > 0) {
+            if (query.APPLY.length > 0) {
 
                 for (let getKey of query.GET) {
                     var get_key_in_apply: boolean;
@@ -232,7 +232,7 @@ export default class QueryController {
                         }
                     }
                 }
-             }
+            }
         }
 
 
@@ -480,7 +480,7 @@ export default class QueryController {
                     res = value == threshold;
                     break;
                 case 'IS':
-                  //  console.log("*");
+                    //  console.log("*");
                     if (threshold.includes("*")) {
                         let stringKeys: string[] = threshold.split("*");
                         if (stringKeys.length == 3 ) {
@@ -623,23 +623,23 @@ export default class QueryController {
                     key = i;
                     value = obj[i];
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
-                     for (let obj of ORFilteredData) {
-                             // if (typeof obj["duplicate"] == "undefined") {
-                            //      obj["duplicate"] = 0;
-                                 ORReturnData.push(obj);
-                       //  }
-                         }
+                    for (let obj of ORFilteredData) {
+                        // if (typeof obj["duplicate"] == "undefined") {
+                        //      obj["duplicate"] = 0;
+                        ORReturnData.push(obj);
+                        //  }
+                    }
                 }
-        }
-        for (let retObj of ORReturnData) {
-            for (let value of ORretValues) {
-                if (retObj["courses_uuid"] == value) {
-                ORReturnData2.push(retObj);
-                    let index = ORretValues.indexOf(value);
-                    ORretValues.splice(index, 1);
+            }
+            for (let retObj of ORReturnData) {
+                for (let value of ORretValues) {
+                    if (retObj["courses_uuid"] == value) {
+                        ORReturnData2.push(retObj);
+                        let index = ORretValues.indexOf(value);
+                        ORretValues.splice(index, 1);
+                    }
                 }
-        }
-}
+            }
             return ORReturnData2;
         }
 
@@ -669,11 +669,11 @@ export default class QueryController {
             for (let i in queryData) {
                 Cvalue = queryData[i];
             }
-                 data.forEach(function (x: any) {
-                     if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
-                             filteredData.push(x);
-                     }
-                     });
+            data.forEach(function (x: any) {
+                if (that.compare(field, x[replaceKey], is_NOT, Cvalue)) {
+                    filteredData.push(x);
+                }
+            });
             return filteredData;
         }
     }
@@ -900,15 +900,31 @@ export default class QueryController {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
         let id = query.GET[0].split('_')[0];
-        let dataID = Object.keys(this.datasets)[0];
+        if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
+            //console.log('two');
+            if (id === 'courses'){
+                var dataID = Object.keys(this.datasets)[0];
+            }
+            if (id === 'rooms'){
+                var dataID = Object.keys(this.datasets)[1];
+            }
+        }
+        else {
+            //console.log('only one');
+            var dataID = Object.keys(this.datasets)[0];
+        }
+
 
         let data: any = this.datasets[dataID];
+        //console.log(data);
         let isEmpty = this.isDataSetEmpty(data);
+        //console.log(isEmpty);
         if (isEmpty === true) {
             let response: QueryResponse = {render: query.AS, result: [{}]};
             return response;
         }
         var parsedData = JSON.parse(data);
+        //console.log(parsedData);
         // let groupedData: any = [];
         // let GET_results = this.filterColumns(query, parsedData);
 
@@ -923,17 +939,22 @@ export default class QueryController {
                 value = query.WHERE[i];
             }
             let WHERE_Results: {}[] = this.filterRows(key, value, parsedData, false);
+           // console.log(WHERE_Results);
             GET_results = this.filterColumns(query, WHERE_Results);
+           // console.log(GET_results);
 
         }
         var groupedData = this.group(query, GET_results);
+       // console.log(groupedData);
 
         let appliedData: any = this.apply(query, groupedData);
+       // console.log(appliedData);
 
         var orderedResults = this.orderResponse(query, appliedData, 0);
-    // }
+       // console.log(orderedResults);
+        // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
-        console.log("made it here");
+       // console.log("made it here");
         return response;
     }
 }
