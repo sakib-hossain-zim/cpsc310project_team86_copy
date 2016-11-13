@@ -5,7 +5,6 @@ let http = require('http');
 import Log from "../Util";
 
 
-
 interface toBeAddedHtml {
     rooms_fullname: string;
     rooms_shortname: string;
@@ -120,7 +119,6 @@ export default class ProcessHtml {
                                     break;
                                 }
 
-
                                 var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
                                 //console.log(tbody.nodeName);
                                 for (let child of tbody.childNodes) {
@@ -169,10 +167,11 @@ export default class ProcessHtml {
                     console.log(err);
                     reject(err);
                 });
-            } catch (error) {
-                console.log(error);
-                reject(error);
-            };
+            } catch (err) {
+                console.log(err);
+                reject(err);
+            }
+            fulfill(htmlProcessedDataset);
         });
     }
 

@@ -108,8 +108,7 @@ export default class DatasetController {
                             // If filetype is json
                             console.log ('filetype is json');
                             var jsonProcess = new ProcessJson();
-                          var JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
-                            console.log("made it here");
+                            var JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
                         } else {
                             // Else if filetype is html
@@ -117,10 +116,11 @@ export default class DatasetController {
                             var htmlProcess = new ProcessHtml();
                             var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
 
-                            return htmlProcessedDataset.then(function(pd) {
+                            htmlProcessedDataset.then(function(pd) {
 
                              //   console.log(pd);
                                 that.save(id, pd);
+                                fulfill(true);
                             }).catch(function (error) {
                                 console.log(error);
                                 reject (error);
