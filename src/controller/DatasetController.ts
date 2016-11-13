@@ -81,6 +81,7 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
+                    let promises2: Promise<any>[] = [];
 
                     if (zip.files.hasOwnProperty('index.htm')) {
                         fileType = 'html';
@@ -100,7 +101,6 @@ export default class DatasetController {
                     }
 
                     Promise.all(promises).then(function(files: any[]) {
-                        console.log('in all promises');
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
@@ -116,10 +116,14 @@ export default class DatasetController {
                             console.log ('filetype is html');
                             var htmlProcess = new ProcessHtml();
                             var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
-                            htmlProcessedDataset.then(function(pd) {
-                                // console.log("made it here");
-                                // console.log(pd);
+
+                            return htmlProcessedDataset.then(function(pd) {
+
+                             //   console.log(pd);
                                 that.save(id, pd);
+                            }).catch(function (error) {
+                                console.log(error);
+                                reject (error);
                             });
                         }
                     });

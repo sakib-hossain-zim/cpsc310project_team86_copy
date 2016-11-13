@@ -909,21 +909,21 @@ export default class QueryController {
         //     console.log (Object.keys(this.datasets)[0]);
         //     console.log(this.datasets[0]);
         //     console.log(typeof this.datasets[0]);
+        var dataID;
         if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
             if (id === 'courses'){
-                var dataID = Object.keys(this.datasets)[0];
+                dataID = Object.keys(this.datasets)[0];
             }
             if (id === 'rooms'){
-                var dataID = Object.keys(this.datasets)[1];
+               dataID = Object.keys(this.datasets)[1];
             }
         }
         else {
-            var dataID = Object.keys(this.datasets)[0];
+           dataID = Object.keys(this.datasets)[0];
         }
 
 
         let data: any = this.datasets[dataID];
-        //console.log(data);
         let isEmpty = this.isDataSetEmpty(data);
         //console.log(isEmpty);
         if (isEmpty === true) {
@@ -961,7 +961,6 @@ export default class QueryController {
        // console.log(orderedResults);
         // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
-       // console.log("made it here");
         return response;
     }
 }
