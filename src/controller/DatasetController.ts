@@ -100,6 +100,7 @@ export default class DatasetController {
                     }
 
                     Promise.all(promises).then(function(files: any[]) {
+                        console.log('in all promises');
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
@@ -116,8 +117,8 @@ export default class DatasetController {
                             var htmlProcess = new ProcessHtml();
                             var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
                             htmlProcessedDataset.then(function(pd) {
-                                console.log("made it here");
-                                console.log(pd);
+                                // console.log("made it here");
+                                // console.log(pd);
                                 that.save(id, pd);
                             });
                         }
@@ -158,33 +159,3 @@ export default class DatasetController {
         }
     }
 }
-
-// files.forEach(function (file) {
-//
-//     let results: any[];
-//     if (file !== null) {
-//         var o = JSON.parse(file);
-//         results = o.result;
-//     }
-//
-//     if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-//         that.invalidDataSet = true;
-//     }
-//
-//     if (results.length > 0) {
-//         results.forEach(function (arrObject: any) {
-//             let tba: toBeAdded = <any>{};
-//
-//             tba.courses_dept = arrObject['Subject'];
-//             tba.courses_id = arrObject['Course'];
-//             tba.courses_avg = arrObject['Avg'];
-//             tba.courses_instructor = arrObject['Professor'];
-//             tba.courses_title = arrObject['Title'];
-//             tba.courses_pass = arrObject['Pass'];
-//             tba.courses_fail = arrObject['Fail'];
-//             tba.courses_uuid = arrObject['id'];
-//             tba.courses_audit = arrObject['Audit'];
-//             processedDataset.push(tba);
-//         });
-//     }
-// });

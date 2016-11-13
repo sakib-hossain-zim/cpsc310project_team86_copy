@@ -34,9 +34,6 @@ export default class ProcessHtml {
 
 
     public process(files: any, invalidDataset: any): Promise<any> {
-        let buildingFullName: string;
-        let buildingShortName: string;
-        let buildingAddress: string;
         let count: number = 0;
         let htmlProcessedDataset: any = [];
         let promises: Promise<any>[] = [];
