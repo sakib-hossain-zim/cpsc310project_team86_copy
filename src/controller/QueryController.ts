@@ -396,7 +396,7 @@ export default class QueryController {
      * @returns {any}
      */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-        if (i != data.length) {
+      //  if (i != data.length) {
             if (value1[keys[i]] > value2[keys[i]]) {
                 return -1;
             } else if (value1[keys[i]] < value2[keys[i]]) {
@@ -404,7 +404,7 @@ export default class QueryController {
             } else {
                 return this.sortDownFunction(value1, value2, keys, i + 1, data);
             }
-        }
+       // }
     }
 
     /**
@@ -414,7 +414,7 @@ export default class QueryController {
      * @param i
      * @returns {any}
      */
-    public orderResponse(query: QueryRequest, data: any, i: number) { // i always starts 0
+    public orderResponse(query: QueryRequest, data: any) { // i always starts 0
         if (typeof query.ORDER == 'undefined') {
             return data;
         }
@@ -449,6 +449,7 @@ export default class QueryController {
             //         return 0;
             //     });
             // }
+            let i = 0;
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
                     return data.sort(function (result1: any, result2: any) {
@@ -958,7 +959,7 @@ export default class QueryController {
         let appliedData: any = this.apply(query, groupedData);
        // console.log(appliedData);
 
-        var orderedResults = this.orderResponse(query, appliedData, 0);
+        var orderedResults = this.orderResponse(query, appliedData);
        // console.log(orderedResults);
         // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
