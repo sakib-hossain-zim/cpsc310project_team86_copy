@@ -135,8 +135,6 @@ export default class ProcessHtml {
                                         tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                         htmlProcessedDataset.push(tba);
 
-                                        //   let promise: Promise<any> = that.getLatLon(roomsAddress);
-                                        //   promises.push(promise);
                                     }
 
                                 }

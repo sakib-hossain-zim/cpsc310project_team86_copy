@@ -8,6 +8,7 @@ import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
 import ProcessJson from "./ProcessJson";
 import ProcessHtml from "./ProcessHtml";
+import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -86,45 +87,47 @@ export default class DatasetController {
                         fileType = 'html';
                         let zip1 = zip.folder('campus');
                         let zip2 = zip1.folder('discover');
-                        zip2.folder('buildings-and-classrooms').forEach(function (relativePath, file) {
-
-                            let p1: Promise<string> = file.async("string");
+                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                            file.name;
+                            let p1 : Promise<string> = file.async("string");
                             promises.push(p1);
                         });
-
                     } else {
-
                         fileType = 'json';
-                        zip.folder('courses').forEach(function (relativePath, file) {
-                            let p2: Promise<string> = file.async("string");
+                        zip.folder('courses').forEach(function(relativePath, file) {
+                            let p2 : Promise<string> = file.async("string");
                             promises.push(p2);
                         });
                     }
-
 
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
-                         else if (fileType === 'json') {
+                        if (fileType === 'json') {
                             // If filetype is json
                             console.log ('filetype is json');
                             let jsonProcess = new ProcessJson();
                             let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
-                            that.save(id, processedDataset);
+
+                            JSONProcessedDataset.then(function (pd) {
+                                that.save(id, pd);
+                            }).catch(function(error){
+                                console.log(error);
+                                reject(error);
+                            });
+
                             //  fulfill(true);
-                        }
-                        else {
+                        } else {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
                             let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
                             htmlProcessedDataset.then(function(pd) {
-                              //  console.log(pd);
-                             //   that.save(id, pd);
-                                // fulfill(true);
+                                console.log(pd);
                             }).catch(function (error) {
+                                console.log(error);
                                 reject (error);
                             });
                         }
