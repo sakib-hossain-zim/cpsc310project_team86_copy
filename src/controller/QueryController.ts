@@ -376,7 +376,6 @@ export default class QueryController {
      * @returns {any}
      */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-        if (i != data.length) {
             if (i < keys.length) {
                 if (value1[keys[i]] < value2[keys[i]]) {
                     return -1;
@@ -386,7 +385,6 @@ export default class QueryController {
                     return this.sortUpFunction(value1, value2, keys, i + 1, data);
                 }
             }
-        }
     }
 
     /**
@@ -398,7 +396,7 @@ export default class QueryController {
      * @returns {any}
      */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-        if (i != data.length) {
+
             if (i < keys.length) {
                 if (value1[keys[i]] > value2[keys[i]]) {
                     return -1;
@@ -407,7 +405,6 @@ export default class QueryController {
                 } else {
                     return this.sortDownFunction(value1, value2, keys, i + 1, data);
                 }
-            }
         }
     }
     /**
@@ -421,7 +418,9 @@ export default class QueryController {
         if (typeof query.ORDER == 'undefined') {
             return data;
         }
-
+        // if (data.length < 2) {
+        //     return data;
+        // }
 
         let that = this;
         let key: any = query.ORDER;
@@ -442,15 +441,15 @@ export default class QueryController {
             let dirValue: any = key[dir];
             let keysValue: any = key[keys];
 
-            let i = 0;
+            let i:number = 0;
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
                     return data.sort(function (result1: any, result2: any) {
-                        return that.sortUpFunction(result1, result2, keysValue, i, data);
+                         return that.sortUpFunction(result1, result2, keysValue, i, data);
                     });
                 } else  {
                     return data.sort(function (result1: any, result2: any) {
-                        return that.sortDownFunction(result1, result2, keysValue, i, data);
+                         return that.sortDownFunction(result1, result2, keysValue, i, data);
                     });
                 }
             }
@@ -582,21 +581,23 @@ export default class QueryController {
 
     public filterRows(field: any, queryData: any, data: any, is_NOT: boolean) {
         let that = this;
-        var filteredData: any = [];
-        var ANDFilteredData: any;
-        var count: number = 0;
-        var ORFilteredData: any;
-        var ORReturnData: any = [];
-        var ORretValues: any = [];
-        var ORReturnData2: any = [];
+        let filteredData: any = [];
+        let ANDFilteredData: any;
+        let count: number = 0;
+        let ORFilteredData: any;
+        let ORReturnData: any = [];
+        let ORretValues: any = [];
+        let ORReturnData2: any = [];
+        let NOTfilteredData: any;
+
         for (let dataObj of data) {
             ORretValues.push(dataObj["courses_uuid"]);
         }
 
         if (field == 'AND') {
             for (let obj of queryData) {
-                var key: any;
-                var value: any;
+                let key: any;
+                let value: any;
                 for (let i in obj) {
                     key = i;
                     value = obj[i];
@@ -615,18 +616,17 @@ export default class QueryController {
         else if (field == 'OR') {
 
             for (let obj of queryData) {
-                var key: any;
-                var value: any;
+                let key: any;
+                let value: any;
 
                 for (let i in obj) {
                     key = i;
                     value = obj[i];
                     ORFilteredData = this.filterRows(key, value, data, is_NOT);
                     for (let obj of ORFilteredData) {
-                        // if (typeof obj["duplicate"] == "undefined") {
-                        //      obj["duplicate"] = 0;
+
                         ORReturnData.push(obj);
-                        //  }
+
                     }
                 }
             }
@@ -643,9 +643,8 @@ export default class QueryController {
         }
 
         else if (field == "NOT") {
-            var key: any;
-            var value: any;
-            var NOTfilteredData: any;
+            let key: any;
+            let value: any;
 
             for (let prop in queryData) {
                 key = prop;
@@ -942,13 +941,13 @@ export default class QueryController {
             GET_results = this.filterColumns(query, WHERE_Results);
 
         }
-        var groupedData = this.group(query, GET_results);
+        let groupedData: any = this.group(query, GET_results);
        // console.log(groupedData);
 
         let appliedData: any = this.apply(query, groupedData);
        // console.log(appliedData);
 
-        var orderedResults = this.orderResponse(query, appliedData);
+        let orderedResults: any = this.orderResponse(query, appliedData);
        // console.log(orderedResults);
         // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
