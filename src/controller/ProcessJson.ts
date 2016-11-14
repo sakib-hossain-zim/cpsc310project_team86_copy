@@ -1,3 +1,5 @@
+
+
 interface toBeAddedJson {
     courses_dept: string;
     courses_id: string;
@@ -48,7 +50,6 @@ export default class ProcessJson {
                         });
                     }
                 });
-
                 fulfill(processedDataset);
             } catch (err) {
                 console.log('error is ' + err);
