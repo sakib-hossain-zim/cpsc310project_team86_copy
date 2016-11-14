@@ -114,7 +114,8 @@ export default class DatasetController {
                             let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
                             //  fulfill(true);
-                        } else {
+                        }
+                        else {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
@@ -122,10 +123,9 @@ export default class DatasetController {
 
                             htmlProcessedDataset.then(function(pd) {
                                 console.log(pd);
-                                //  that.save(id, pd);
+                                that.save(id, pd);
                                 // fulfill(true);
                             }).catch(function (error) {
-                                console.log(error);
                                 reject (error);
                             });
                         }

@@ -115,6 +115,8 @@ export default class ProcessHtml {
                                     break;
                                 }
 
+                                else { console.log();}
+
                                 var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
                                 //console.log(tbody.nodeName);
                                 for (let child of tbody.childNodes) {
@@ -162,22 +164,7 @@ export default class ProcessHtml {
                         obj.rooms_lat = geo.lat;
                         obj.rooms_lon = geo.lon;
                     }
-                    //   }
-                    // console.log("made after Promises.all - Html Process");
-                    // //  for (var i = 0; i < values.length; i++) {
-                    //
-                    // let geo: GeoResponse = <any>{};
-                    // if (!values[i].hasOwnProperty('error')) {
-                    //     geo.lat = values[i].lat;
-                    //     geo.lon = values[i].lon;
-                    // }
-                    // else {
-                    //     geo.error = values[i].error;
-                    // }
-                    //
-                    // htmlProcessedDataset[i].rooms_lat = geo.lat;
-                    // htmlProcessedDataset[i].rooms_lon = geo.lon;
-                    //   }
+
                     let controller = new DatasetController();
                     controller.save(id, htmlProcessedDataset);
                 }).catch (function (err) {
