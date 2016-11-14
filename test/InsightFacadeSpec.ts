@@ -47,159 +47,164 @@ describe("InsightFacade", function () {
         });
     });
 
-    it("Should be able to update an existing dataset (201)", function () {
-        var that = this;
-        // that.timeout(5000);
-        Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('repeat', zipFileContents).then(function() {
-            return facade.addDataset('repeat', zipFileContents).then(function (response: InsightResponse) {
-                expect(response.code).to.equal(201);
-            }).catch(function (response: InsightResponse) {
-                expect.fail('Should not happen');
-            });
-        });
-        // return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
-        //     expect(response.code).to.equal(201);
-        // }).catch(function (response: InsightResponse) {
-        //     expect.fail('Should not happen');
-        // });
-    });
-
-    it("Should not be able to add an invalid dataset (400)", function () {
+    it("update existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('invalid', 'some random bytes').then(function (response: InsightResponse) {
-            expect.fail();
-        }).catch(function (response: InsightResponse) {
-            expect(response.code).to.equal(400);
-        });
-    });
-
-    it("Should be able to successfully answer a query (200)", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["courses_dept", "courses_avg"],
-            "WHERE": {"GT": {"courses_avg": 90}},
-            "ORDER": "courses_avg",
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('courses', zipFileContents).then(function() {
-            return facade.performQuery(query).then(function (response: InsightResponse) {
-                console.log(response.code);
-                expect(response.code).to.equal(200);
-            }).catch(function (response: InsightResponse) {
-                expect.fail('Should not happen');
-            });
-        });
-
-    });
-
-    it("Should fail to query because it depends on a resource that has not been PUT (424)", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["foo_dept", "foo_avg"],
-            "WHERE": {"GT": {"foo_avg": 90}},
-            "ORDER": "foo_avg",
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
-            expect.fail();
-        }).catch(function (response: InsightResponse) {
-            expect(response.code).to.equal(424);
-        });
-    });
-
-    it("424 error", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["courses_id", "courses_dept", "courses_avg"],
-            "WHERE": {
-                "OR": [
-
-                    {"IS": {"foo_dept": "adhe"}}
-                    ,
-                    {"EQ": {"courses_avg": 90}}
-                ]
-            },
-            "ORDER": "courses_avg",
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
-            expect.fail();
-        }).catch(function (response: InsightResponse) {
-            expect(response.code).to.equal(424);
-        });
-    });
-
-    it("424 error for nested query", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["courses_dept", "courses_id", "courses_avg"],
-            "WHERE": {
-                "OR": [
-                    {"AND": [
-                        {"GT": {"courses_avg": 70}},
-                        {"IS": {"foo_dept": "adhe"}}
-                    ]},
-                    {"EQ": {"courses_avg": 90}}
-                ]
-            },
-            "ORDER": "courses_avg",
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
-            expect.fail();
-        }).catch(function (response: InsightResponse) {
-            expect(response.code).to.equal(424);
-        });
-    });
-
-    it("give 200", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["courses_id", "courses_dept", "courses_avg"],
-            "WHERE": {
-                "OR": [
-
-                    {"IS": {"courses_dept": "adhe"}}
-                    ,
-                    {"EQ": {"courses_avg": 90}}
-                ]
-            },
-            "ORDER": "courses_avg",
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
-            expect(response.code).to.equal(200);
+        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(201);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');
         });
     });
 
-    it("Should be able to delete a dataset (204)", function () {
-        var that = this;
-        Log.trace("Starting test: " + that.test.title);
-        return facade.removeDataset('repeat').then(function (response: InsightResponse) {
-            expect(response.code).to.equal(204);
-        }).catch(function (response: InsightResponse) {
-            expect.fail('Should not happen');
-        });
-    });
+    // it("Should be able to update an existing dataset (201)", function () {
+    //     var that = this;
+    //     // that.timeout(5000);
+    //     Log.trace("Starting test: " + that.test.title);
+    //     facade.addDataset('repeat', zipFileContents).then(function() {
+    //         return facade.addDataset('repeat', zipFileContents).then(function (response: InsightResponse) {
+    //             expect(response.code).to.equal(201);
+    //         }).catch(function (response: InsightResponse) {
+    //             expect.fail('Should not happen');
+    //         });
+    //     });
+    // });
 
-    it("Should fail to delete a dataset that has not been PUT (404)", function () {
-        var that = this;
-        Log.trace("Starting test: " + that.test.title);
-        return facade.removeDataset('randomCourse').then(function (response: InsightResponse) {
-            expect.fail();
-        }).catch(function (response: InsightResponse) {
-            expect(response.code).to.equal(404);
-        });
-    });
+    // it("Should not be able to add an invalid dataset (400)", function () {
+    //     var that = this;
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.addDataset('invalid', 'some random bytes').then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(400);
+    //     });
+    // });
+    //
+    // it("Should be able to successfully answer a query (200)", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_dept", "courses_avg"],
+    //         "WHERE": {"GT": {"courses_avg": 90}},
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     facade.addDataset('courses', zipFileContents).then(function() {
+    //         return facade.performQuery(query).then(function (response: InsightResponse) {
+    //             console.log(response.code);
+    //             expect(response.code).to.equal(200);
+    //         }).catch(function (response: InsightResponse) {
+    //             expect.fail('Should not happen');
+    //         });
+    //     });
+    //
+    // });
+    //
+    // it("Should fail to query because it depends on a resource that has not been PUT (424)", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["foo_dept", "foo_avg"],
+    //         "WHERE": {"GT": {"foo_avg": 90}},
+    //         "ORDER": "foo_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(424);
+    //     });
+    // });
+    //
+    // it("424 error", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_id", "courses_dept", "courses_avg"],
+    //         "WHERE": {
+    //             "OR": [
+    //
+    //                 {"IS": {"foo_dept": "adhe"}}
+    //                 ,
+    //                 {"EQ": {"courses_avg": 90}}
+    //             ]
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(424);
+    //     });
+    // });
+    //
+    // it("424 error for nested query", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_dept", "courses_id", "courses_avg"],
+    //         "WHERE": {
+    //             "OR": [
+    //                 {"AND": [
+    //                     {"GT": {"courses_avg": 70}},
+    //                     {"IS": {"foo_dept": "adhe"}}
+    //                 ]},
+    //                 {"EQ": {"courses_avg": 90}}
+    //             ]
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(424);
+    //     });
+    // });
+    //
+    // it("give 200", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["courses_id", "courses_dept", "courses_avg"],
+    //         "WHERE": {
+    //             "OR": [
+    //
+    //                 {"IS": {"courses_dept": "adhe"}}
+    //                 ,
+    //                 {"EQ": {"courses_avg": 90}}
+    //             ]
+    //         },
+    //         "ORDER": "courses_avg",
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(200);
+    //     }).catch(function (response: InsightResponse) {
+    //         expect.fail('Should not happen');
+    //     });
+    // });
+    //
+    // // it("Should be able to delete a dataset (204)", function () {
+    // //     var that = this;
+    // //     Log.trace("Starting test: " + that.test.title);
+    // //     return facade.removeDataset('repeat').then(function (response: InsightResponse) {
+    // //         expect(response.code).to.equal(204);
+    // //     }).catch(function (response: InsightResponse) {
+    // //         expect.fail('Should not happen');
+    // //     });
+    // // });
+    //
+    // it("Should fail to delete a dataset that has not been PUT (404)", function () {
+    //     var that = this;
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.removeDataset('randomCourse').then(function (response: InsightResponse) {
+    //         expect.fail();
+    //     }).catch(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(404);
+    //     });
+    // });
 
 
     it("Should be able to add a new HTML dataset (204)", function () {
@@ -212,42 +217,73 @@ describe("InsightFacade", function () {
         });
     });
 
-    it("Should be able to successfully answer a html  (200)", function () {
+    it("update existing HTML dataset (201)", function () {
         var that = this;
-        let query: QueryRequest = {
-            "GET": ["rooms_shortname", "numRooms"],
-            "WHERE": {"GT": {"rooms_seats": 160}},
-            "GROUP": [ "rooms_shortname" ],
-            "APPLY": [ {"numRooms": {"COUNT": "rooms_name"}} ],
-            "AS": "TABLE"
-        };
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('rooms', zipFileContents_room).then(function() {
-            return facade.performQuery(query).then(function (response: InsightResponse) {
-                console.log(response.code);
-                expect(response.code).to.equal(200);
-            }).catch(function (response: InsightResponse) {
-                expect.fail('Should not happen');
-            });
-        });
-    });
-
-    it("html give 200", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["rooms_fullname", "rooms_number"],
-            "WHERE": {"IS": {"rooms_shortname": "DMP"}},
-            "ORDER": { "dir": "UP", "keys": ["rooms_number"]},
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
-            console.log(response.code);
-            expect(response.code).to.equal(200);
+        return facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(201);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');
         });
     });
+    // it("Should be able to update an existing html dataset (201)", function () {
+    //     var that = this;
+    //     // that.timeout(5000);
+    //     Log.trace("Starting test: " + that.test.title);
+    //     facade.addDataset('repeathtml', zipFileContents_room).then(function() {
+    //         return facade.addDataset('repeathtml', zipFileContents_room).then(function (response: InsightResponse) {
+    //             expect(response.code).to.equal(201);
+    //         }).catch(function (response: InsightResponse) {
+    //             expect.fail('Should not happen');
+    //         });
+    //     });
+    // });
+    //
+    // it("Should be able to delete a dataset (204)", function () {
+    //     var that = this;
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.removeDataset('repeathtml').then(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(204);
+    //     }).catch(function (response: InsightResponse) {
+    //         expect.fail('Should not happen');
+    //     });
+    // });
+    //
+    // it("Should be able to successfully answer a html  (200)", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["rooms_shortname", "numRooms"],
+    //         "WHERE": {"GT": {"rooms_seats": 160}},
+    //         "GROUP": [ "rooms_shortname" ],
+    //         "APPLY": [ {"numRooms": {"COUNT": "rooms_name"}} ],
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     facade.addDataset('rooms', zipFileContents_room).then(function() {
+    //         return facade.performQuery(query).then(function (response: InsightResponse) {
+    //             console.log(response.code);
+    //             expect(response.code).to.equal(200);
+    //         }).catch(function (response: InsightResponse) {
+    //             expect.fail('Should not happen');
+    //         });
+    //     });
+    // });
+    //
+    // it("html give 200", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["rooms_fullname", "rooms_number"],
+    //         "WHERE": {"IS": {"rooms_shortname": "DMP"}},
+    //         "ORDER": { "dir": "UP", "keys": ["rooms_number"]},
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(200);
+    //     }).catch(function (response: InsightResponse) {
+    //         expect.fail('Should not happen');
+    //     });
+    // });
 
 
 });

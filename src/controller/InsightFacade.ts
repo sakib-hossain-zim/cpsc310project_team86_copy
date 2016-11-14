@@ -22,9 +22,8 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             try {
                 var controller = InsightFacade.datasetController;
-
                 controller.process(id, content).then(function (result) {
-                    console.log('control process');
+                    //console.log('in addDataset ' + controller.invalidDataSet);
                     try {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
