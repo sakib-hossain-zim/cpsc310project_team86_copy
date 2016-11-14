@@ -106,27 +106,27 @@ export default class DatasetController {
                         if (fileType === 'json') {
                             // If filetype is json
                             console.log ('filetype is json');
-                            var jsonProcess = new ProcessJson();
-                            var JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            let jsonProcess = new ProcessJson();
+                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
-                            fulfill(true);
+                          //  fulfill(true);
                         } else {
                             // Else if filetype is html
                             console.log ('filetype is html');
-                            var htmlProcess = new ProcessHtml();
-                            var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
+                            let htmlProcess = new ProcessHtml();
+                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
                             htmlProcessedDataset.then(function(pd) {
-                                that.save(id, pd);
-                                fulfill(true);
+                                console.log(pd);
+                              //  that.save(id, pd);
+                               // fulfill(true);
                             }).catch(function (error) {
                                 console.log(error);
                                 reject (error);
                             });
                         }
                     });
-                    console.log("made it before fulfill");
-                   // fulfill(true);
+                    fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);
@@ -145,7 +145,7 @@ export default class DatasetController {
      * @param id
      * @param processedDataset
      */
-    private save(id: string, processedDataset: any) {
+    public save(id: string, processedDataset: any) {
         // add it to the memory model
         try {
             var dirExist = fs.existsSync('./data');

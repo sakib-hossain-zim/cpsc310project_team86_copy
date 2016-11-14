@@ -2,6 +2,7 @@ import {ASTNode} from "parse5";
 let parse5 = require('parse5');
 import fs = require('fs');
 let http = require('http');
+import DatasetController from "./DatasetController";
 import Log from "../Util";
 
 
@@ -27,12 +28,7 @@ interface GeoResponse {
 
 export default class ProcessHtml {
 
-    public getValue(files: any, invalidDataset:any): Promise<any> {
-        return this.process(files, invalidDataset);
-    }
-
-
-    public process(files: any, invalidDataset: any): Promise<any> {
+    public process(id, files: any, invalidDataset: any): Promise<boolean> {
         let count: number = 0;
         let htmlProcessedDataset: any = [];
         let promises: Promise<any>[] = [];
@@ -146,7 +142,6 @@ export default class ProcessHtml {
                         }
                     }
                 }
-                console.log("right before Promise.all = Html Process");
                 Promise.all(promises).then(function (values: any[]) {
                     let building = htmlProcessedDataset[0].rooms_shortname;
                     let i = 0;
@@ -183,17 +178,19 @@ export default class ProcessHtml {
                     // htmlProcessedDataset[i].rooms_lat = geo.lat;
                     // htmlProcessedDataset[i].rooms_lon = geo.lon;
                  //   }
-                    console.log("made it to htmlProcess fulfill");
-                    fulfill(htmlProcessedDataset);
+                    let controller = new DatasetController();
+                    controller.save(id, htmlProcessedDataset);
                 }).catch (function (err) {
                     console.log(err);
                     reject(err);
                 });
+                console.log("made it before fulfill true");
+                fulfill(true);
             } catch (err) {
                 console.log(err);
                 reject(err);
             }
-            console.log("made it to very end Html Process");
+           fulfill(true);
         });
     }
 
