@@ -240,21 +240,19 @@ describe("InsightFacade", function () {
         });
     });
 
-    it("html give 200", function () {
-        var that = this;
-        let query: QueryRequest = {
-            "GET": ["rooms_fullname", "rooms_number"],
-            "WHERE": {"IS": {"rooms_shortname": "DMP"}},
-            "ORDER": { "dir": "UP", "keys": ["rooms_number"]},
-            "AS": "TABLE"
-        };
-        Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
-            expect(response.code).to.equal(200);
-        }).catch(function (response: InsightResponse) {
-            expect.fail('Should not happen');
-        });
-    });
-
-
+    // it("html give 200", function () {
+    //     var that = this;
+    //     let query: QueryRequest = {
+    //         "GET": ["rooms_fullname", "rooms_number"],
+    //         "WHERE": {"IS": {"rooms_shortname": "DMP"}},
+    //         "ORDER": { "dir": "UP", "keys": ["rooms_number"]},
+    //         "AS": "TABLE"
+    //     };
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.performQuery(query).then(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(200);
+    //     }).catch(function (response: InsightResponse) {
+    //         expect.fail('Should not happen');
+    //     });
+    // });
 });
