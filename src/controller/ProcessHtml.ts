@@ -77,7 +77,8 @@ export default class ProcessHtml {
                                 var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
-
+                                let promise = that.getLatLon(ucll_roomAddress);
+                                promises.push(promise);
                                 for (let child of ucll_tbody.childNodes) {
 
                                     if (child.nodeName == 'tr') {
@@ -97,8 +98,8 @@ export default class ProcessHtml {
                                         htmlProcessedDataset.push(tba);
                                         // console.log('start');
 
-                                        let promise = that.getLatLon(ucll_roomAddress);
-                                        promises.push(promise);
+                                      //  let promise = that.getLatLon(ucll_roomAddress);
+                                      //  promises.push(promise);
                                     }
 
                                     else {
@@ -112,9 +113,8 @@ export default class ProcessHtml {
                                 var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
-
-                                //console.log(shortName);
-
+                                let promise: Promise<any> = that.getLatLon(roomsAddress);
+                                promises.push(promise);
                                 if (typeof room_info_path == 'undefined') {
                                     break;
                                 }
@@ -137,8 +137,8 @@ export default class ProcessHtml {
                                         tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                         htmlProcessedDataset.push(tba);
 
-                                        var promise: Promise<any> = that.getLatLon(roomsAddress);
-                                        promises.push(promise);
+                                     //   let promise: Promise<any> = that.getLatLon(roomsAddress);
+                                     //   promises.push(promise);
                                     }
 
                                 }
@@ -146,22 +146,44 @@ export default class ProcessHtml {
                         }
                     }
                 }
+                console.log("right before Promise.all = Html Process");
                 Promise.all(promises).then(function (values: any[]) {
-                    for (var i = 0; i < values.length; i++) {
+                    let building = htmlProcessedDataset[0].rooms_shortname;
+                    let i = 0;
+                    for (var obj of htmlProcessedDataset) {
+                            if (obj.rooms_shortname !== building) {
+                                building = obj.rooms_shortname;
+                                i++;
+                            }
+                            let geo: GeoResponse = <any>{};
+                            if (!values[i].hasOwnProperty('error')) {
+                                geo.lat = values[i].lat;
+                                geo.lon = values[i].lon;
+                            }
+                            else {
+                                geo.error = values[i].error;
+                            }
 
-                        let geo: GeoResponse = <any>{};
-                        if (!values[i].hasOwnProperty('error')) {
-                            geo.lat = values[i].lat;
-                            geo.lon = values[i].lon;
+                            obj.rooms_lat = geo.lat;
+                            obj.rooms_lon = geo.lon;
                         }
-                        else {
-                            geo.error = values[i].error;
-                        }
-
-                        htmlProcessedDataset[i].rooms_lat = geo.lat;
-                        htmlProcessedDataset[i].rooms_lon = geo.lon;
-
-                    }
+                            //   }
+                    // console.log("made after Promises.all - Html Process");
+                    // //  for (var i = 0; i < values.length; i++) {
+                    //
+                    // let geo: GeoResponse = <any>{};
+                    // if (!values[i].hasOwnProperty('error')) {
+                    //     geo.lat = values[i].lat;
+                    //     geo.lon = values[i].lon;
+                    // }
+                    // else {
+                    //     geo.error = values[i].error;
+                    // }
+                    //
+                    // htmlProcessedDataset[i].rooms_lat = geo.lat;
+                    // htmlProcessedDataset[i].rooms_lon = geo.lon;
+                 //   }
+                    console.log("made it to htmlProcess fulfill");
                     fulfill(htmlProcessedDataset);
                 }).catch (function (err) {
                     console.log(err);
@@ -171,7 +193,7 @@ export default class ProcessHtml {
                 console.log(err);
                 reject(err);
             }
-            fulfill(htmlProcessedDataset);
+            console.log("made it to very end Html Process");
         });
     }
 
@@ -193,9 +215,7 @@ export default class ProcessHtml {
             // console.log('in promise');
 
             http.get(options, function (res) {
-                //console.log('STATUS: ' + res.statusCode);
                 res.on("data", function (chunk) {
-                    //console.log("BODY: " + chunk);
                     var jsonlatlon = JSON.parse(chunk);
                     //console.log(jsonlatlon);
                     fulfill(jsonlatlon);

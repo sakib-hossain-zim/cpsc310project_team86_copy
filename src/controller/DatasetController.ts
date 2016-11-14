@@ -81,7 +81,6 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
-                    let promises2: Promise<any>[] = [];
 
                     if (zip.files.hasOwnProperty('index.htm')) {
                         fileType = 'html';
@@ -110,6 +109,7 @@ export default class DatasetController {
                             var jsonProcess = new ProcessJson();
                             var JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
+                            fulfill(true);
                         } else {
                             // Else if filetype is html
                             console.log ('filetype is html');
@@ -117,8 +117,6 @@ export default class DatasetController {
                             var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
 
                             htmlProcessedDataset.then(function(pd) {
-
-                             //   console.log(pd);
                                 that.save(id, pd);
                                 fulfill(true);
                             }).catch(function (error) {
@@ -127,7 +125,8 @@ export default class DatasetController {
                             });
                         }
                     });
-                    fulfill(true);
+                    console.log("made it before fulfill");
+                   // fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);
