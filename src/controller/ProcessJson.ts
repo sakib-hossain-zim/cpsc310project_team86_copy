@@ -49,9 +49,9 @@ export default class ProcessJson {
                     }
                 });
 
-                fulfill(true);
+                fulfill(processedDataset);
             } catch (err) {
-                console.log(err);
+                console.log('error is ' + err);
                 reject(err);
             }
             fulfill(true);

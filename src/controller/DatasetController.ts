@@ -8,6 +8,7 @@ import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
 import ProcessJson from "./ProcessJson";
 import ProcessHtml from "./ProcessHtml";
+import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -98,10 +99,6 @@ export default class DatasetController {
                             promises.push(p2);
                         });
                     }
-                    for (let promise of promises) {
-                        console.log(promise);
-                    }
-
 
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
@@ -109,11 +106,16 @@ export default class DatasetController {
                         }
                         if (fileType === 'json') {
                             // If filetype is json
-                            console.log ('filetype is json');
+                            console.log('filetype is json');
                             let jsonProcess = new ProcessJson();
                             let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
-                            that.save(id, processedDataset);
-                            //  fulfill(true);
+
+                            JSONProcessedDataset.then(function (pd) {
+                                that.save(id, pd);
+                                //  fulfill(true);
+                            }).catch(function (error) {
+                                reject(error);
+                            });
                         }
                         else {
                             // Else if filetype is html
@@ -122,9 +124,11 @@ export default class DatasetController {
                             let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
                             htmlProcessedDataset.then(function(pd) {
-                                console.log(pd);
-                                that.save(id, pd);
-                                // fulfill(true);
+                                if (pd == true){
+                                that.save(id, pd);}
+                                else {
+                                    reject(error);
+                                }
                             }).catch(function (error) {
                                 reject (error);
                             });
