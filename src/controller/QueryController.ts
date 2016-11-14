@@ -376,7 +376,7 @@ export default class QueryController {
      * @returns {any}
      */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-        if (i != data.length) {
+      //  if (i != data.length) {
             if (value1[keys[i]] < value2[keys[i]]) {
                 return -1;
             } else if (value1[keys[i]] > value2[keys[i]]) {
@@ -384,7 +384,7 @@ export default class QueryController {
             } else {
                 return this.sortUpFunction(value1, value2, keys, i + 1, data);
             }
-        }
+      //  }
     }
 
     /**
@@ -416,6 +416,9 @@ export default class QueryController {
      */
     public orderResponse(query: QueryRequest, data: any) { // i always starts 0
         if (typeof query.ORDER == 'undefined') {
+            return data;
+        }
+        if (data.length < 2) {
             return data;
         }
 
