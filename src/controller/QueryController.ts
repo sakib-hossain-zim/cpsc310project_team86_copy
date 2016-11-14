@@ -10,7 +10,7 @@ import filter = require("core-js/library/fn/array/filter");
 export interface QueryRequest {
     GET: string|string[];
     WHERE: {};
-    ORDER?: {};
+    ORDER?: string|{};
     AS: string;
     APPLY?: {}[];
     GROUP?: string[];
@@ -376,7 +376,7 @@ export default class QueryController {
      * @returns {any}
      */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-      //  if (i != data.length) {
+        if (i < keys.length) {
             if (value1[keys[i]] < value2[keys[i]]) {
                 return -1;
             } else if (value1[keys[i]] > value2[keys[i]]) {
@@ -384,7 +384,7 @@ export default class QueryController {
             } else {
                 return this.sortUpFunction(value1, value2, keys, i + 1, data);
             }
-      //  }
+        }
     }
 
     /**
@@ -396,7 +396,7 @@ export default class QueryController {
      * @returns {any}
      */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-      //  if (i != data.length) {
+        if (i < keys.length) {
             if (value1[keys[i]] > value2[keys[i]]) {
                 return -1;
             } else if (value1[keys[i]] < value2[keys[i]]) {
@@ -404,7 +404,7 @@ export default class QueryController {
             } else {
                 return this.sortDownFunction(value1, value2, keys, i + 1, data);
             }
-       // }
+       }
     }
 
     /**
@@ -440,18 +440,7 @@ export default class QueryController {
             let keys: any = Object.keys(key)[1];
             let dirValue: any = key[dir];
             let keysValue: any = key[keys];
-            console.log(keysValue);
-            // if (keysValue.length === 1) {
-            //     return data.sort(function (result1: any, result2: any) {
-            //         if (result1[keysValue[0]] < result2[keysValue[0]]) {
-            //             return -1;
-            //         }
-            //         else if (result1[keysValue[0]] > result2[keysValue[0]]) {
-            //             return 1;
-            //         }
-            //         return 0;
-            //     });
-            // }
+
             let i = 0;
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
@@ -936,9 +925,6 @@ export default class QueryController {
             return response;
         }
         var parsedData = JSON.parse(data);
-        //console.log(parsedData);
-        // let groupedData: any = [];
-        // let GET_results = this.filterColumns(query, parsedData);
 
         var GET_results: any;
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
@@ -951,9 +937,8 @@ export default class QueryController {
                 value = query.WHERE[i];
             }
             let WHERE_Results: {}[] = this.filterRows(key, value, parsedData, false);
-           // console.log(WHERE_Results);
+
             GET_results = this.filterColumns(query, WHERE_Results);
-           // console.log(GET_results);
 
         }
         var groupedData = this.group(query, GET_results);
