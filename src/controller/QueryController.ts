@@ -376,13 +376,15 @@ export default class QueryController {
      * @returns {any}
      */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-        if (i < keys.length) {
-            if (value1[keys[i]] < value2[keys[i]]) {
-                return -1;
-            } else if (value1[keys[i]] > value2[keys[i]]) {
-                return 1;
-            } else {
-                return this.sortUpFunction(value1, value2, keys, i + 1, data);
+        if (i != data.length) {
+            if (i < keys.length) {
+                if (value1[keys[i]] < value2[keys[i]]) {
+                    return -1;
+                } else if (value1[keys[i]] > value2[keys[i]]) {
+                    return 1;
+                } else {
+                    return this.sortUpFunction(value1, value2, keys, i + 1, data);
+                }
             }
         }
     }
@@ -396,15 +398,17 @@ export default class QueryController {
      * @returns {any}
      */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-        if (i < keys.length) {
-            if (value1[keys[i]] > value2[keys[i]]) {
-                return -1;
-            } else if (value1[keys[i]] < value2[keys[i]]) {
-                return 1;
-            } else {
-                return this.sortDownFunction(value1, value2, keys, i + 1, data);
+        if (i != data.length) {
+            if (i < keys.length) {
+                if (value1[keys[i]] > value2[keys[i]]) {
+                    return -1;
+                } else if (value1[keys[i]] < value2[keys[i]]) {
+                    return 1;
+                } else {
+                    return this.sortDownFunction(value1, value2, keys, i + 1, data);
+                }
             }
-       }
+        }
     }
     /**
      * ORDER results by ascending or descending
@@ -417,9 +421,7 @@ export default class QueryController {
         if (typeof query.ORDER == 'undefined') {
             return data;
         }
-        if (data.length < 2) {
-            return data;
-        }
+
 
         let that = this;
         let key: any = query.ORDER;
