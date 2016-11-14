@@ -105,15 +105,24 @@ export default class DatasetController {
                         }
                         if (fileType === 'json') {
                             // If filetype is json
-                            var jsonProcess = new ProcessJson();
-                            var JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            console.log ('filetype is json');
+                            let jsonProcess = new ProcessJson();
+                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
+                            //  fulfill(true);
                         } else {
                             // Else if filetype is html
-                            var htmlProcess = new ProcessHtml();
-                            var htmlProcessedDataset = htmlProcess.getValue(files, that.invalidDataSet);
+                            console.log ('filetype is html');
+                            let htmlProcess = new ProcessHtml();
+                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
+
                             htmlProcessedDataset.then(function(pd) {
-                                that.save(id, pd);
+                                console.log(pd);
+                                //  that.save(id, pd);
+                                // fulfill(true);
+                            }).catch(function (error) {
+                                console.log(error);
+                                reject (error);
                             });
                         }
                     });
@@ -136,7 +145,7 @@ export default class DatasetController {
      * @param id
      * @param processedDataset
      */
-    private save(id: string, processedDataset: any) {
+    public save(id: string, processedDataset: any) {
         // add it to the memory model
         try {
             var dirExist = fs.existsSync('./data');
