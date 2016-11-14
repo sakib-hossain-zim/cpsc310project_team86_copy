@@ -406,7 +406,6 @@ export default class QueryController {
             }
        }
     }
-
     /**
      * ORDER results by ascending or descending
      * @param query
