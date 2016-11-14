@@ -88,14 +88,14 @@ export default class DatasetController {
                         let zip2 = zip1.folder('discover');
                         zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
                             file.name;
-                            var p : Promise<string> = file.async("string");
-                            promises.push(p);
+                            let p1 : Promise<string> = file.async("string");
+                            promises.push(p1);
                         });
                     } else {
                         fileType = 'json';
                         zip.folder('courses').forEach(function(relativePath, file) {
-                            var p : Promise<string> = file.async("string");
-                            promises.push(p);
+                            let p2 : Promise<string> = file.async("string");
+                            promises.push(p2);
                         });
                     }
 
