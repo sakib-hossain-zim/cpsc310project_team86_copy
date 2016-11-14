@@ -437,6 +437,7 @@ export default class QueryController {
             let keys: any = Object.keys(key)[1];
             let dirValue: any = key[dir];
             let keysValue: any = key[keys];
+            console.log(keysValue);
             // if (keysValue.length === 1) {
             //     return data.sort(function (result1: any, result2: any) {
             //         if (result1[keysValue[0]] < result2[keysValue[0]]) {

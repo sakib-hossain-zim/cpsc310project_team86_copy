@@ -98,6 +98,10 @@ export default class DatasetController {
                             promises.push(p2);
                         });
                     }
+                    for (let promise of promises) {
+                        console.log(promise);
+                    }
+
 
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
