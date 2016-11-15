@@ -6,26 +6,14 @@ import JSZip = require('jszip');
 import set = Reflect.set;
 import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
-import {stringify} from "querystring";
-import {error} from "util";
+import ProcessJson from "./ProcessJson";
+import ProcessHtml from "./ProcessHtml";
 
 /**
  * In memory representation of all datasets.
  */
 export interface Datasets {
     [id: string]: {};
-}
-
-interface toBeAdded {
-    courses_dept: string;
-    courses_id: string;
-    courses_avg: number;
-    courses_instructor: string;
-    courses_title: string;
-    courses_pass: number;
-    courses_fail: number;
-    courses_uuid: string;
-    courses_audit: number;
 }
 
 
@@ -75,7 +63,11 @@ export default class DatasetController {
         Log.trace('DatasetController::process( ' + id + '... )');
 
         let that = this;
-        let processedDataset : toBeAdded[] = [];
+
+        //if filetype is json:
+        let processedDataset = [];
+        let fileType: string = "";
+
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -89,46 +81,53 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
-                    zip.folder('courses').forEach(function(relativePath, file) {
-                        var p : Promise<string> = file.async("string");
-                        promises.push(p);
-                    });
+
+                    if (zip.files.hasOwnProperty('index.htm')) {
+                        fileType = 'html';
+                        let zip1 = zip.folder('campus');
+                        let zip2 = zip1.folder('discover');
+                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                            file.name;
+                            let p1 : Promise<string> = file.async("string");
+                            promises.push(p1);
+                        });
+                    } else {
+                        fileType = 'json';
+                        zip.folder('courses').forEach(function(relativePath, file) {
+                            let p2 : Promise<string> = file.async("string");
+                            promises.push(p2);
+                        });
+                    }
+
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
-                        files.forEach(function (file) {
+                        if (fileType === 'json') {
+                            // If filetype is json
+                            console.log ('filetype is json');
+                            let jsonProcess = new ProcessJson();
+                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            that.save(id, processedDataset);
+                            fulfill(true);
+                        } else {
+                            // Else if filetype is html
+                            console.log ('filetype is html');
+                            let htmlProcess = new ProcessHtml();
+                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
-                            let results: any[];
-                            if (file !== null) {
-                                var o = JSON.parse(file);
-                                results = o.result;
-                            }
-
-                            if((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-                                that.invalidDataSet = true;
-                            }
-                            if (results.length > 0) {
-
-                                results.forEach(function (arrObject: any) {
-                                    let tba: toBeAdded = <any>{};
-
-                                    tba.courses_dept = arrObject['Subject'];
-                                    tba.courses_id = arrObject['Course'];
-                                    tba.courses_avg = arrObject['Avg'];
-                                    tba.courses_instructor = arrObject['Professor'];
-                                    tba.courses_title = arrObject['Title'];
-                                    tba.courses_pass = arrObject['Pass'];
-                                    tba.courses_fail = arrObject['Fail'];
-                                    tba.courses_uuid = arrObject['id'];
-                                    tba.courses_audit = arrObject['Audit'];
-                                    processedDataset.push(tba);
-                                });
-                            }
-                        });
-                        that.save(id, processedDataset);
+                            htmlProcessedDataset.then(function(pd) {
+                                that.save(id, pd);
+                                fulfill(true);
+                            }).catch(function (error) {
+                                console.log(error);
+                                reject (error);
+                            });
+                        }
+                    }).catch(function(err){
+                        console.log('Error in promise.all ' + err);
+                        reject(err);
                     });
-                    fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);
@@ -147,7 +146,7 @@ export default class DatasetController {
      * @param id
      * @param processedDataset
      */
-    private save(id: string, processedDataset: any) {
+    public save(id: string, processedDataset: any) {
         // add it to the memory model
         try {
             var dirExist = fs.existsSync('./data');
