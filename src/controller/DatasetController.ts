@@ -8,7 +8,6 @@ import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
 import ProcessJson from "./ProcessJson";
 import ProcessHtml from "./ProcessHtml";
-import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -108,22 +107,28 @@ export default class DatasetController {
                             // If filetype is json
                             console.log ('filetype is json');
                             let jsonProcess = new ProcessJson();
-                            jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
-                            //  fulfill(true);
+                             fulfill(true);
                         } else {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
-                            return htmlProcess.process(id, files, that.invalidDataSet).then(function(pd) {
+                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
+
+                            htmlProcessedDataset.then(function(pd) {
                                 console.log(pd);
+                                //  that.save(id, pd);
+                                fulfill(true);
                             }).catch(function (error) {
                                 console.log(error);
                                 reject (error);
                             });
                         }
+                    }).catch(function(err){
+                        console.log('Error in promise.all ' + err);
+                        reject(err);
                     });
-                    fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);

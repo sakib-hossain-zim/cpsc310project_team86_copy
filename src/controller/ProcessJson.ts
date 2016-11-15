@@ -12,8 +12,10 @@ interface toBeAddedJson {
 
 export default class ProcessJson {
     public process(files: any, processedDataset: any, invalidDataset: any): any {
+
         console.log('parsing json');
         files.forEach(function (file) {
+
             let results: any[];
             if (file !== null) {
                 var o = JSON.parse(file);

@@ -27,6 +27,7 @@ interface GeoResponse {
 }
 
 export default class ProcessHtml {
+
     public process(id, files: any, invalidDataset: any): Promise<boolean> {
         let count: number = 0;
         let htmlProcessedDataset: any = [];
@@ -34,20 +35,25 @@ export default class ProcessHtml {
         let that = this;
 
         return new Promise(function(fulfill, reject)  {
-            try {
-                for (let file of files) {
-                    var document: ASTNode = parse5.parse(file);
 
+            try {
+
+                for (let file of files) {
+
+
+                    var document: ASTNode = parse5.parse(file);
                     for (let child of document.childNodes) {
+
                         if (child.nodeName == 'html') {
                             var htmlNode = child;
                         }
                     }
-
                     for (let child of htmlNode.childNodes) {
+
                         if (child.nodeName == 'head') {
                             // console.log('made it here');
-                            var headAttrs = child.childNodes[9];
+                            var headNode = child;
+                            var headAttrs = headNode.childNodes[9];
                             if (typeof headAttrs !== 'undefined') {
                                 // console.log(headAttrs.attrs[1].value);
                                 var shortName = headAttrs.attrs[1].value;
@@ -57,14 +63,20 @@ export default class ProcessHtml {
 
                         if (child.nodeName == 'body') {
                             var bodyNode = child;
-                            if (shortName === 'UCLL') {
+                            if (count == 0) {
+                                count++;
+                                break;
+                            }
+
+                            else if (shortName === 'UCLL') {
+
                                 var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
                                 let promise = that.getLatLon(ucll_roomAddress);
                                 promises.push(promise);
-
                                 for (let child of ucll_tbody.childNodes) {
+
                                     if (child.nodeName == 'tr') {
                                         let tba: toBeAddedHtml = <any>{};
                                         tba.rooms_fullname = ucll_roomsFullName;
@@ -84,23 +96,29 @@ export default class ProcessHtml {
 
                                         //  let promise = that.getLatLon(ucll_roomAddress);
                                         //  promises.push(promise);
-                                    } else {
                                     }
+
+                                    else {
+                                    }
+
                                 }
-                            } else {
+                            }
+
+                            else {
+
                                 var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
                                 let promise: Promise<any> = that.getLatLon(roomsAddress);
                                 promises.push(promise);
-
                                 if (typeof room_info_path == 'undefined') {
                                     break;
-                                } else { console.log();}
+                                }
 
                                 var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
                                 //console.log(tbody.nodeName);
                                 for (let child of tbody.childNodes) {
+
                                     if (child.nodeName == 'tr') {
                                         let tba: toBeAddedHtml = <any>{};
                                         tba.rooms_fullname = roomsFullName;
@@ -114,13 +132,16 @@ export default class ProcessHtml {
                                         tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                         tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                         htmlProcessedDataset.push(tba);
+
+                                        //   let promise: Promise<any> = that.getLatLon(roomsAddress);
+                                        //   promises.push(promise);
                                     }
+
                                 }
                             }
                         }
                     }
                 }
-
                 Promise.all(promises).then(function (values: any[]) {
                     let building = htmlProcessedDataset[0].rooms_shortname;
                     let i = 0;
@@ -141,7 +162,22 @@ export default class ProcessHtml {
                         obj.rooms_lat = geo.lat;
                         obj.rooms_lon = geo.lon;
                     }
-
+                    //   }
+                    // console.log("made after Promises.all - Html Process");
+                    // //  for (var i = 0; i < values.length; i++) {
+                    //
+                    // let geo: GeoResponse = <any>{};
+                    // if (!values[i].hasOwnProperty('error')) {
+                    //     geo.lat = values[i].lat;
+                    //     geo.lon = values[i].lon;
+                    // }
+                    // else {
+                    //     geo.error = values[i].error;
+                    // }
+                    //
+                    // htmlProcessedDataset[i].rooms_lat = geo.lat;
+                    // htmlProcessedDataset[i].rooms_lon = geo.lon;
+                    //   }
                     let controller = new DatasetController();
                     controller.save(id, htmlProcessedDataset);
                 }).catch (function (err) {
