@@ -42,6 +42,7 @@ export default class InsightFacade implements IInsightFacade {
             } catch (e) {
                 reject({code: 400, body: {error: e.message}});
             }
+            reject({code: 400, body: {error: "message"}});
         });
 
         // var controller = InsightFacade.datasetController;
