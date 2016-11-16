@@ -68,7 +68,6 @@ export default class DatasetController {
         let processedDataset = [];
         let fileType: string;
 
-
         return new Promise(function (fulfill, reject) {
             try {
                 if (fs.existsSync('./data/' + id + '.json')) {
