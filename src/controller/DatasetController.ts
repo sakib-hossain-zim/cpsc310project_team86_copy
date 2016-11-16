@@ -66,13 +66,17 @@ export default class DatasetController {
 
         //if filetype is json:
         let processedDataset = [];
-        let fileType: string = "";
+        let fileType: string;
 
 
         return new Promise(function (fulfill, reject) {
             try {
-
-                let myZip = new JSZip();
+                if (fs.existsSync('./data/' + id + '.json')) {
+                    fulfill(true);
+                } else {
+                    fulfill(false);
+                }
+                    let myZip = new JSZip();
                 myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
                     Log.trace('DatasetController::process(..) - unzipped');
                     // The contents of the file will depend on the id provided. e.g.,
@@ -87,7 +91,6 @@ export default class DatasetController {
                         let zip1 = zip.folder('campus');
                         let zip2 = zip1.folder('discover');
                         zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
-                            file.name;
                             let p1 : Promise<string> = file.async("string");
                             promises.push(p1);
                         });
@@ -124,6 +127,7 @@ export default class DatasetController {
                                 reject (error);
                             });
                         }
+                        fulfill(true);
                     }).catch(function(err){
                         console.log('Error in promise.all ' + err);
                         reject(err);

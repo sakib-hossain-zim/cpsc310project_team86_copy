@@ -19,59 +19,58 @@ export default class InsightFacade implements IInsightFacade {
      */
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
-        // fulfill should be for 2XX codes and reject for everything else.
-        // return new Promise(function (fulfill, reject) {
-        //     try {
-        //         var controller = InsightFacade.datasetController;
-        //         controller.process(id, content).then(function (result) {
-        //             try {
-        //                 if (controller.invalidDataSet) {
-        //                     reject({code: 400, body: {error: "not valid dataset"}});
-        //                 } else {
-        //                     if (fs.existsSync('./data/' + id + '.json')) {
-        //                         fulfill({code: 201, body: {success: result}});
-        //                     } else {
-        //                         fulfill({code: 204, body: {success: result}});
-        //                     }
-        //                 }
-        //             } catch (e) {
-        //                 reject({code: 400, body: {error: e.message}});
-        //             }
-        //         }).catch(function (err: Error) {
-        //             reject({code: 400, body: {error: err.message}});
-        //         });
-        //     } catch (e) {
-        //         reject({code: 400, body: {error: e.message}});
-        //     }
-        // });
-
-        var controller = InsightFacade.datasetController;
-
+        //     fulfill should be for 2XX codes and reject for everything else.
         return new Promise(function (fulfill, reject) {
-
-
-            var idExists: boolean = false;
-            if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
-                idExists = true;
+            try {
+                var controller = InsightFacade.datasetController;
+                controller.process(id, content).then(function (result) {
+                    try {
+                        if (controller.invalidDataSet) {
+                            reject({code: 400, body: {error: "not valid dataset"}});
+                        }
+                        if (result == true) {
+                            fulfill({code: 201, body: {success: result}});
+                        } else {
+                            fulfill({code: 204, body: {success: result}});
+                        }
+                    } catch (e) {
+                        reject({code: 400, body: {error: e.message}});
+                    }
+                }).catch(function (err: Error) {
+                    reject({code: 400, body: {error: err.message}});
+                });
+            } catch (e) {
+                reject({code: 400, body: {error: e.message}});
             }
-
-            controller.process(id, content).then(function (result) {
-                if (controller.invalidDataSet) {
-                    reject({code: 400, body: {error: "not valid dataset"}});
-                }
-                if (idExists) {         // if id existed before give 201
-                    fulfill({code: 201, body: {success: result}});
-                } else {                                        // else 204
-                    fulfill({code: 204, body: {success: result}});
-                }
-            }).catch(function (err) {
-                reject({code: 400, body: {error: err.message}});
-            });
-            // }).catch(function(e){
-            //    console.log('we have error ' + e.message);
-            // })
-
         });
+
+        // var controller = InsightFacade.datasetController;
+        //
+        // return new Promise(function (fulfill, reject) {
+        //
+        //
+        //     var idExists: boolean = false;
+        //     if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
+        //         idExists = true;
+        //     }
+        //
+        //     controller.process(id, content).then(function (result) {
+        //         if (controller.invalidDataSet) {
+        //             reject({code: 400, body: {error: "not valid dataset"}});
+        //         }
+        //         if (idExists) {         // if id existed before give 201
+        //             fulfill({code: 201, body: {success: result}});
+        //         } else {                                        // else 204
+        //             fulfill({code: 204, body: {success: result}});
+        //         }
+        //     }).catch(function (err) {
+        //         reject({code: 400, body: {error: err.message}});
+        //     });
+        //     // }).catch(function(e){
+        //     //    console.log('we have error ' + e.message);
+        //     // })
+        //
+        // });
     }
 
     /**

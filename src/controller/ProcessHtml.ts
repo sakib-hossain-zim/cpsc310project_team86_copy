@@ -175,7 +175,6 @@ export default class ProcessHtml {
                 console.log(err);
                 reject(err);
             }
-            // fulfill(true);
         });
     }
 
