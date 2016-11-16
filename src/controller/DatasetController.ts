@@ -117,12 +117,9 @@ export default class DatasetController {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
-                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
-
-                            htmlProcessedDataset.then(function(pd) {
-                                that.save(id, pd);
-                                fulfill(true);
-                            }).catch(function (error) {
+                          htmlProcess.process(id, files, that.invalidDataSet).then(function (pd){
+                              console.log('what is ' + pd );
+                          }).catch(function (error) {
                                 console.log(error);
                                 reject (error);
                             });
