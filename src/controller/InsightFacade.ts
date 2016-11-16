@@ -67,9 +67,6 @@ export default class InsightFacade implements IInsightFacade {
             }).catch(function (err) {
                 reject({code: 400, body: {error: err.message}});
             });
-            // }).catch(function(e){
-            //    console.log('we have error ' + e.message);
-            // })
 
         });
     }
