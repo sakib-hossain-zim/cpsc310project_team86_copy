@@ -23,7 +23,6 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 var controller = InsightFacade.datasetController;
                 controller.process(id, content).then(function (result) {
-                    console.log('control process');
                     try {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
@@ -86,12 +85,16 @@ export default class InsightFacade implements IInsightFacade {
                 let obj = query.WHERE;
                 let empty:any =[];
                 let x = null;
-
+                let result = queryController.query(query);
                 if (isValid === true) {
                     if (query.WHERE !== null) {
                         var id = queryController.getWhereKeys(obj, empty, x);
+                        console.log(id);
                     }
-                    let result = queryController.query(query);
+                    if (Object.keys(query.WHERE).length == 0) {
+                        fulfill({code: 200, body: result});
+                    }
+
                     if (typeof id !== 'boolean') {
                         reject({code: 424, body: {missing: [id]}});
                     } else {

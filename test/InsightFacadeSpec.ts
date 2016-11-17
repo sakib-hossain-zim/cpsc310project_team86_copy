@@ -35,66 +35,24 @@ describe("InsightFacade", function () {
 
     beforeEach(function () {
         facade = new InsightFacade();
-        this.timeout(2000);
-    });
-
-
-    it("Should be able to add a new HTML dataset (204)", function () {
-        var that = this;
-        Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
-            console.log('response code is ' + response.code);
-            expect(response.code).to.equal(204);
-        }).catch(function (response: InsightResponse) {
-            expect.fail('Should not happen');
-        });
     });
 
     it("Should be able to add a new dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
-            console.log(response.code);
+        return facade.addDataset('courses', zipFileContents).then(function (response: InsightResponse) {
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');
         });
-
     });
-
 
     it("Should be able to update an existing dataset (201)", function () {
         var that = this;
         // that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('repeatCourses', zipFileContents).then(function() {
-            return facade.addDataset('repeatCourses', zipFileContents).then(function (response: InsightResponse) {
-                expect(response.code).to.equal(201);
-            }).catch(function (response: InsightResponse) {
-                expect.fail('Should not happen');
-            });
-        });
-    });
-
-    //
-    // it("Should be able to add a new HTML dataset (204)", function () {
-    //     var that = this;
-    //     Log.trace("Starting test: " + that.test.title);
-    //     return facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
-    //         console.log('response code is ' + response.code);
-    //         expect(response.code).to.equal(204);
-    //     }).catch(function (response: InsightResponse) {
-    //         expect.fail('Should not happen');
-    //     });
-    // });
-
-
-    it("Should be able to update an existing dataset (201)", function () {
-        var that = this;
-        // that.timeout(5000);
-        Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('roomsRepeat', zipFileContents).then(function() {
-            return facade.addDataset('roomsRepeat', zipFileContents).then(function (response: InsightResponse) {
+        facade.addDataset('repeat', zipFileContents).then(function() {
+            return facade.addDataset('repeat', zipFileContents).then(function (response: InsightResponse) {
                 expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
@@ -218,7 +176,15 @@ describe("InsightFacade", function () {
         });
     });
 
-
+    // it("Should be able to delete a dataset (204)", function () {
+    //     var that = this;
+    //     Log.trace("Starting test: " + that.test.title);
+    //     return facade.removeDataset('repeat').then(function (response: InsightResponse) {
+    //         expect(response.code).to.equal(204);
+    //     }).catch(function (response: InsightResponse) {
+    //         expect.fail('Should not happen');
+    //     });
+    // });
 
     it("Should fail to delete a dataset that has not been PUT (404)", function () {
         var that = this;
@@ -231,6 +197,15 @@ describe("InsightFacade", function () {
     });
 
 
+    it("Should be able to add a new HTML dataset (204)", function () {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        return facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
+            expect(response.code).to.equal(204);
+        }).catch(function (response: InsightResponse) {
+            expect.fail('Should not happen');
+        });
+    });
 
     it("Should be able to update an existing html dataset (201)", function () {
         var that = this;
