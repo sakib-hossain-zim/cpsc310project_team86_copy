@@ -35,10 +35,11 @@ describe("InsightFacade", function () {
 
     beforeEach(function () {
         facade = new InsightFacade();
+        this.timeout(2000);
     });
 
 
-    it.only("Should be able to add a new HTML dataset (204)", function () {
+    it("Should be able to add a new HTML dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
