@@ -8,6 +8,7 @@ import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
 import ProcessJson from "./ProcessJson";
 import ProcessHtml from "./ProcessHtml";
+import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -66,16 +67,13 @@ export default class DatasetController {
 
         //if filetype is json:
         let processedDataset = [];
-        let fileType: string;
+        let fileType: string = "";
+
 
         return new Promise(function (fulfill, reject) {
             try {
-                if (fs.existsSync('./data/' + id + '.json')) {
-                    fulfill(true);
-                } else {
-                    fulfill(false);
-                }
-                    let myZip = new JSZip();
+
+                let myZip = new JSZip();
                 myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
                     Log.trace('DatasetController::process(..) - unzipped');
                     // The contents of the file will depend on the id provided. e.g.,
@@ -101,33 +99,37 @@ export default class DatasetController {
                         });
                     }
 
+                    let nextPromises: Promise<any>[] = [];
+
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
-                        }
-                        if (fileType === 'json') {
+                        } else if (fileType === 'json') {
                             // If filetype is json
                             console.log ('filetype is json');
                             let jsonProcess = new ProcessJson();
-                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
-                            fulfill(true);
-                        } else {
+                            //  fulfill(true);
+                        } else if (fileType === 'html') {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
-                          htmlProcess.process(id, files, that.invalidDataSet).then(function (pd){
-                              console.log('what is ' + pd );
-                          }).catch(function (error) {
-                                console.log(error);
-                                reject (error);
-                            });
+                            let htmlPromise: Promise<any> = htmlProcess.process(id, files, that.invalidDataSet);
+                            nextPromises.push(htmlPromise);
+                        } else {
+                            reject(false);
                         }
-                        fulfill(true);
-                    }).catch(function(err){
-                        console.log('Error in promise.all ' + err);
-                        reject(err);
                     });
+
+                    Promise.all(nextPromises).then(function(data: any) {
+                        console.log(data);
+                    }).catch(function(error) {
+                        console.log(error.message);
+                        reject(error);
+                    });
+
+                    fulfill(true);
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);
