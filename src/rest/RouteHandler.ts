@@ -31,7 +31,7 @@ export default class RouteHandler {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
-            res.contentType
+            res.contentType;
             console.log(res.contentType);
            // console.log(req.contentType());
             console.log(req.getHref());
@@ -87,7 +87,7 @@ export default class RouteHandler {
     }
 
     public static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next){
-        var id: string = req.params.id;
+        let id: string = req.params.id;
         try {
             RouteHandler.insightFacade.removeDataset(id).then(function (response) {
                 res.json(response.code, response.body);
