@@ -41,7 +41,6 @@ export default class InsightFacade implements IInsightFacade {
             reject({code: 400, body: {error: "message"}});
         });
      }
-
      /**
      *
      * @param id
