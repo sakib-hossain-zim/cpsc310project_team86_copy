@@ -66,73 +66,79 @@ export default class DatasetController {
 
         //if filetype is json:
         let processedDataset = [];
-        let fileType: string;
+        let fileType: string = "";
+
 
         return new Promise(function (fulfill, reject) {
+            // console.time('start of promise');
             try {
-                // if (fs.existsSync('./data/' + id + '.json')) {
-                //     fulfill(true);
-                // } else {
-                //     fulfill(false);
-                // }
-                //     let myZip = new JSZip();
-                // myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
-                //     Log.trace('DatasetController::process(..) - unzipped');
-                //     // The contents of the file will depend on the id provided. e.g.,
-                //     // some zips will contain .html files, some will contain .json files.
-                //     // You can depend on 'id' to differentiate how the zip should be handled,
-                //     // although you should still be tolerant to errors.var myCourses: JSZipObject;
-                //
-                //     let promises: Promise<any>[] = [];
-                //
-                //     if (zip.files.hasOwnProperty('index.htm')) {
-                //         fileType = 'html';
-                //         let zip1 = zip.folder('campus');
-                //         let zip2 = zip1.folder('discover');
-                //         zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
-                //             let p1 : Promise<any> = file.async("string");
-                //             promises.push(p1);
-                //         });
-                //     } else {
-                //         fileType = 'json';
-                //         zip.folder('courses').forEach(function(relativePath, file) {
-                //             let p2 : Promise<any> = file.async("string");
-                //             promises.push(p2);
-                //         });
-                //     }
-                //
-                //     Promise.all(promises).then(function(files: any[]) {
-                //         if (typeof files === 'undefined' || files.length < 1) {
-                //             that.invalidDataSet = true;
-                //         }
-                //         if (fileType === 'json') {
-                //             // If filetype is json
-                //             console.log ('filetype is json');
-                //             let jsonProcess = new ProcessJson();
-                //             let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
-                //             that.save(id, processedDataset);
-                //             fulfill(true);
-                //         } else {
-                //             // Else if filetype is html
-                //             console.log ('filetype is html');
-                //             let htmlProcess = new ProcessHtml();
-                //           htmlProcess.process(id, files, that.invalidDataSet).then(function (pd){
-                //               console.log('what is ' + pd );
-                //           }).catch(function (error) {
-                //                 console.log(error);
-                //                 reject (error);
-                //             });
-                //         }
-                //         fulfill(true);
-                //     }).catch(function(err){
-                //         console.log('Error in promise.all ' + err);
-                //         reject(err);
-                //     });
-                // }).catch(function (err) {
-                //     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
-                //     reject(err);
-                // });
-                fulfill(true);
+
+                let myZip = new JSZip();
+                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
+                    Log.trace('DatasetController::process(..) - unzipped');
+                    // The contents of the file will depend on the id provided. e.g.,
+                    // some zips will contain .html files, some will contain .json files.
+                    // You can depend on 'id' to differentiate how the zip should be handled,
+                    // although you should still be tolerant to errors.var myCourses: JSZipObject;
+
+                    let promises: Promise<string>[] = [];
+
+                    if (zip.files.hasOwnProperty('index.htm')) {
+                        fileType = 'html';
+                        let zip1 = zip.folder('campus');
+                        let zip2 = zip1.folder('discover');
+                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                            file.name;
+                            let p1 : Promise<string> = file.async("string");
+                            promises.push(p1);
+                        });
+                    } else {
+                        fileType = 'json';
+                        zip.folder('courses').forEach(function(relativePath, file) {
+                            let p2 : Promise<string> = file.async("string");
+                            promises.push(p2);
+                        });
+                    }
+
+                    Promise.all(promises).then(function(files: any[]) {
+                        // console.time('promise.all');
+                        if (typeof files === 'undefined' || files.length < 1) {
+                            that.invalidDataSet = true;
+                        }
+                        if (fileType === 'json') {
+                            // If filetype is json
+                            // console.time('json');
+                            // console.log ('filetype is json');
+                            let jsonProcess = new ProcessJson();
+                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            that.save(id, processedDataset);
+                            // console.timeEnd('json');
+                            fulfill(true);
+                        } else {
+                            // Else if filetype is html
+                            // console.time('in html');
+                            // console.log ('filetype is html');
+                            let htmlProcess = new ProcessHtml();
+                          htmlProcess.process(id, files, that.invalidDataSet).then(function (pd){
+                              that.save(id, pd);
+                              // console.timeEnd('start of promise');
+                              fulfill(true);
+                              // console.timeEnd('in html');
+                          }).catch(function (error) {
+                                // console.log(error);
+                                reject (error);
+                            });
+
+                        }
+                        // console.timeEnd('promise.all');
+                    }).catch(function(err){
+                        // console.log('Error in promise.all ' + err);
+                        reject(err);
+                    });
+                }).catch(function (err) {
+                    Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
+                    reject(err);
+                });
             } catch (err) {
                 Log.trace('DatasetController::process(..) - ERROR: ' + err);
                 reject(err);

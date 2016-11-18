@@ -38,7 +38,7 @@ describe("InsightFacade", function () {
     });
 
 
-    it.only("Should be able to add a new HTML dataset (204)", function () {
+    it("Should be able to add a new HTML dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('rooms', zipFileContents_room).then(function (response: InsightResponse) {
@@ -67,7 +67,7 @@ describe("InsightFacade", function () {
         // that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('repeatCourses', zipFileContents).then(function() {
-            return facade.addDataset('repeatCourses', zipFileContents).then(function (response: InsightResponse) {
+             facade.addDataset('repeatCourses', zipFileContents).then(function (response: InsightResponse) {
                 expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
@@ -93,7 +93,7 @@ describe("InsightFacade", function () {
         // that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('roomsRepeat', zipFileContents).then(function() {
-            return facade.addDataset('roomsRepeat', zipFileContents).then(function (response: InsightResponse) {
+             facade.addDataset('roomsRepeat', zipFileContents).then(function (response: InsightResponse) {
                 expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
@@ -104,7 +104,7 @@ describe("InsightFacade", function () {
     it("Should not be able to add an invalid dataset (400)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('invalid', 'some random bytes').then(function (response: InsightResponse) {
+        facade.addDataset('invalid', 'some random bytes').then(function (response: InsightResponse) {
             expect.fail();
         }).catch(function (response: InsightResponse) {
             expect(response.code).to.equal(400);
@@ -121,7 +121,7 @@ describe("InsightFacade", function () {
         };
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('courses', zipFileContents).then(function() {
-            return facade.performQuery(query).then(function (response: InsightResponse) {
+             facade.performQuery(query).then(function (response: InsightResponse) {
                 console.log(response.code);
                 expect(response.code).to.equal(200);
             }).catch(function (response: InsightResponse) {
@@ -140,7 +140,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
+        facade.performQuery(query).then(function (response: InsightResponse) {
             expect.fail();
         }).catch(function (response: InsightResponse) {
             expect(response.code).to.equal(424);
@@ -163,7 +163,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
+        facade.performQuery(query).then(function (response: InsightResponse) {
             expect.fail();
         }).catch(function (response: InsightResponse) {
             expect(response.code).to.equal(424);
@@ -187,7 +187,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
+       facade.performQuery(query).then(function (response: InsightResponse) {
             expect.fail();
         }).catch(function (response: InsightResponse) {
             expect(response.code).to.equal(424);
@@ -210,7 +210,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
+        facade.performQuery(query).then(function (response: InsightResponse) {
             expect(response.code).to.equal(200);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');
@@ -222,7 +222,7 @@ describe("InsightFacade", function () {
     it("Should fail to delete a dataset that has not been PUT (404)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.removeDataset('randomCourse').then(function (response: InsightResponse) {
+       facade.removeDataset('randomCourse').then(function (response: InsightResponse) {
             expect.fail();
         }).catch(function (response: InsightResponse) {
             expect(response.code).to.equal(404);
@@ -236,7 +236,7 @@ describe("InsightFacade", function () {
         // that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('repeathtml', zipFileContents_room).then(function() {
-            return facade.addDataset('repeathtml', zipFileContents_room).then(function (response: InsightResponse) {
+           facade.addDataset('repeathtml', zipFileContents_room).then(function (response: InsightResponse) {
                 expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
@@ -255,7 +255,7 @@ describe("InsightFacade", function () {
         };
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('rooms', zipFileContents_room).then(function() {
-            return facade.performQuery(query).then(function (response: InsightResponse) {
+            facade.performQuery(query).then(function (response: InsightResponse) {
                 console.log(response.code);
                 expect(response.code).to.equal(200);
             }).catch(function (response: InsightResponse) {
@@ -273,7 +273,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        return facade.performQuery(query).then(function (response: InsightResponse) {
+        facade.performQuery(query).then(function (response: InsightResponse) {
             expect(response.code).to.equal(200);
         }).catch(function (response: InsightResponse) {
             expect.fail('Should not happen');

@@ -897,7 +897,7 @@ export default class QueryController {
     public query(query: QueryRequest): any {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
-        console.log(query.GET[0]);
+        // console.log(query.GET[0]);
         let id = query.GET[0].split('_')[0];
         //console.log(this.datasets);
         //     console.log (Object.keys(this.datasets)[0]);
