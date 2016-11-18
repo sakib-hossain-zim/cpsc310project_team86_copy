@@ -19,59 +19,29 @@ export default class InsightFacade implements IInsightFacade {
      */
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
-        // fulfill should be for 2XX codes and reject for everything else.
-        // return new Promise(function (fulfill, reject) {
-        //     try {
-        //         var controller = InsightFacade.datasetController;
-        //         controller.process(id, content).then(function (result) {
-        //             try {
-        //                 if (controller.invalidDataSet) {
-        //                     reject({code: 400, body: {error: "not valid dataset"}});
-        //                 } else {
-        //                     if (fs.existsSync('./data/' + id + '.json')) {
-        //                         fulfill({code: 201, body: {success: result}});
-        //                     } else {
-        //                         fulfill({code: 204, body: {success: result}});
-        //                     }
-        //                 }
-        //             } catch (e) {
-        //                 reject({code: 400, body: {error: e.message}});
-        //             }
-        //         }).catch(function (err: Error) {
-        //             reject({code: 400, body: {error: err.message}});
-        //         });
-        //     } catch (e) {
-        //         reject({code: 400, body: {error: e.message}});
-        //     }
-        // });
-
-        var controller = InsightFacade.datasetController;
-
-
+        //     fulfill should be for 2XX codes and reject for everything else.
         return new Promise(function (fulfill, reject) {
-            // console.time('insight');
-            var idExists: boolean = false;
-            if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
-                idExists = true;
+            try {
+                var controller = InsightFacade.datasetController;
+                controller.process(id, content).then(function (result) {
+                    try {
+                        if (controller.invalidDataSet) {
+                            reject({code: 400, body: {error: "not valid dataset"}});
+                        }
+                        if (result == true) {
+                            fulfill({code: 201, body: {success: result}});
+                        } else {
+                            fulfill({code: 204, body: {success: result}});
+                        }
+                    } catch (e) {
+                        reject({code: 400, body: {error: e.message}});
+                    }
+                }).catch(function (err: Error) {
+                    reject({code: 400, body: {error: err.message}});
+                });
+            } catch (e) {
+                reject({code: 400, body: {error: e.message}});
             }
-            controller.process(id, content).then(function (result) {
-                if (controller.invalidDataSet) {
-                    reject({code: 400, body: {error: "not valid dataset"}});
-                }
-                if (idExists) {         // if id existed before give 201
-                    // console.log('201');
-                    fulfill({code: 201, body: {success: result}});
-                    // console.timeEnd('insight');
-                } else {
-                    // console.log('204'); // else 204
-                    fulfill({code: 204, body: {success: result}});
-                    // console.timeEnd('insight');
-                }
-            }).catch(function (err) {
-                reject({code: 400, body: {error: err.message}});
-            });
-
-
         });
     }
 
@@ -106,38 +76,38 @@ export default class InsightFacade implements IInsightFacade {
      */
     public performQuery (query: QueryRequest): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
-
-            try {
-
-                let datasets = InsightFacade.datasetController.getDatasets();
-                let queryController = new QueryController(datasets);
-                //let id = query.GET[0].split('_')[0];
-                let isValid = queryController.isValid(query);
-                let obj = query.WHERE;
-                let empty:any =[];
-                let x = null;
-                let result = queryController.query(query);
-                if (isValid === true) {
-                    if (query.WHERE !== null) {
-                        var id = queryController.getWhereKeys(obj, empty, x);
-                        // console.log(id);
-                    }
-                    if (Object.keys(query.WHERE).length == 0) {
-                        fulfill({code: 200, body: result});
-                    }
-
-                    if (typeof id !== 'boolean') {
-                        reject({code: 424, body: {missing: [id]}});
-                    } else {
-                        fulfill({code: 200, body: result});
-                    }
-                } else {
-                    reject({code: 400, body: {error: 'invalid query'}});
-                }
-
-            } catch (e) {
-                reject({code: 400, body: {error: e.message}});
-            }
+            // try {
+            //
+            //     let datasets = InsightFacade.datasetController.getDatasets();
+            //     let queryController = new QueryController(datasets);
+            //     //let id = query.GET[0].split('_')[0];
+            //     let isValid = queryController.isValid(query);
+            //     let obj = query.WHERE;
+            //     let empty:any =[];
+            //     let x = null;
+            //     let result = queryController.query(query);
+            //     if (isValid === true) {
+            //         if (query.WHERE !== null) {
+            //             var id = queryController.getWhereKeys(obj, empty, x);
+            //             console.log(id);
+            //         }
+            //         if (Object.keys(query.WHERE).length == 0) {
+            //             fulfill({code: 200, body: result});
+            //         }
+            //
+            //         if (typeof id !== 'boolean') {
+            //             reject({code: 424, body: {missing: [id]}});
+            //         } else {
+            //             fulfill({code: 200, body: result});
+            //         }
+            //     } else {
+            //         reject({code: 400, body: {error: 'invalid query'}});
+            //     }
+            //
+            // } catch (e) {
+            //     reject({code: 400, body: {error: e.message}});
+            // }
+            reject({code: 400, body: {error: 'invalid query'}});
         });
     }
 }

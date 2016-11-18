@@ -1,0 +1,28 @@
+Simon Plath
+20232120
+
+COVERAGE: 86.05% statements
+
+
+Contributions:
+
+Provided indexing solution to parsing html files
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/0558fa6e744012a424a83507c94e84401b7bae4e
+
+fixed parsing so extracts information from every room in the building
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/1dcd32bf50743c44c49885cab4d3d59d536028e9
+
+fixed async code to return processed dataset after it has been populated
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/0e7d0b3cd32c377e0a82e122434b9044b819a02b
+
+A few validation revisions to comply with the new keys
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/4161c098e168448b4fdbb2221a8342f5417f23d3
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/7eda9ddcffdb510e9c08690d5fa61a1e474bffcc
+
+https://github.com/CS310-2016Fall/cpsc310project_team86/commit/342d03aa3ff725ec7ebe506cd1ee38ed725cf68e
+

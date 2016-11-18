@@ -96,8 +96,6 @@ export default class ProcessHtml {
                                     htmlProcessedDataset.push(tba);
                                     // console.log('start');
 
-                                    //  let promise = that.getLatLon(ucll_roomAddress);
-                                    //  promises.push(promise);
                                 }
 
                             }

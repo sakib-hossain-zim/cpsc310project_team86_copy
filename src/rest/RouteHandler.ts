@@ -31,7 +31,7 @@ export default class RouteHandler {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
-
+            res.contentType
             // stream bytes from request into buffer and convert to base64
             // adapted from: https://github.com/restify/node-restify/issues/880#issuecomment-133485821
             let buffer: any = [];
@@ -52,11 +52,11 @@ export default class RouteHandler {
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-            // RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
-            //     res.json(response.code, response.body);
-            //  }).catch(function(err: InsightResponse) {
-            res.json(err.code, err.body);
-            //  });
+            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+                res.json(response.code, response.body);
+            }).catch(function(err: InsightResponse) {
+                res.json(err.code, err.body);
+            });
         }
         return next();
     }
@@ -82,7 +82,7 @@ export default class RouteHandler {
     }
 
     public static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next){
-        let id: string = req.params.id;
+        var id: string = req.params.id;
         try {
             RouteHandler.insightFacade.removeDataset(id).then(function (response) {
                 res.json(response.code, response.body);
