@@ -7,14 +7,18 @@ import Log from "../src/Util";
 
 import JSZip = require('jszip');
 import {expect} from 'chai';
+import fs = require('fs');
 
 describe("DatasetController", function () {
 
     beforeEach(function () {
+
     });
 
     afterEach(function () {
     });
+
+
 
     it("Should be able to process valid dataset", function () {
         Log.test('Creating dataset');
