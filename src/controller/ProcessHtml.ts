@@ -28,7 +28,7 @@ interface GeoResponse {
 
 export default class ProcessHtml {
 
-    public process(id, files: any, invalidDataset: any): Promise<any> {
+    public process(id, files: any, invalidDataset: any, htmlDataset: any): Promise<boolean> {
 
         console.log('parsing html file');
 
@@ -146,6 +146,12 @@ export default class ProcessHtml {
                         }
                     }
                 }
+                var htmlLength = htmlProcessedDataset.length;
+                for (var i = 0; htmlLength >0; i++) {
+                    var j = i;
+                    htmlLength = htmlLength -1;
+                    htmlDataset[j] = htmlProcessedDataset[i];
+                }
                 Promise.all(promises).then(function (values: any[]) {
                     let building = htmlProcessedDataset[0].rooms_shortname;
                     let i = 0;
@@ -168,7 +174,7 @@ export default class ProcessHtml {
                     }
                     // let controller = new DatasetController();
                     console.log('done promise.all');
-                    fulfill(htmlProcessedDataset);
+                    fulfill(true);
                 }).catch (function (err) {
                     console.log(err);
                     reject(err);
