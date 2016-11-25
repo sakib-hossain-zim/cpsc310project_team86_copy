@@ -38,10 +38,10 @@ describe("InsightFacade", function () {
     });
 
 
-    it("Should be able to add a new HTML dataset (204)", function () {
+    it.only("Should be able to add a new HTML dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
+        return facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
             console.log('response code is ' + response.code);
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
@@ -52,7 +52,7 @@ describe("InsightFacade", function () {
     it("Should be able to add a new JSON dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('courses', jsonZip).then(function (response: InsightResponse) {
+        return facade.addDataset('courses', jsonZip).then(function (response: InsightResponse) {
             console.log(response.code);
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
