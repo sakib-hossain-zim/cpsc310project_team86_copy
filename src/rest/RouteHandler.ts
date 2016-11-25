@@ -31,12 +31,7 @@ export default class RouteHandler {
         Log.trace('RouteHandler::postDataset(..) - params: ' + JSON.stringify(req.params));
         try {
             var id: string = req.params.id;
-            res.contentType
-            console.log(res.contentType);
-           // console.log(req.contentType());
-            console.log(req.getHref());
-            console.log(req.is('text/html'));
-            console.log(req.is('application/json'));
+            // console.log(req.contentType());
             // stream bytes from request into buffer and convert to base64
             // adapted from: https://github.com/restify/node-restify/issues/880#issuecomment-133485821
             let buffer: any = [];
@@ -49,6 +44,7 @@ export default class RouteHandler {
                 req.body = concated.toString('base64');
                 Log.trace('RouteHandler::postDataset(..) on end; total length: ' + req.body.length);
                 RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+                    console.log("in route handler");
                     res.json(response.code, response.body);
                 }).catch(function (response) {
                     res.json(response.code, response.body);
@@ -57,7 +53,7 @@ export default class RouteHandler {
 
         } catch (err) {
             Log.error('RouteHandler::postDataset(..) - ERROR: ' + err.message);
-             RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
+            RouteHandler.insightFacade.addDataset(id, req.body).then(function (response: InsightResponse) {
                 res.json(response.code, response.body);
             }).catch(function(err: InsightResponse) {
                 res.json(err.code, err.body);

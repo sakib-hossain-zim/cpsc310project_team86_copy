@@ -8,7 +8,6 @@ import fs = require('fs');
 import keys = require("core-js/fn/array/keys");
 import ProcessJson from "./ProcessJson";
 import ProcessHtml from "./ProcessHtml";
-import {error} from "util";
 
 /**
  * In memory representation of all datasets.
@@ -47,7 +46,9 @@ export default class DatasetController {
         let i = 0;
         var filenames = fs.readdirSync("./data/");
         filenames.forEach(function (file) {
-            that.datasets[i] = fs.readFileSync("./data/" + file, 'utf8');
+            let stringKeys = file.split(".");
+            let id = stringKeys[0];
+            that.datasets[id] = fs.readFileSync("./data/" + file, 'utf8');
             i++;
         });
 
@@ -97,26 +98,43 @@ export default class DatasetController {
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
-                        } else if (fileType === 'json') {
+                        }
+                        if (fileType === 'html'){
+                            console.log ('filetype is html');
+                            let htmlProcess = new ProcessHtml();
+                            let htmlDataset: any = [];
+                            let htmlProcessedDataset = htmlProcess.process(id, files, htmlDataset);
+                            console.log('back from htmlprocess');
+                            that.save(id, htmlDataset);
+                            fulfill(true);
+
+                        }
+                        if (fileType === 'json') {
                             // If filetype is json
                             console.log ('filetype is json');
                             let jsonProcess = new ProcessJson();
-                            jsonProcess.process(files, processedDataset, that.invalidDataSet);
+                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
-                            //  fulfill(true);
-                        } else if (fileType === 'html') {
-                            // Else if filetype is html
-                            console.log ('filetype is html');
-                            let htmlProcess = new ProcessHtml();
-                            htmlProcess.process(files, processedDataset, that.invalidDataSet).then(function(htmlData: any) {
-                                that.save(id, htmlData);
-                            });
-                        } else {
-                            reject(false);
+                            fulfill(true);
                         }
-                    });
+                        // else {
+                        // Else if filetype is html
+                        // console.log ('filetype is html');
+                        // let htmlProcess = new ProcessHtml();
+                        // let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
-                    fulfill(true);
+                        // htmlProcessedDataset.then(function(pd) {
+                        //     that.save(id, pd);
+                        //     fulfill(true);
+                        // }).catch(function (error) {
+                        //     console.log(error);
+                        //     reject (error);
+                        // });
+                        // }
+                    }).catch(function(err){
+                        console.log('Error in promise.all ' + err);
+                        reject(err);
+                    });
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);

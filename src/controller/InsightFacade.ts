@@ -5,6 +5,7 @@ import {QueryRequest, default as QueryController} from "./QueryController";
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
 import fs = require('fs');
+import {error} from "util";
 
 
 export default class InsightFacade implements IInsightFacade {
@@ -19,6 +20,9 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
+        // fulfill should be for 2XX codes and reject for everything else.
+        let controller = InsightFacade.datasetController;
+
         return new Promise(function (fulfill, reject) {
             try {
                 var controller = InsightFacade.datasetController;
@@ -60,7 +64,6 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 let controller = InsightFacade.datasetController;
                 let datasets = controller.getDatasets();
-
                 if (fs.existsSync('./data/' + id + '.json')){
                     fs.unlink('./data/' + id + '.json');
                     datasets[id] = null;
