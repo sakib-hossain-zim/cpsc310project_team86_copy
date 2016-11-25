@@ -46,9 +46,7 @@ export default class DatasetController {
         let i = 0;
         var filenames = fs.readdirSync("./data/");
         filenames.forEach(function (file) {
-            let stringKeys = file.split(".");
-            let id = stringKeys[0];
-            that.datasets[id] = fs.readFileSync("./data/" + file, 'utf8');
+            that.datasets[i] = fs.readFileSync("./data/" + file, 'utf8');
             i++;
         });
 
@@ -70,6 +68,7 @@ export default class DatasetController {
         let processedDataset = [];
         let fileType: string = "";
 
+
         return new Promise(function (fulfill, reject) {
             try {
 
@@ -82,12 +81,14 @@ export default class DatasetController {
                     // although you should still be tolerant to errors.var myCourses: JSZipObject;
 
                     let promises: Promise<string>[] = [];
+                    let anotherpromise: Promise<string>[] = [];
 
                     if (zip.files.hasOwnProperty('index.htm')) {
                         fileType = 'html';
                         let zip1 = zip.folder('campus');
                         let zip2 = zip1.folder('discover');
                         zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                            file.name;
                             let p1 : Promise<string> = file.async("string");
                             promises.push(p1);
                         });
@@ -95,50 +96,52 @@ export default class DatasetController {
                         fileType = 'json';
                         zip.folder('courses').forEach(function(relativePath, file) {
                             let p2 : Promise<string> = file.async("string");
-                            promises.push(p2);
+                            anotherpromise.push(p2);
                         });
                     }
+                    // json promises
+                    if (fileType === 'json') {
+                        console.log(anotherpromise.length);
+                        Promise.all(anotherpromise).then(function (files: any[]) {
+                            console.log(typeof files);
+                            console.log(files.length);
+                            if (typeof files === 'undefined' || files.length < 1) {
+                                that.invalidDataSet = true;
+                            }
 
-                    Promise.all(promises).then(function(files: any[]) {
-                        if (typeof files === 'undefined' || files.length < 1) {
-                            that.invalidDataSet = true;
-                        }
-                        if (fileType === 'html'){
-                            console.log ('filetype is html');
-                            let htmlProcess = new ProcessHtml();
-                            let htmlDataset: any = [];
-                            let htmlProcessedDataset = htmlProcess.process(id, files, htmlDataset);
-                            console.log('back from htmlprocess');
-                            that.save(id, htmlDataset);
-                            fulfill(true);
-
-                        }
-                        if (fileType === 'json') {
-                            // If filetype is json
-                            console.log ('filetype is json');
+                            console.log('filetype is json');
                             let jsonProcess = new ProcessJson();
                             let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
                             that.save(id, processedDataset);
                             fulfill(true);
-                        }
-                        // else {
-                            // Else if filetype is html
-                            // console.log ('filetype is html');
-                            // let htmlProcess = new ProcessHtml();
-                            // let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
-                            // htmlProcessedDataset.then(function(pd) {
-                            //     that.save(id, pd);
-                            //     fulfill(true);
-                            // }).catch(function (error) {
-                            //     console.log(error);
-                            //     reject (error);
-                            // });
-                        // }
-                    }).catch(function(err){
-                        console.log('Error in promise.all ' + err);
-                        reject(err);
-                    });
+
+                        }).catch(function (err) {
+                            console.log('Error in promise.all ' + err);
+                            reject(err);
+                        });
+                    }
+
+                    if (fileType === 'html') {
+                        Promise.all(promises).then(function (files: any[]) {
+                            if (typeof files === 'undefined' || files.length < 1) {
+                                that.invalidDataSet = true;
+                            }
+
+                                console.log ('filetype is html');
+                                let htmlProcess = new ProcessHtml();
+                              htmlProcess.process(id, files, that.invalidDataSet).then(function(value){
+                                  console.log('back from htmlprocess');
+                                  that.save(id, value);
+                                  fulfill(true);
+                              });
+
+                        }).catch(function (err) {
+                            console.log('Error in promise.all ' + err);
+                            reject(err);
+                        });
+                    }
+
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                     reject(err);

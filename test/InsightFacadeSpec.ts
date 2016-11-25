@@ -76,13 +76,13 @@ describe("InsightFacade", function () {
     });
 
 
-    it("Should be able to update an html existing dataset (201)", function () {
+    it.only("Should be able to update an html existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-       facade.addDataset('roomsRepeat', htmlZip).then(function() {
-             facade.addDataset('roomsRepeat', htmlZip).then(function (response: InsightResponse) {
+       return facade.addDataset('courses', jsonZip).then(function() {
+                facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
                  console.log(response.code);
-                expect(response.code).to.equal(201);
+                expect(response.code).to.equal(204);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
             });

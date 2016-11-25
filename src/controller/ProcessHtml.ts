@@ -28,10 +28,7 @@ interface GeoResponse {
 
 export default class ProcessHtml {
 
-
-    public process(id:any , files: any, htmlDataset: any): Promise<any> {
-
-        console.log("parsing html files");
+    public process(id, files: any, invalidDataset: any): Promise<any> {
         let count: number = 0;
         let htmlProcessedDataset: any = [];
 
@@ -40,7 +37,6 @@ export default class ProcessHtml {
         let that = this;
 
         return new Promise(function (fulfill, reject) {
-            // console.time('start of html promise');
 
 
             for (let file of files) {
@@ -90,14 +86,17 @@ export default class ProcessHtml {
                                     tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
                                     tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
                                     var ucllroomnumber = tba.rooms_number;
+                                    //console.log (ucllroomnumber);
+                                    // console.log(roomnumber);
                                     tba.rooms_name = shortName + "_" + ucllroomnumber;
                                     tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
                                     tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                     tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                     htmlProcessedDataset.push(tba);
+                                    // console.log('start');
 
-                                    //  let promise = that.getLatLon(ucll_roomAddress);
-                                    //  promises.push(promise);
+                                     let promise = that.getLatLon(ucll_roomAddress);
+                                     promises.push(promise);
                                 }
 
                             }
@@ -132,8 +131,8 @@ export default class ProcessHtml {
                                     tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                     htmlProcessedDataset.push(tba);
 
-                                    //   let promise: Promise<any> = that.getLatLon(roomsAddress);
-                                    //   promises.push(promise);
+                                      let promise: Promise<any> = that.getLatLon(roomsAddress);
+                                      promises.push(promise);
                                 }
 
                             }
@@ -143,7 +142,6 @@ export default class ProcessHtml {
             }
 
             Promise.all(promises).then(function (values: any[]) {
-                // console.time('latlon');
                 let building = htmlProcessedDataset[0].rooms_shortname;
                 let i = 0;
                 for (var obj of htmlProcessedDataset) {
@@ -163,14 +161,15 @@ export default class ProcessHtml {
 
                     obj.rooms_lat = geo.lat;
                     obj.rooms_lon = geo.lon;
+                    fulfill(htmlProcessedDataset);
 
                 }
-                fulfill(htmlProcessedDataset);
-                // console.timeEnd('latlon');
-                // console.timeEnd('start of html promise');
+
+
+
 
             }).catch(function (err) {
-                // console.log(err);
+                console.log(err);
                 reject(err);
             });
 
@@ -198,13 +197,14 @@ export default class ProcessHtml {
             http.get(options, function (res) {
                 res.on("data", function (chunk) {
                     var jsonlatlon = JSON.parse(chunk);
+                    //console.log(jsonlatlon);
                     fulfill(jsonlatlon);
                 });
 
                 // console.log('in here');
 
             }).on('error', function (e: any) {
-                // console.log('error in http.get ' + e.message);
+                console.log('error in http.get ' + e.message);
                 reject(e);
             });
 

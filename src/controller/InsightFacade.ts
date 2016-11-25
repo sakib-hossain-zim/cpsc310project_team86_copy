@@ -20,32 +20,30 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
-        let controller = InsightFacade.datasetController;
-
-
         return new Promise(function (fulfill, reject) {
-            console.time('insight');
-            var idExists: boolean = false;
-            if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
-                idExists = true;
-            }
-            controller.process(id, content).then(function (result) {
-                if (controller.invalidDataSet) {
-                    reject({code: 400, body: {error: "not valid dataset"}});
-                }
-                if (idExists) {         // if id existed before give 201
-                    console.log('201');
-                    fulfill({code: 201, body: {success: result}});
-                    console.timeEnd('insight');
-                } else {
-                    console.log('204'); // else 204
-                    fulfill({code: 204, body: {success: result}});
-                    console.timeEnd('insight');
-                }
-            }).catch(function (err) {
-                reject({code: 400, body: {error: err.message}});
-            });
+            try {
+                var controller = InsightFacade.datasetController;
 
+                controller.process(id, content).then(function (result) {
+                    try {
+                        if (controller.invalidDataSet) {
+                            reject({code: 400, body: {error: "not valid dataset"}});
+                        } else {
+                            if (fs.existsSync('./data/' + id + '.json')) {
+                                fulfill({code: 201, body: {success: result}});
+                            } else {
+                                fulfill({code: 204, body: {success: result}});
+                            }
+                        }
+                    } catch (e) {
+                        reject({code: 400, body: {error: e.message}});
+                    }
+                }).catch(function (err: Error) {
+                    reject({code: 400, body: {error: err.message}});
+                });
+            } catch (e) {
+                reject({code: 400, body: {error: e.message}});
+            }
         });
     }
 
