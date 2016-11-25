@@ -28,7 +28,7 @@ interface GeoResponse {
 
 export default class ProcessHtml {
 
-    public process( files: any): Promise<any> {
+    public process(id, files: any, invalidDataset: any): Promise<any> {
         let count: number = 0;
         let htmlProcessedDataset: any = [];
 
@@ -96,6 +96,8 @@ export default class ProcessHtml {
                                     htmlProcessedDataset.push(tba);
                                     // console.log('start');
 
+                                    //  let promise = that.getLatLon(ucll_roomAddress);
+                                    //  promises.push(promise);
                                 }
 
                             }
@@ -164,8 +166,11 @@ export default class ProcessHtml {
 
                 }
                 fulfill(htmlProcessedDataset);
+                // console.timeEnd('latlon');
+                // console.timeEnd('start of html promise');
 
             }).catch(function (err) {
+                // console.log(err);
                 reject(err);
             });
 
@@ -188,13 +193,18 @@ export default class ProcessHtml {
                 path: path
             };
 
+            // console.log('in promise');
+
             http.get(options, function (res) {
                 res.on("data", function (chunk) {
                     var jsonlatlon = JSON.parse(chunk);
                     fulfill(jsonlatlon);
                 });
 
+                // console.log('in here');
+
             }).on('error', function (e: any) {
+                // console.log('error in http.get ' + e.message);
                 reject(e);
             });
 
