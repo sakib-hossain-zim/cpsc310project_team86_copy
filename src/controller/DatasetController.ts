@@ -88,7 +88,6 @@ export default class DatasetController {
                         let zip1 = zip.folder('campus');
                         let zip2 = zip1.folder('discover');
                         zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
-                            file.name;
                             let p1 : Promise<string> = file.async("string");
                             promises.push(p1);
                         });
@@ -108,7 +107,7 @@ export default class DatasetController {
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
                             let htmlDataset: any = [];
-                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet, htmlDataset);
+                            let htmlProcessedDataset = htmlProcess.process(id, files, htmlDataset);
                             console.log('back from htmlprocess');
                             that.save(id, htmlDataset);
                             fulfill(true);

@@ -29,7 +29,7 @@ interface GeoResponse {
 export default class ProcessHtml {
 
 
-    public process(files: any): Promise<any> {
+    public process(id:any , files: any, htmlDataset: any): Promise<any> {
 
         console.log("parsing html files");
         let count: number = 0;
