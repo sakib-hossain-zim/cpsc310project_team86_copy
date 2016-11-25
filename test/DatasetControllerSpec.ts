@@ -17,6 +17,7 @@ describe("DatasetController", function () {
     });
 
     it("Should be able to process valid dataset", function () {
+        this.timeout(1000);
         Log.test('Creating dataset');
         let content = [{
             "tier_eighty_five": 1,
@@ -111,6 +112,7 @@ describe("DatasetController", function () {
     });
 
     it("Should be able to receive a Dataset", function () {
+        this.timeout(1000);
         Log.test('Creating dataset');
         let content = {key: 'value'};
         let zip = new JSZip();

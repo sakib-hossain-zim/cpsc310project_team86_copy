@@ -35,6 +35,7 @@ interface responseObject {
     courses_audit?: string;
     courses_uuid?: string;
     courses_year?: number;
+
     rooms_fullname?: string;
     rooms_shortname?: string;
     rooms_number?: string;

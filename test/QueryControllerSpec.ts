@@ -10,6 +10,7 @@ import {expect} from 'chai';
 describe("QueryController", function () {
 
     beforeEach(function () {
+        this.timeout(1000);
     });
 
     afterEach(function () {

@@ -35,6 +35,7 @@ describe("InsightFacade", function () {
 
     beforeEach(function () {
         facade = new InsightFacade();
+        this.timeout(1000);
     });
 
     it("Should be able to add a new dataset (204)", function () {
@@ -51,7 +52,7 @@ describe("InsightFacade", function () {
         var that = this;
         // that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('repeat', zipFileContents).then(function() {
+        return facade.addDataset('repeat', zipFileContents).then(function() {
             return facade.addDataset('repeat', zipFileContents).then(function (response: InsightResponse) {
                 expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
@@ -79,7 +80,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('courses', zipFileContents).then(function() {
+        return facade.addDataset('courses', zipFileContents).then(function() {
             return facade.performQuery(query).then(function (response: InsightResponse) {
                 console.log(response.code);
                 expect(response.code).to.equal(200);
@@ -211,7 +212,7 @@ describe("InsightFacade", function () {
         var that = this;
         // that.timeout(5000);
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('repeathtml', zipFileContents_room).then(function() {
+        return facade.addDataset('repeathtml', zipFileContents_room).then(function() {
             return facade.addDataset('repeathtml', zipFileContents_room).then(function (response: InsightResponse) {
                 expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
@@ -230,7 +231,7 @@ describe("InsightFacade", function () {
             "AS": "TABLE"
         };
         Log.trace("Starting test: " + that.test.title);
-        facade.addDataset('rooms', zipFileContents_room).then(function() {
+        return facade.addDataset('rooms', zipFileContents_room).then(function() {
             return facade.performQuery(query).then(function (response: InsightResponse) {
                 console.log(response.code);
                 expect(response.code).to.equal(200);

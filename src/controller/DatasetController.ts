@@ -65,14 +65,11 @@ export default class DatasetController {
 
         let that = this;
 
-        //if filetype is json:
         let processedDataset = [];
         let fileType: string = "";
 
-
         return new Promise(function (fulfill, reject) {
             try {
-
                 let myZip = new JSZip();
                 myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
                     Log.trace('DatasetController::process(..) - unzipped');
@@ -85,9 +82,7 @@ export default class DatasetController {
 
                     if (zip.files.hasOwnProperty('index.htm')) {
                         fileType = 'html';
-                        let zip1 = zip.folder('campus');
-                        let zip2 = zip1.folder('discover');
-                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                        zip.folder('campus/discover/buildings-and-classrooms').forEach(function(relativePath, file) {
                             let p1 : Promise<string> = file.async("string");
                             promises.push(p1);
                         });
@@ -98,8 +93,6 @@ export default class DatasetController {
                             promises.push(p2);
                         });
                     }
-
-                    let nextPromises: Promise<any>[] = [];
 
                     Promise.all(promises).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
@@ -115,18 +108,12 @@ export default class DatasetController {
                             // Else if filetype is html
                             console.log ('filetype is html');
                             let htmlProcess = new ProcessHtml();
-                            let htmlPromise: Promise<any> = htmlProcess.process(id, files, that.invalidDataSet);
-                            nextPromises.push(htmlPromise);
+                            htmlProcess.process(files, processedDataset, that.invalidDataSet).then(function(htmlData: any) {
+                                that.save(id, htmlData);
+                            });
                         } else {
                             reject(false);
                         }
-                    });
-
-                    Promise.all(nextPromises).then(function(data: any) {
-                        console.log(data);
-                    }).catch(function(error) {
-                        console.log(error.message);
-                        reject(error);
                     });
 
                     fulfill(true);

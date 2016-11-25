@@ -22,6 +22,7 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             try {
                 var controller = InsightFacade.datasetController;
+
                 controller.process(id, content).then(function (result) {
                     try {
                         if (controller.invalidDataSet) {
@@ -39,6 +40,10 @@ export default class InsightFacade implements IInsightFacade {
                 }).catch(function (err: Error) {
                     reject({code: 400, body: {error: err.message}});
                 });
+                // var t0 = performance.now();
+                // doSomething();
+                // var t1 = performance.now();
+                // console.log("Call to process took " + (t1 - t0) + " milliseconds.");
             } catch (e) {
                 reject({code: 400, body: {error: e.message}});
             }
