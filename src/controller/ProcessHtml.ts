@@ -28,7 +28,10 @@ interface GeoResponse {
 
 export default class ProcessHtml {
 
+
     public process(files: any): Promise<any> {
+
+        console.log("parsing html files");
         let count: number = 0;
         let htmlProcessedDataset: any = [];
 
@@ -87,14 +90,11 @@ export default class ProcessHtml {
                                     tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
                                     tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
                                     var ucllroomnumber = tba.rooms_number;
-                                    //console.log (ucllroomnumber);
-                                    // console.log(roomnumber);
                                     tba.rooms_name = shortName + "_" + ucllroomnumber;
                                     tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
                                     tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                     tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                     htmlProcessedDataset.push(tba);
-                                    // console.log('start');
 
                                     //  let promise = that.getLatLon(ucll_roomAddress);
                                     //  promises.push(promise);

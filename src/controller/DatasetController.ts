@@ -46,7 +46,9 @@ export default class DatasetController {
         let i = 0;
         var filenames = fs.readdirSync("./data/");
         filenames.forEach(function (file) {
-            that.datasets[i] = fs.readFileSync("./data/" + file, 'utf8');
+            let stringKeys = file.split(".");
+            let id = stringKeys[0];
+            that.datasets[id] = fs.readFileSync("./data/" + file, 'utf8');
             i++;
         });
 
@@ -67,7 +69,6 @@ export default class DatasetController {
         //if filetype is json:
         let processedDataset = [];
         let fileType: string;
-
 
         return new Promise(function (fulfill, reject) {
             try {

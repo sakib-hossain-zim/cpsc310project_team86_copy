@@ -20,7 +20,7 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
-        var controller = InsightFacade.datasetController;
+        let controller = InsightFacade.datasetController;
 
 
         return new Promise(function (fulfill, reject) {
@@ -46,7 +46,6 @@ export default class InsightFacade implements IInsightFacade {
                 reject({code: 400, body: {error: err.message}});
             });
 
-
         });
     }
 
@@ -61,7 +60,6 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 let controller = InsightFacade.datasetController;
                 let datasets = controller.getDatasets();
-
                 if (fs.existsSync('./data/' + id + '.json')){
                     fs.unlink('./data/' + id + '.json');
                     datasets[id] = null;
