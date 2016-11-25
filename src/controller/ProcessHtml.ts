@@ -28,7 +28,7 @@ interface GeoResponse {
 
 export default class ProcessHtml {
 
-    public process(id, files: any, invalidDataset: any): Promise<any> {
+    public process(files: any): Promise<any> {
         let count: number = 0;
         let htmlProcessedDataset: any = [];
 
