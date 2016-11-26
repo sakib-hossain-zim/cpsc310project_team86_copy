@@ -99,6 +99,7 @@ describe("InsightFacade", function () {
         });
     });
 
+
     it("Should be able to add courses then rooms dataset 204", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
