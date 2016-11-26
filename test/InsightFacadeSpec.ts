@@ -36,7 +36,6 @@ describe("InsightFacade", function () {
         facade = new InsightFacade();
     });
 
-
     it("Should be able to add a new HTML dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
