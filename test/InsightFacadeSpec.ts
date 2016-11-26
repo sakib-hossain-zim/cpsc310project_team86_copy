@@ -113,8 +113,6 @@ describe("InsightFacade", function () {
         });
     });
 
-
-
     // it("Should be able to successfully answer a query (200)", function () {
     //     var that = this;
     //     let query: QueryRequest = {
