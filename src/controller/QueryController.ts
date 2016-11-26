@@ -903,14 +903,14 @@ export default class QueryController {
         let id = query.GET[0].split('_')[0];
 
         var dataID;
-      // if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
+       if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
             if (id === 'courses'){
                 dataID = Object.keys(this.datasets)[0];
             }
             if (id === 'rooms'){
                dataID = Object.keys(this.datasets)[1];
             }
-      //  }
+        }
         else {
            dataID = Object.keys(this.datasets)[0];
         }
