@@ -108,7 +108,7 @@ describe("DatasetController", function () {
         return zip.generateAsync(opts).then(function (data) {
             Log.test('Dataset created');
             let controller = new DatasetController();
-            return controller.process('setA', data);
+            return controller.process('courses', data);
         }).then(function (result) {
             Log.test('Dataset processed; result: ' + result); // result should be true
             expect(result).to.equal(true); // zip file was valid, should pass
@@ -127,7 +127,7 @@ describe("DatasetController", function () {
         return zip.generateAsync(opts).then(function (data) {
             Log.test('Dataset created');
             let controller = new DatasetController();
-            return controller.process('setA', data);
+            return controller.process('courses', data);
         }).then(function (result) {
             Log.test('Dataset processed; result: ' + result);
             expect(result).to.equal(true);

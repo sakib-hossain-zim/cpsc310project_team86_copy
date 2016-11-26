@@ -20,32 +20,27 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset (id:string, content: string) : Promise<InsightResponse> {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
-        return new Promise(function (fulfill, reject) {
-            try {
-                var controller = InsightFacade.datasetController;
+        let controller = InsightFacade.datasetController;
 
-                controller.process(id, content).then(function (result) {
-                    try {
-                        if (controller.invalidDataSet) {
-                            reject({code: 400, body: {error: "not valid dataset"}});
-                        } else {
-                            if (fs.existsSync('./data/' + id + '.json')) {
-                                console.log('201');
-                                fulfill({code: 201, body: {success: result}});
-                            } else {
-                                console.log('204');
-                                fulfill({code: 204, body: {success: result}});
-                            }
-                        }
-                    } catch (e) {
-                        reject({code: 400, body: {error: e.message}});
-                    }
-                }).catch(function (err: Error) {
-                    reject({code: 400, body: {error: err.message}});
-                });
-            } catch (e) {
-                reject({code: 400, body: {error: e.message}});
+
+        return new Promise(function (fulfill, reject) {
+            var idExists: boolean = false;
+            if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
+                idExists = true;
             }
+            controller.process(id, content).then(function (result) {
+                if (controller.invalidDataSet) {
+                    reject({code: 400, body: {error: "not valid dataset"}});
+                }
+                if (idExists) {         // if id existed before give 201
+                    fulfill({code: 201, body: {success: result}});
+                } else {
+                    fulfill({code: 204, body: {success: result}});
+                }
+            }).catch(function (err) {
+                reject({code: 400, body: {error: err.message}});
+            });
+
         });
     }
 
@@ -93,7 +88,7 @@ export default class InsightFacade implements IInsightFacade {
                 if (isValid === true) {
                     if (query.WHERE !== null) {
                         var id = queryController.getWhereKeys(obj, empty, x);
-                        console.log(id);
+                       // console.log(id);
                     }
                     if (Object.keys(query.WHERE).length == 0) {
                         fulfill({code: 200, body: result});

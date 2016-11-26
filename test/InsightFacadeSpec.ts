@@ -8,7 +8,6 @@ import {expect} from 'chai';
 import InsightFacade from "../src/controller/InsightFacade";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 
-
 describe("InsightFacade", function () {
 
     var jsonZip: string = null;
@@ -37,11 +36,10 @@ describe("InsightFacade", function () {
         facade = new InsightFacade();
     });
 
-
-    it.only("Should be able to add a new HTML dataset (204)", function () {
+    it("Should be able to add a new HTML dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
+        facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
             console.log('response code is ' + response.code);
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
@@ -52,7 +50,7 @@ describe("InsightFacade", function () {
     it("Should be able to add a new JSON dataset (204)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-        return facade.addDataset('courses', jsonZip).then(function (response: InsightResponse) {
+        facade.addDataset('courses', jsonZip).then(function (response: InsightResponse) {
             console.log(response.code);
             expect(response.code).to.equal(204);
         }).catch(function (response: InsightResponse) {
@@ -75,14 +73,13 @@ describe("InsightFacade", function () {
 
     });
 
-
-    it.only("Should be able to update an html existing dataset (201)", function () {
+    it("Should be able to update an html existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
-       return facade.addDataset('courses', jsonZip).then(function() {
-                facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
+       facade.addDataset('roomsRepeat', htmlZip).then(function() {
+             facade.addDataset('roomsRepeat', htmlZip).then(function (response: InsightResponse) {
                  console.log(response.code);
-                expect(response.code).to.equal(204);
+                expect(response.code).to.equal(201);
             }).catch(function (response: InsightResponse) {
                 expect.fail('Should not happen');
             });
@@ -103,8 +100,18 @@ describe("InsightFacade", function () {
     });
 
 
-
-
+    it("Should be able to add courses then rooms dataset 204", function () {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        facade.addDataset('courses', jsonZip).then(function() {
+            facade.addDataset('rooms', htmlZip).then(function (response: InsightResponse) {
+                console.log(response.code);
+                expect(response.code).to.equal(204);
+            }).catch(function (response: InsightResponse) {
+                expect.fail('Should not happen');
+            });
+        });
+    });
 
     // it("Should be able to successfully answer a query (200)", function () {
     //     var that = this;
