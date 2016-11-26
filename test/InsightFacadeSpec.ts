@@ -8,7 +8,6 @@ import {expect} from 'chai';
 import InsightFacade from "../src/controller/InsightFacade";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 
-
 describe("InsightFacade", function () {
 
     var jsonZip: string = null;
