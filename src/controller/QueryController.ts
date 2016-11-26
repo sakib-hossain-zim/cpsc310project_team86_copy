@@ -898,17 +898,19 @@ export default class QueryController {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
         // console.log(query.GET[0]);
+     //   console.log(Object.keys(this.datasets));
+     //   console.log(Object.keys(this.datasets)[0]);
         let id = query.GET[0].split('_')[0];
 
         var dataID;
-        if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
+      // if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
             if (id === 'courses'){
                 dataID = Object.keys(this.datasets)[0];
             }
             if (id === 'rooms'){
                dataID = Object.keys(this.datasets)[1];
             }
-        }
+      //  }
         else {
            dataID = Object.keys(this.datasets)[0];
         }
@@ -948,6 +950,7 @@ export default class QueryController {
        // console.log(orderedResults);
         // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
+        console.log(response);
         return response;
     }
 }

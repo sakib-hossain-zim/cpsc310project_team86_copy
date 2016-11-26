@@ -103,16 +103,7 @@ export default class DatasetController {
                         if (typeof files === 'undefined' || files.length < 1) {
                             that.invalidDataSet = true;
                         }
-                        if (fileType === 'html'){
-                            console.log ('filetype is html');
-                            let htmlProcess = new ProcessHtml();
-                            let htmlDataset: any = [];
-                            let htmlProcessedDataset = htmlProcess.process(id, files, htmlDataset);
-                            console.log('back from htmlprocess');
-                            that.save(id, htmlDataset);
-                            fulfill(true);
 
-                        }
                         if (fileType === 'json') {
                             // If filetype is json
                             console.log ('filetype is json');
@@ -121,20 +112,19 @@ export default class DatasetController {
                             that.save(id, processedDataset);
                             fulfill(true);
                         }
-                        // else {
-                            // Else if filetype is html
-                            // console.log ('filetype is html');
-                            // let htmlProcess = new ProcessHtml();
-                            // let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
+                        else {
+                            console.log ('filetype is html');
+                            let htmlProcess = new ProcessHtml();
+                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
 
-                            // htmlProcessedDataset.then(function(pd) {
-                            //     that.save(id, pd);
-                            //     fulfill(true);
-                            // }).catch(function (error) {
-                            //     console.log(error);
-                            //     reject (error);
-                            // });
-                        // }
+                            htmlProcessedDataset.then(function(pd) {
+                                that.save(id, pd);
+                                fulfill(true);
+                            }).catch(function (error) {
+                                console.log(error);
+                                reject (error);
+                            });
+                        }
                     }).catch(function(err){
                         console.log('Error in promise.all ' + err);
                         reject(err);

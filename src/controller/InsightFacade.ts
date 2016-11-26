@@ -24,7 +24,6 @@ export default class InsightFacade implements IInsightFacade {
 
 
         return new Promise(function (fulfill, reject) {
-            console.time('insight');
             var idExists: boolean = false;
             if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
                 idExists = true;
@@ -34,13 +33,9 @@ export default class InsightFacade implements IInsightFacade {
                     reject({code: 400, body: {error: "not valid dataset"}});
                 }
                 if (idExists) {         // if id existed before give 201
-                    console.log('201');
                     fulfill({code: 201, body: {success: result}});
-                    console.timeEnd('insight');
                 } else {
-                    console.log('204'); // else 204
                     fulfill({code: 204, body: {success: result}});
-                    console.timeEnd('insight');
                 }
             }).catch(function (err) {
                 reject({code: 400, body: {error: err.message}});
@@ -93,7 +88,7 @@ export default class InsightFacade implements IInsightFacade {
                 if (isValid === true) {
                     if (query.WHERE !== null) {
                         var id = queryController.getWhereKeys(obj, empty, x);
-                        console.log(id);
+                       // console.log(id);
                     }
                     if (Object.keys(query.WHERE).length == 0) {
                         fulfill({code: 200, body: result});

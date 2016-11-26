@@ -145,6 +145,7 @@ export default class ProcessHtml {
             Promise.all(promises).then(function (values: any[]) {
                 // console.time('latlon');
                 let building = htmlProcessedDataset[0].rooms_shortname;
+                console.log(building);
                 let i = 0;
                 for (var obj of htmlProcessedDataset) {
                     if (obj.rooms_shortname !== building) {
