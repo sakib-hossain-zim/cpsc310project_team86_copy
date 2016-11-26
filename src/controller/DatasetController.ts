@@ -63,79 +63,34 @@ export default class DatasetController {
      */
     public process(id: string, data: any): Promise<boolean> {
         Log.trace('DatasetController::process( ' + id + '... )');
-
         let that = this;
 
-        //if filetype is json:
-        let processedDataset = [];
-        let fileType: string = "";
-
         return new Promise(function (fulfill, reject) {
+
             try {
 
-                let myZip = new JSZip();
-                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
-                    Log.trace('DatasetController::process(..) - unzipped');
-                    // The contents of the file will depend on the id provided. e.g.,
-                    // some zips will contain .html files, some will contain .json files.
-                    // You can depend on 'id' to differentiate how the zip should be handled,
-                    // although you should still be tolerant to errors.var myCourses: JSZipObject;
-
-                    let promises: Promise<string>[] = [];
-
-                    if (zip.files.hasOwnProperty('index.htm')) {
-                        fileType = 'html';
-                        let zip1 = zip.folder('campus');
-                        let zip2 = zip1.folder('discover');
-                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
-                            let p1 : Promise<string> = file.async("string");
-                            promises.push(p1);
-                        });
-                    } else {
-                        fileType = 'json';
-                        zip.folder('courses').forEach(function(relativePath, file) {
-                            let p2 : Promise<string> = file.async("string");
-                            promises.push(p2);
-                        });
-                    }
-
-                    Promise.all(promises).then(function(files: any[]) {
-                        if (typeof files === 'undefined' || files.length < 1) {
-                            that.invalidDataSet = true;
-                        }
-
-                        if (fileType === 'json') {
-                            // If filetype is json
-                            console.log ('filetype is json');
-                            let jsonProcess = new ProcessJson();
-                            let JSONProcessedDataset = jsonProcess.process(files, processedDataset, that.invalidDataSet);
-                            that.save(id, processedDataset);
-                            fulfill(true);
-                        }
-                        else {
-                            console.log ('filetype is html');
-                            let htmlProcess = new ProcessHtml();
-                            let htmlProcessedDataset = htmlProcess.process(id, files, that.invalidDataSet);
-
-                            htmlProcessedDataset.then(function(pd) {
-                                that.save(id, pd);
-                                fulfill(true);
-                            }).catch(function (error) {
-                                console.log(error);
-                                reject (error);
-                            });
-                        }
-                    }).catch(function(err){
-                        console.log('Error in promise.all ' + err);
+                if (id == "courses") {
+                    let jsonProcess = new ProcessJson();
+                    let JSONProcessedDataset = jsonProcess.process(id, data, that.invalidDataSet);
+                    JSONProcessedDataset.then(function (value) {
+                        fulfill(value);
+                    }).catch(function (err) {
+                        Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
+                        reject(err);
+                    });;
+                }
+                if (id == "rooms") {
+                    let htmlProcess = new ProcessHtml();
+                    let htmlProcessedDataset = htmlProcess.process(id, data, that.invalidDataSet);
+                    htmlProcessedDataset.then(function (value) {
+                        fulfill(value);
+                    }).catch(function (err) {
+                        Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                         reject(err);
                     });
-                }).catch(function (err) {
-                    Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
-                    reject(err);
-                });
-            } catch (err) {
-                Log.trace('DatasetController::process(..) - ERROR: ' + err);
-                reject(err);
+                }
+            } catch (error) {
+                reject(error);
             }
         });
     }

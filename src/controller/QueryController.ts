@@ -950,7 +950,6 @@ export default class QueryController {
        // console.log(orderedResults);
         // }
         var response: QueryResponse = {render: query.AS, result: orderedResults};
-        console.log(response);
         return response;
     }
 }

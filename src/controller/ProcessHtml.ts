@@ -4,6 +4,7 @@ import fs = require('fs');
 let http = require('http');
 import DatasetController from "./DatasetController";
 import Log from "../Util";
+import JSZip = require('jszip');
 
 
 interface toBeAddedHtml {
@@ -29,19 +30,42 @@ interface GeoResponse {
 export default class ProcessHtml {
 
 
-    public process(id:any , files: any, htmlDataset: any): Promise<any> {
+    public process(id:any , data: any, invalidDataset: any): Promise<boolean> {
+
+        let that = this;
+        let datasetController = new DatasetController();
+        let htmlProcessedDataset: any = [];
+        let promises2: Promise<any>[] = [];
+
+
+        return new Promise(function (fulfill, reject) {
+            try {
+
+                let myZip = new JSZip();
+                myZip.loadAsync(data, {base64: true}).then(function (zip: JSZip) {
+                    Log.trace('DatasetController::process(..) - unzipped');
+                    // The contents of the file will depend on the id provided. e.g.,
+                    // some zips will contain .html files, some will contain .json files.
+                    // You can depend on 'id' to differentiate how the zip should be handled,
+                    // although you should still be tolerant to errors.var myCourses: JSZipObject;
+
+                    let promises1: Promise<string>[] = [];
+
+                        let zip1 = zip.folder('campus');
+                        let zip2 = zip1.folder('discover');
+                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                            let p1 : Promise<string> = file.async("string");
+                            promises1.push(p1);
+                        });
+
+
+                    Promise.all(promises1).then(function(files: any[]) {
+                        if (typeof files === 'undefined' || files.length < 1) {
+                            invalidDataset = true;
+                        }
 
         console.log("parsing html files");
         let count: number = 0;
-        let htmlProcessedDataset: any = [];
-
-        let promises: Promise<any>[] = [];
-
-        let that = this;
-
-        return new Promise(function (fulfill, reject) {
-            // console.time('start of html promise');
-
 
             for (let file of files) {
 
@@ -56,13 +80,10 @@ export default class ProcessHtml {
                 for (let child of htmlNode.childNodes) {
 
                     if (child.nodeName == 'head') {
-                        // console.log('made it here');
                         var headNode = child;
                         var headAttrs = headNode.childNodes[9];
                         if (typeof headAttrs !== 'undefined') {
-                            // console.log(headAttrs.attrs[1].value);
                             var shortName = headAttrs.attrs[1].value;
-                            //console.log(shortName);
                         }
                     }
 
@@ -78,8 +99,8 @@ export default class ProcessHtml {
                             var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                             var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                             var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
-                            let promise = that.getLatLon(ucll_roomAddress);
-                            promises.push(promise);
+                            let promise2 = that.getLatLon(ucll_roomAddress);
+                            promises2.push(promise2);
                             for (let child of ucll_tbody.childNodes) {
 
                                 if (child.nodeName == 'tr') {
@@ -108,8 +129,8 @@ export default class ProcessHtml {
                             var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                             var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                             var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
-                            let promise: Promise<any> = that.getLatLon(roomsAddress);
-                            promises.push(promise);
+                            let promise2: Promise<any> = that.getLatLon(roomsAddress);
+                            promises2.push(promise2);
                             if (typeof room_info_path == 'undefined') {
                                 break;
                             }
@@ -142,7 +163,7 @@ export default class ProcessHtml {
                 }
             }
 
-            Promise.all(promises).then(function (values: any[]) {
+            Promise.all(promises2).then(function (values: any[]) {
                 // console.time('latlon');
                 let building = htmlProcessedDataset[0].rooms_shortname;
                 console.log(building);
@@ -166,17 +187,28 @@ export default class ProcessHtml {
                     obj.rooms_lon = geo.lon;
 
                 }
-                fulfill(htmlProcessedDataset);
-                // console.timeEnd('latlon');
-                // console.timeEnd('start of html promise');
+
+                datasetController.save(id, htmlProcessedDataset);
+                fulfill(true);
+
 
             }).catch(function (err) {
-                // console.log(err);
                 reject(err);
             });
-
+            }).catch(function(err){
+            console.log('Error in promise.all ' + err);
+            reject(err);
         });
-    }
+    }).catch(function (err) {
+        Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
+        reject(err);
+    });
+} catch (err) {
+    Log.trace('DatasetController::process(..) - ERROR: ' + err);
+    reject(err);
+}
+});
+}
 
     // http://stackoverflow.com/questions/6968448/where-is-body-in-a-nodejs-http-get-response
 
