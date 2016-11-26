@@ -74,7 +74,6 @@ describe("InsightFacade", function () {
 
     });
 
-
     it("Should be able to update an html existing dataset (201)", function () {
         var that = this;
         Log.trace("Starting test: " + that.test.title);
