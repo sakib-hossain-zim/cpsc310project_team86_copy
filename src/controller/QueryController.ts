@@ -25,28 +25,33 @@ export interface QueryResponse {
 }
 
 interface responseObject {
-    courses_dept: string;
-    courses_avg: number;
-    courses_instructor: string;
-    courses_pass: number;
-    courses_fail: number;
-    courses_title: string;
-    courses_id: string;
-    courses_audit: string;
-    courses_uuid: string;
-    courses_year: number;
-    rooms_fullname: string;
-    rooms_shortname: string;
-    rooms_number: string;
-    rooms_name: string;
-    rooms_address: string;
-    rooms_lat: number;
-    rooms_lon: number;
-    rooms_seats: number;
-    rooms_type: string;
-    rooms_furniture: string;
-    rooms_href: string;
+    courses_dept?: string;
+    courses_avg?: number;
+    courses_instructor?: string;
+    courses_pass?: number;
+    courses_fail?: number;
+    courses_title?: string;
+    courses_id?: string;
+    courses_audit?: string;
+    courses_uuid?: string;
+    courses_year?: number;
+    rooms_fullname?: string;
+    rooms_shortname?: string;
+    rooms_number?: string;
+    rooms_name?: string;
+    rooms_address?: string;
+    rooms_lat?: number;
+    rooms_lon?: number;
+    rooms_seats?: number;
+    rooms_type?: string;
+    rooms_furniture?: string;
+    rooms_href?: string;
 }
+
+ interface roomsResponseObject {
+
+ }
+
 
 interface stringArray {
     [index: number]: string;
@@ -55,8 +60,6 @@ interface stringArray {
 export default class QueryController {
     private datasets: Datasets = {};
     private count: number = 0;
-    private is_NOT: boolean = false;
-
 
     constructor(datasets: Datasets) {
         this.datasets = datasets;
@@ -261,7 +264,9 @@ export default class QueryController {
      * @param data
      * @returns {responseObject[]}
      */
-    public filterColumns(query: QueryRequest, data: any): any {
+    public filterColumns(query: QueryRequest, data: any, id: string): any {
+
+
         let respObjArray: responseObject[] = [];
         let applyKeyArray: any = [];
 
@@ -283,7 +288,6 @@ export default class QueryController {
 
         data.forEach(function (obj: any) {
             var respObj: responseObject = <any>{};
-            let i: number = 0;
 
             for (let key of query.GET) {
 
@@ -579,7 +583,7 @@ export default class QueryController {
      * @returns {any}
      */
 
-    public filterRows(field: any, queryData: any, data: any, is_NOT: boolean) {
+    public filterRows(field: any, queryData: any, data: any, is_NOT: boolean, id: string) {
         let that = this;
         let filteredData: any = [];
         let ANDFilteredData: any;
@@ -590,8 +594,15 @@ export default class QueryController {
         let ORReturnData2: any = [];
         let NOTfilteredData: any;
 
-        for (let dataObj of data) {
-            ORretValues.push(dataObj["courses_uuid"]);
+        if (id == 'courses') {
+            for (let dataObj of data) {
+                ORretValues.push(dataObj["courses_uuid"]);
+            }
+        }
+        if (id == 'rooms') {
+            for (let dataObj of data) {
+                ORretValues.push(dataObj["rooms_name"]);
+            }
         }
 
         if (field == 'AND') {
@@ -602,10 +613,10 @@ export default class QueryController {
                     key = i;
                     value = obj[i];
                     if (count < 1) {
-                        ANDFilteredData = this.filterRows(key, value, data, is_NOT);
+                        ANDFilteredData = this.filterRows(key, value, data, is_NOT, id);
                     }
                     else {
-                        ANDFilteredData = this.filterRows(key, value, ANDFilteredData, is_NOT);
+                        ANDFilteredData = this.filterRows(key, value, ANDFilteredData, is_NOT, id);
                     }
                     count++;
                 }
@@ -622,7 +633,7 @@ export default class QueryController {
                 for (let i in obj) {
                     key = i;
                     value = obj[i];
-                    ORFilteredData = this.filterRows(key, value, data, is_NOT);
+                    ORFilteredData = this.filterRows(key, value, data, is_NOT, id);
                     for (let obj of ORFilteredData) {
 
                         ORReturnData.push(obj);
@@ -632,12 +643,20 @@ export default class QueryController {
             }
             for (let retObj of ORReturnData) {
                 for (let value of ORretValues) {
-                    if (retObj["courses_uuid"] == value) {
-                        ORReturnData2.push(retObj);
-                        let index = ORretValues.indexOf(value);
-                        ORretValues.splice(index, 1);
+                    if (id == "courses") {
+                        if (retObj["courses_uuid"] == value) {
+                            ORReturnData2.push(retObj);
+                            let index = ORretValues.indexOf(value);
+                            ORretValues.splice(index, 1);
+                        }
+                     } else {
+                         if (retObj["rooms_name"] == value) {
+                             ORReturnData2.push(retObj);
+                             let index = ORretValues.indexOf(value);
+                             ORretValues.splice(index, 1);
+                         }
                     }
-                }
+                    }
             }
             return ORReturnData2;
         }
@@ -650,9 +669,9 @@ export default class QueryController {
                 key = prop;
                 value = queryData[key];
                 if (is_NOT) {
-                    NOTfilteredData = this.filterRows(key, value, data, false);
+                    NOTfilteredData = this.filterRows(key, value, data, false, id);
                 } else {
-                    NOTfilteredData = this.filterRows(key, value, data, true);
+                    NOTfilteredData = this.filterRows(key, value, data, true, id);
                 }
             }
             return NOTfilteredData;
@@ -897,9 +916,6 @@ export default class QueryController {
     public query(query: QueryRequest): any {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
-        // console.log(query.GET[0]);
-     //   console.log(Object.keys(this.datasets));
-     //   console.log(Object.keys(this.datasets)[0]);
         let id = query.GET[0].split('_')[0];
 
         var dataID;
@@ -909,12 +925,12 @@ export default class QueryController {
             }
             if (id === 'rooms'){
                dataID = Object.keys(this.datasets)[1];
+
             }
         }
         else {
            dataID = Object.keys(this.datasets)[0];
         }
-
 
         let data: any = this.datasets[dataID];
         let isEmpty = this.isDataSetEmpty(data);
@@ -924,10 +940,11 @@ export default class QueryController {
             return response;
         }
         var parsedData = JSON.parse(data);
+        //console.log(data);
 
         var GET_results: any;
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {
-            GET_results = this.filterColumns(query, parsedData);
+            GET_results = this.filterColumns(query, parsedData, id);
         } else {
             let operands: stringArray = Object.keys(query.WHERE);
             var key: any = operands[0];
@@ -935,21 +952,24 @@ export default class QueryController {
             for (let i in query.WHERE) {
                 value = query.WHERE[i];
             }
-            let WHERE_Results: {}[] = this.filterRows(key, value, parsedData, false);
+            let WHERE_Results: {}[] = this.filterRows(key, value, parsedData, false, id);
+           // console.log(WHERE_Results);
 
-            GET_results = this.filterColumns(query, WHERE_Results);
+            GET_results = this.filterColumns(query, WHERE_Results, id);
+         //   console.log(GET_results);
 
         }
         let groupedData: any = this.group(query, GET_results);
        // console.log(groupedData);
 
         let appliedData: any = this.apply(query, groupedData);
-       // console.log(appliedData);
+      //  console.log(appliedData);
 
         let orderedResults: any = this.orderResponse(query, appliedData);
-       // console.log(orderedResults);
-        // }
+      //  console.log(orderedResults);
+
         var response: QueryResponse = {render: query.AS, result: orderedResults};
+       // console.log(response);
         return response;
     }
 }

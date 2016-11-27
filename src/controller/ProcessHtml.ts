@@ -6,7 +6,6 @@ import DatasetController from "./DatasetController";
 import Log from "../Util";
 import JSZip = require('jszip');
 
-
 interface toBeAddedHtml {
     rooms_fullname: string;
     rooms_shortname: string;
@@ -68,7 +67,6 @@ export default class ProcessHtml {
         let count: number = 0;
 
             for (let file of files) {
-
 
                 var document: ASTNode = parse5.parse(file);
                 for (let child of document.childNodes) {

@@ -13,6 +13,7 @@ interface toBeAddedJson {
     courses_fail: number;
     courses_uuid: string;
     courses_audit: number;
+    courses_year: number;
 }
 
 export default class ProcessJson {
@@ -68,6 +69,7 @@ export default class ProcessJson {
                                     tba.courses_fail = arrObject['Fail'];
                                     tba.courses_uuid = arrObject['id'];
                                     tba.courses_audit = arrObject['Audit'];
+                                    tba.courses_year = arrObject['Year'];
                                     processedDataset.push(tba);
                                 });
                             }
