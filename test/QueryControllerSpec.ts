@@ -1189,7 +1189,7 @@ describe("QueryController", function () {
 
     });
 
-    it("Should be able to query ROOM EXAMPLE 3", function () { // ordering does not matter
+    it("Should be able to query ROOM EXAMPLE 3", function () {
         let query: QueryRequest = {
             "GET": ["rooms_fullname", "rooms_number", "rooms_seats"],
             "WHERE": {"AND": [

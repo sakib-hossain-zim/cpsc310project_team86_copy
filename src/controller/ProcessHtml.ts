@@ -57,13 +57,12 @@ export default class ProcessHtml {
                             promises1.push(p1);
                         });
 
-
                     Promise.all(promises1).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
                             invalidDataset = true;
                         }
 
-        console.log("parsing html files");
+                        console.log("parsing html files");
         let count: number = 0;
 
             for (let file of files) {
@@ -82,6 +81,7 @@ export default class ProcessHtml {
                         var headAttrs = headNode.childNodes[9];
                         if (typeof headAttrs !== 'undefined') {
                             var shortName = headAttrs.attrs[1].value;
+                            // console.log(shortName);
                         }
                     }
                     if (shortName !== "MAUD" && shortName !== "NIT") {
@@ -138,7 +138,6 @@ export default class ProcessHtml {
                                 var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
                                 //console.log(tbody.nodeName);
                                 for (let child of tbody.childNodes) {
-
                                     if (child.nodeName == 'tr') {
                                         let tba: toBeAddedHtml = <any>{};
                                         tba.rooms_fullname = roomsFullName;
@@ -153,8 +152,6 @@ export default class ProcessHtml {
                                         tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                         htmlProcessedDataset.push(tba);
 
-                                        //   let promise: Promise<any> = that.getLatLon(roomsAddress);
-                                        //   promises.push(promise);
                                     }
 
                                 }
@@ -165,7 +162,7 @@ export default class ProcessHtml {
             }
 
             Promise.all(promises2).then(function (values: any[]) {
-
+                console.log(htmlProcessedDataset.length);
                 let building = htmlProcessedDataset[0].rooms_shortname;
                 let i = 0;      //count
                 let j = 0;

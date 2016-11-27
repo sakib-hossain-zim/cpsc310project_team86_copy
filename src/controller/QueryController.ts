@@ -426,9 +426,9 @@ export default class QueryController {
         // if (data.length < 2) {
         //     return data;
         // }
+
         let that = this;
         let key: any = query.ORDER;
-        console.log(typeof query.ORDER);
 
         if (typeof query.ORDER === 'string') {
             return data.sort(function (result1: any, result2: any) {
@@ -717,19 +717,19 @@ export default class QueryController {
 
         if (key !== null) {
 
-            let id = key.split('_')[0];
+            let id = key.split('_')[0]
 
             if (fs.existsSync('./data/' + id + '.json') || id == 'NOT'){
                 isBoolean = true;
             }
             else {
                 isBoolean = false;
-                let arr_where: any = [];
+                let arr_where: any = []
                 arr_where.push(id);
                 return arr_where;
             }
         }
-        console.log(obj);
+
         if (obj.length > 0){
             obj = obj[0];
 
@@ -909,7 +909,6 @@ export default class QueryController {
         return respArray;
     }
 
-
     /**
      * The actual query happening
      * @param query
@@ -919,23 +918,36 @@ export default class QueryController {
         Log.trace('QueryController::query( ' + JSON.stringify(query) + ' )');
         //define a function to process the query. use this to check
         let id = query.GET[0].split('_')[0];
-
         var dataID;
-       if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
-            if (id === 'courses'){
-                dataID = Object.keys(this.datasets)[0];
-            }
-            if (id === 'rooms'){
-               dataID = Object.keys(this.datasets)[1];
+        var dataLength = Object.keys(this.datasets).length;
 
+        for (let i = 0; dataLength >0; i ++){
+
+            if (id === Object.keys(this.datasets)[i]) {         // searches for id that matches datasets
+                dataID = Object.keys(this.datasets)[i];         // found it
+                // console.log('found');
+                // console.log(i);
+                break;
             }
+            dataLength = dataLength - 1;                        // didn't find it onto the next
         }
-        else {
-           dataID = Object.keys(this.datasets)[0];
-        }
-        let data: any = this.datasets[id];
+       // if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
+       //      if (id === 'courses'){
+       //          dataID = Object.keys(this.datasets)[0];
+       //      }
+       //      if (id === 'rooms'){
+       //          console.log('key is rooms');
+       //         dataID = Object.keys(this.datasets)[1];
+       //
+       //      }
+       //  }
+       //  else {
+       //     dataID = Object.keys(this.datasets)[0];
+       //     console.log('key in only rooms');
+       //  }
+
+        let data: any = this.datasets[dataID];
         let isEmpty = this.isDataSetEmpty(data);
-        console.log("made it here");
         //console.log(isEmpty);
         if (isEmpty === true) {
             let response: QueryResponse = {render: query.AS, result: [{}]};
