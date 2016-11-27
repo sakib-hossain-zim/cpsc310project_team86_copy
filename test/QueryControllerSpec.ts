@@ -1120,6 +1120,120 @@ describe("QueryController", function () {
             { courses_dept: 'adhe', courses_id: '412', courses_avg: 76.22 }];
 
     });
+
+    it("Should be able to query ROOM EXAMPLE 1", function () {
+        let query: QueryRequest = {
+            "GET": ["rooms_fullname", "rooms_number"],
+            "WHERE": {"IS": {"rooms_shortname": "DMP"}},
+            "ORDER": {"dir": "UP", "keys": ["rooms_number"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+        let expectedResult = { render: 'TABLE',
+            result:
+                [ { rooms_fullname: 'Hugh Dempster Pavilion',
+                    rooms_number: '101' },
+                    { rooms_fullname: 'Hugh Dempster Pavilion',
+                        rooms_number: '110' },
+                    { rooms_fullname: 'Hugh Dempster Pavilion',
+                        rooms_number: '201' },
+                    { rooms_fullname: 'Hugh Dempster Pavilion',
+                        rooms_number: '301' },
+                    { rooms_fullname: 'Hugh Dempster Pavilion',
+                        rooms_number: '310' } ] };
+        expect(ret).to.deep.equal(expectedResult);
+
+    });
+
+
+    it("Should be able to query ROOM EXAMPLE 2", function () { // ordering does not matter
+        let query: QueryRequest = {
+            "GET": ["rooms_shortname", "numRooms"],
+            "WHERE": {"GT": {"rooms_seats": 160}},
+            "GROUP": [ "rooms_shortname" ],
+            "APPLY": [ {"numRooms": {"COUNT": "rooms_name"}} ],
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+        let expectedResult = { render: 'TABLE',
+            result:
+                [ { rooms_shortname: 'ANGU', numRooms: 1 },
+                    { rooms_shortname: 'BIOL', numRooms: 1 },
+                    { rooms_shortname: 'BUCH', numRooms: 2 },
+                    { rooms_shortname: 'CHBE', numRooms: 1 },
+                    { rooms_shortname: 'CHEM', numRooms: 2 },
+                    { rooms_shortname: 'CIRS', numRooms: 1 },
+                    { rooms_shortname: 'ESB', numRooms: 1 },
+                    { rooms_shortname: 'FSC', numRooms: 1 },
+                    { rooms_shortname: 'GEOG', numRooms: 1 },
+                    { rooms_shortname: 'HEBB', numRooms: 1 },
+                    { rooms_shortname: 'HENN', numRooms: 1 },
+                    { rooms_shortname: 'LSC', numRooms: 2 },
+                    { rooms_shortname: 'LSK', numRooms: 2 },
+                    { rooms_shortname: 'MATH', numRooms: 1 },
+                    { rooms_shortname: 'MCML', numRooms: 1 },
+                    { rooms_shortname: 'OSBO', numRooms: 1 },
+                    { rooms_shortname: 'PHRM', numRooms: 2 },
+                    { rooms_shortname: 'SCRF', numRooms: 1 },
+                    { rooms_shortname: 'SRC', numRooms: 3 },
+                    { rooms_shortname: 'SWNG', numRooms: 4 },
+                    { rooms_shortname: 'WESB', numRooms: 1 },
+                    { rooms_shortname: 'WOOD', numRooms: 2 } ] };
+        expect(ret).to.deep.equal(expectedResult);
+
+    });
+
+    it.only("Should be able to query ROOM EXAMPLE 3", function () { // ordering does not matter
+        let query: QueryRequest = {
+            "GET": ["rooms_fullname", "rooms_number", "rooms_seats"],
+            "WHERE": {"AND": [
+                {"GT": {"rooms_lat": 49.261292}},
+                {"LT": {"rooms_lon": -123.245214}},
+                {"LT": {"rooms_lat": 49.262966}},
+                {"GT": {"rooms_lon": -123.249886}},
+                {"IS": {"rooms_furniture": "*Movable Tables*"}}
+            ]},
+            "ORDER": { "dir": "UP", "keys": ["rooms_number"]},
+            "AS": "TABLE"
+        };
+        let datasetController = new DatasetController();
+        let datasets: Datasets = datasetController.getDatasets();
+        let controller = new QueryController(datasets);
+        let ret = controller.query(query);
+
+        let expectedResult = { render: 'TABLE',
+            result:
+                [ { rooms_fullname: 'Chemical and Biological Engineering Building',
+                    rooms_number: '103',
+                    rooms_seats: '60' },
+                    { rooms_fullname: 'Civil and Mechanical Engineering',
+                        rooms_number: '1206',
+                        rooms_seats: '26' },
+                    { rooms_fullname: 'Civil and Mechanical Engineering',
+                        rooms_number: '1210',
+                        rooms_seats: '22' },
+                    { rooms_fullname: 'MacLeod',
+                        rooms_number: '214',
+                        rooms_seats: '60' },
+                    { rooms_fullname: 'MacLeod',
+                        rooms_number: '220',
+                        rooms_seats: '40' },
+                    { rooms_fullname: 'MacLeod',
+                        rooms_number: '242',
+                        rooms_seats: '60' },
+                    { rooms_fullname: 'MacLeod',
+                        rooms_number: '254',
+                        rooms_seats: '84' } ] };
+
+        expect(ret).to.deep.equal(expectedResult);
+
+    });
     // it ("Should be able to handle Cyclone query", function() {
     //    let query: QueryRequest = {
     //         "GET": ["courses_dept", "courses_id", "courses_instructor"],

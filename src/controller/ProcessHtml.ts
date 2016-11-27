@@ -97,7 +97,7 @@ export default class ProcessHtml {
                                 var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
-                                let promise2 = that.getLatLon(ucll_roomAddress);
+                                let promise2 = that.getLatLon(ucll_roomAddress, shortName);
                                 promises2.push(promise2);
                                 for (let child of ucll_tbody.childNodes) {
 
@@ -127,7 +127,7 @@ export default class ProcessHtml {
                                 var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
-                                let promise2: Promise<any> = that.getLatLon(roomsAddress);
+                                let promise2: Promise<any> = that.getLatLon(roomsAddress, shortName);
                                 promises2.push(promise2);
                                 if (typeof room_info_path == 'undefined') {
                                     break;
@@ -163,29 +163,50 @@ export default class ProcessHtml {
             }
 
             Promise.all(promises2).then(function (values: any[]) {
-                // console.time('latlon');
+
                 let building = htmlProcessedDataset[0].rooms_shortname;
-                console.log(building);
-                let i = 0;
-                for (var obj of htmlProcessedDataset) {
-                    if (obj.rooms_shortname !== building) {
+                let i = 0;      //count
+                let j = 0;
+
+                for (var obj of htmlProcessedDataset) {         //htmlArray
+                    // console.log(obj.rooms_shortname);
+                    for (var jsonObj of values) {                //jsonLatLon array
+
+                        if (jsonObj.short === obj.rooms_shortname) {         // if they both have same short name
+                            // console.log('matched');
+                            break;
+                        }
+                        else {
+                            // console.log('still looking');
+                            i++
+                        }
+
+
+                    }
+                    // console.log('here');
+                    if (obj.rooms_shortname !== building) {     //short name is not AERL
                         building = obj.rooms_shortname;
-                        i++;
                     }
 
+
                     let geo: GeoResponse = <any>{};
+
                     if (!values[i].hasOwnProperty('error')) {
                         geo.lat = values[i].lat;
                         geo.lon = values[i].lon;
                     }
+
                     else {
                         geo.error = values[i].error;
                     }
 
                     obj.rooms_lat = geo.lat;
                     obj.rooms_lon = geo.lon;
+                    j++;
+                    i = 0;              //reset count
 
                 }
+
 
                 datasetController.save(id, htmlProcessedDataset);
                 fulfill(true);
@@ -211,7 +232,7 @@ export default class ProcessHtml {
 
     // http://stackoverflow.com/questions/6968448/where-is-body-in-a-nodejs-http-get-response
 
-    public getLatLon(address: any) {
+    public getLatLon(address: any, shortname:string) {
 
         return new Promise(function (fulfill, reject) {
 
@@ -230,6 +251,7 @@ export default class ProcessHtml {
             http.get(options, function (res) {
                 res.on("data", function (chunk) {
                     var jsonlatlon = JSON.parse(chunk);
+                    jsonlatlon['short'] = shortname;
                     fulfill(jsonlatlon);
                 });
 
