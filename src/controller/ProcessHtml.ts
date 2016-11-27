@@ -14,7 +14,7 @@ interface toBeAddedHtml {
     rooms_address: string;
     rooms_lat: number;
     rooms_lon: number;
-    rooms_seats: string;
+    rooms_seats: number;
     rooms_type: string;
     rooms_furniture: string;
     rooms_href: string;
@@ -85,6 +85,7 @@ export default class ProcessHtml {
                         }
                     }
                     if (shortName !== "MAUD" && shortName !== "NIT") {
+
                         if (child.nodeName == 'body') {
                             var bodyNode = child;
                             if (count == 0) {
@@ -110,7 +111,7 @@ export default class ProcessHtml {
                                         tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
                                         var ucllroomnumber = tba.rooms_number;
                                         tba.rooms_name = shortName + "_" + ucllroomnumber;
-                                        tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                                        tba.rooms_seats = Number(child.childNodes[3].childNodes[0].value.trim());
                                         tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                         tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                         htmlProcessedDataset.push(tba);
@@ -125,6 +126,7 @@ export default class ProcessHtml {
                             else {
 
                                 var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
+                                // console.log(roomsFullName);
                                 var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
                                 var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
                                 let promise2: Promise<any> = that.getLatLon(roomsAddress, shortName);
@@ -146,7 +148,7 @@ export default class ProcessHtml {
                                         tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
                                         var roomnumber = tba.rooms_number;
                                         tba.rooms_name = shortName + "_" + roomnumber;
-                                        tba.rooms_seats = child.childNodes[3].childNodes[0].value.trim();
+                                        tba.rooms_seats = Number(child.childNodes[3].childNodes[0].value.trim());
                                         tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
                                         tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
                                         htmlProcessedDataset.push(tba);
@@ -206,7 +208,6 @@ export default class ProcessHtml {
                     i = 0;              //reset count
 
                 }
-
 
                 datasetController.save(id, htmlProcessedDataset);
                 fulfill(true);

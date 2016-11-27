@@ -1189,7 +1189,7 @@ describe("QueryController", function () {
 
     });
 
-    it.only("Should be able to query ROOM EXAMPLE 3", function () { // ordering does not matter
+    it("Should be able to query ROOM EXAMPLE 3", function () { // ordering does not matter
         let query: QueryRequest = {
             "GET": ["rooms_fullname", "rooms_number", "rooms_seats"],
             "WHERE": {"AND": [
@@ -1206,30 +1206,31 @@ describe("QueryController", function () {
         let datasets: Datasets = datasetController.getDatasets();
         let controller = new QueryController(datasets);
         let ret = controller.query(query);
+        console.log(ret);
 
         let expectedResult = { render: 'TABLE',
             result:
-                [ { rooms_fullname: 'Chemical and Biological Engineering Building',
-                    rooms_number: '103',
-                    rooms_seats: '60' },
-                    { rooms_fullname: 'Civil and Mechanical Engineering',
-                        rooms_number: '1206',
-                        rooms_seats: '26' },
-                    { rooms_fullname: 'Civil and Mechanical Engineering',
-                        rooms_number: '1210',
-                        rooms_seats: '22' },
-                    { rooms_fullname: 'MacLeod',
-                        rooms_number: '214',
-                        rooms_seats: '60' },
-                    { rooms_fullname: 'MacLeod',
-                        rooms_number: '220',
-                        rooms_seats: '40' },
-                    { rooms_fullname: 'MacLeod',
-                        rooms_number: '242',
-                        rooms_seats: '60' },
-                    { rooms_fullname: 'MacLeod',
-                        rooms_number: '254',
-                        rooms_seats: '84' } ] };
+            [ { rooms_fullname: 'Chemical and Biological Engineering Building',
+                rooms_number: '103',
+                rooms_seats: 60 },
+                { rooms_fullname: 'Civil and Mechanical Engineering',
+                    rooms_number: '1206',
+                    rooms_seats: 26 },
+                { rooms_fullname: 'Civil and Mechanical Engineering',
+                    rooms_number: '1210',
+                    rooms_seats: 22 },
+                { rooms_fullname: 'MacLeod',
+                    rooms_number: '214',
+                    rooms_seats: 60 },
+                { rooms_fullname: 'MacLeod',
+                    rooms_number: '220',
+                    rooms_seats: 40 },
+                { rooms_fullname: 'MacLeod',
+                    rooms_number: '242',
+                    rooms_seats: 60 },
+                { rooms_fullname: 'MacLeod',
+                    rooms_number: '254',
+                    rooms_seats: 84 } ] };
 
         expect(ret).to.deep.equal(expectedResult);
 
