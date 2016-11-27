@@ -909,6 +909,7 @@ export default class QueryController {
         return respArray;
     }
 
+
     /**
      * The actual query happening
      * @param query
