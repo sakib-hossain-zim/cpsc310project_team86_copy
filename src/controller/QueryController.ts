@@ -931,20 +931,6 @@ export default class QueryController {
             }
             dataLength = dataLength - 1;                        // didn't find it onto the next
         }
-       // if (fs.existsSync('./data/' + 'courses' + '.json') && fs.existsSync('./data/' + 'rooms' + '.json')){
-       //      if (id === 'courses'){
-       //          dataID = Object.keys(this.datasets)[0];
-       //      }
-       //      if (id === 'rooms'){
-       //          console.log('key is rooms');
-       //         dataID = Object.keys(this.datasets)[1];
-       //
-       //      }
-       //  }
-       //  else {
-       //     dataID = Object.keys(this.datasets)[0];
-       //     console.log('key in only rooms');
-       //  }
 
         let data: any = this.datasets[dataID];
         let isEmpty = this.isDataSetEmpty(data);
