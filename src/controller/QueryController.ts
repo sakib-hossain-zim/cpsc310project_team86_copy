@@ -426,9 +426,9 @@ export default class QueryController {
         // if (data.length < 2) {
         //     return data;
         // }
-
         let that = this;
         let key: any = query.ORDER;
+        console.log(typeof query.ORDER);
 
         if (typeof query.ORDER === 'string') {
             return data.sort(function (result1: any, result2: any) {
@@ -717,19 +717,19 @@ export default class QueryController {
 
         if (key !== null) {
 
-            let id = key.split('_')[0]
+            let id = key.split('_')[0];
 
             if (fs.existsSync('./data/' + id + '.json') || id == 'NOT'){
                 isBoolean = true;
             }
             else {
                 isBoolean = false;
-                let arr_where: any = []
+                let arr_where: any = [];
                 arr_where.push(id);
                 return arr_where;
             }
         }
-
+        console.log(obj);
         if (obj.length > 0){
             obj = obj[0];
 
@@ -932,9 +932,9 @@ export default class QueryController {
         else {
            dataID = Object.keys(this.datasets)[0];
         }
-
-        let data: any = this.datasets[dataID];
+        let data: any = this.datasets[id];
         let isEmpty = this.isDataSetEmpty(data);
+        console.log("made it here");
         //console.log(isEmpty);
         if (isEmpty === true) {
             let response: QueryResponse = {render: query.AS, result: [{}]};

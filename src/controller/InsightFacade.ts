@@ -79,24 +79,28 @@ export default class InsightFacade implements IInsightFacade {
 
                 let datasets = InsightFacade.datasetController.getDatasets();
                 let queryController = new QueryController(datasets);
-                //let id = query.GET[0].split('_')[0];
+                let id = query.GET[0].split('_')[0];
                 let isValid = queryController.isValid(query);
                 let obj = query.WHERE;
                 let empty:any =[];
                 let x = null;
                 let result = queryController.query(query);
 
+                 // if (fs.existsSync('./data/' + id + '.json')) {
+                 //     reject({code: 424, body: {missing: [id]}});
+                 // }
+console.log("made it to Insight Fascade");
                 if (isValid === true) {
                     if (query.WHERE !== null) {
-                        var id = queryController.getWhereKeys(obj, empty, x);
+                        var id2 = queryController.getWhereKeys(obj, empty, x);
                        // console.log(id);
                     }
                     if (Object.keys(query.WHERE).length == 0) {
                         fulfill({code: 200, body: result});
                     }
 
-                    if (typeof id !== 'boolean') {
-                        reject({code: 424, body: {missing: [id]}});
+                    if (typeof id2 !== 'boolean') {
+                        reject({code: 424, body: {missing: [id2]}});
                     } else {
                         fulfill({code: 200, body: result});
                     }
