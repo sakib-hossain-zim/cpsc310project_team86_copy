@@ -102,8 +102,8 @@ export default class QueryController {
                     this.is_Rooms = true;
                 }
             }
-
         }
+
         if (this.is_Courses == true && this.is_Rooms == true) {
             return false;
         }
