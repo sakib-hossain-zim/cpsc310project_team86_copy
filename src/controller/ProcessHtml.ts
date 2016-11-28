@@ -228,7 +228,7 @@ export default class ProcessHtml {
 });
 }
 
-    // http://stackoverflow.com/questions/6968448/where-is-body-in-a-nodejs-http-get-response
+    // source: http://stackoverflow.com/questions/6968448/where-is-body-in-a-nodejs-http-get-response
 
     public getLatLon(address: any, shortname:string) {
 

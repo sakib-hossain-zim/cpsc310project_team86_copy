@@ -197,6 +197,31 @@ describe("InsightFacade", function () {
         });
     });
 
+    it("424 error for rooms query", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["rooms_fullname", "rooms_number", "rooms_seats"],
+            "WHERE": {"AND": [
+                {"GT": {"rooms_lat": 49.261292}},
+                {"LT": {"rooms_lon": -123.245214}},
+                {"LT": {"rooms_lat": 49.262966}},
+                {"GT": {"oms_lon": -123.249886}},
+                {"IS": {"rooms_furniture": "*Movable Tables*"}}
+            ]},
+            "ORDER": { "dir": "UP", "keys": ["rooms_number"]},
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        facade.performQuery(query).then(function (response: InsightResponse) {
+            expect.fail();
+            console.log(response.code);
+        }).catch(function (response: InsightResponse) {
+            expect(response.code).to.equal(424);
+        });
+    });
+
+
+
     it("give 200", function () {
         var that = this;
         let query: QueryRequest = {

@@ -287,6 +287,7 @@ export default class QueryController {
             }
         }
 
+
         data.forEach(function (obj: any) {
             var respObj: responseObject = <any>{};
 
