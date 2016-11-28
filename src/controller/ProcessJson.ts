@@ -20,7 +20,7 @@ export default class ProcessJson {
 
     public process(id: string, data: any, invalidDataset: any): Promise<boolean> {
 
-        let that = this;
+        // let that = this;
         let processedDataset = [];
         let datasetController = new DatasetController();
 
@@ -42,7 +42,8 @@ export default class ProcessJson {
                     });
                     Promise.all(promises).then(function (files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
-                            invalidDataset = true;
+                            datasetController.invalidDataSet = true;
+                            // invalidDataset = true;
                         }
                         files.forEach(function (file) {
 
@@ -53,7 +54,7 @@ export default class ProcessJson {
                             }
 
                             if ((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-                                invalidDataset = true;
+                                datasetController.invalidDataSet = true;
                             }
                             if (results.length > 0) {
 

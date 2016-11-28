@@ -48,10 +48,6 @@ interface responseObject {
     rooms_href?: string;
 }
 
- interface roomsResponseObject {
-
- }
-
 
 interface stringArray {
     [index: number]: string;

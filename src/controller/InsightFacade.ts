@@ -20,6 +20,13 @@ export default class InsightFacade implements IInsightFacade {
         // The promise should return an InsightResponse for both fullfill and reject.
         // fulfill should be for 2XX codes and reject for everything else.
         return new Promise(function (fulfill, reject) {
+
+            var idExists: boolean = false;
+
+            if (fs.existsSync('./data/' + id + '.json')) {          //check if id exists
+                idExists = true;
+            }
+
             try {
                 var controller = InsightFacade.datasetController;
                 controller.process(id, content).then(function (result) {
@@ -27,7 +34,7 @@ export default class InsightFacade implements IInsightFacade {
                         if (controller.invalidDataSet) {
                             reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
-                            if (fs.existsSync('./data/' + id + '.json')) {
+                            if (idExists == true) {
                                 fulfill({code: 201, body: {success: result}});
                             } else {
                                 fulfill({code: 204, body: {success: result}});
@@ -80,13 +87,13 @@ export default class InsightFacade implements IInsightFacade {
 
                 let datasets = InsightFacade.datasetController.getDatasets();
                 let queryController = new QueryController(datasets);
-                //let id = query.GET[0].split('_')[0];
+                let id2 = query.GET[0].split('_')[0];
                 let isValid = queryController.isValid(query);
                 let obj = query.WHERE;
                 let empty:any =[];
                 let x = null;
                 let result = queryController.query(query);
-                if (isValid === true) {
+                if (isValid === true) {                 // query is valid
                     if (query.WHERE !== null) {
                         var id = queryController.getWhereKeys(obj, empty, x);
                         console.log(id);
@@ -95,12 +102,24 @@ export default class InsightFacade implements IInsightFacade {
                         fulfill({code: 200, body: result});
                     }
 
+                    console.log (fs.existsSync('./data/' + id2 + '.json'));
+
+                    if (!fs.existsSync('./data/' + id2 + '.json')){     // if id doesn't exist in GET
+                        console.log('exist clause');
+                        reject({code: 424, body: {missing: [id2]}});
+                    }
+
                     if (typeof id !== 'boolean') {
+                        console.log('boolean clause');
                         reject({code: 424, body: {missing: [id]}});
-                    } else {
+
+                    }
+                    else {
                         fulfill({code: 200, body: result});
                     }
-                } else {
+
+                }
+                else {                                                     // query is not valid
                     reject({code: 400, body: {error: 'invalid query'}});
                 }
 

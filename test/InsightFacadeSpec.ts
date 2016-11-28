@@ -65,7 +65,21 @@ describe("InsightFacade", function () {
         var empty = undefined;
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('courses', empty).then(function (response: InsightResponse) {
-            console.log('this should not be it ' + response.code);
+            console.log('failed');
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            console.log('failed ' + response.code);
+            expect(response.code).to.equal(400);
+        });
+
+    });
+
+    it('adding an invalid dataset should return a 400 error', function() {
+        var that = this;
+        var empty = 'abdksbf';
+        Log.trace("Starting test: " + that.test.title);
+        facade.addDataset('courses', empty).then(function (response: InsightResponse) {
+            console.log(response.code);
             expect.fail();
         }).catch(function (response: InsightResponse) {
             console.log('failed ' + response.code);
@@ -146,6 +160,24 @@ describe("InsightFacade", function () {
         facade.performQuery(query).then(function (response: InsightResponse) {
             expect.fail();
         }).catch(function (response: InsightResponse) {
+            console.log('test failed');
+            expect(response.code).to.equal(424);
+        });
+    });
+
+    it("Should give (424) GET", function () {
+        var that = this;
+        let query: QueryRequest = {
+            "GET": ["foo_dept", "foo_avg"],
+            "WHERE": {"GT": {"courses_avg": 90}},
+            "ORDER": "courses_avg",
+            "AS": "TABLE"
+        };
+        Log.trace("Starting test: " + that.test.title);
+        facade.performQuery(query).then(function (response: InsightResponse) {
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            console.log('test failed');
             expect(response.code).to.equal(424);
         });
     });
