@@ -88,12 +88,10 @@ export default class QueryController {
 
         this.checkWhereKeys(query.WHERE);
 
-        if (query.ORDER != "undefined") {
+        if (typeof query.ORDER != "undefined") {
             let key: any = query.ORDER;
             let keys: any = Object.keys(key)[1];
             let keysValue: any = key[keys];
-            console.log(keys);
-            console.log(keysValue);
             for (let insideValue of keysValue) {
                 if (insideValue.split("_")[0] == "courses") {
                     this.is_Courses = true;
@@ -944,10 +942,7 @@ export default class QueryController {
 
     public checkWhereKeys(obj: any) {
 
-
-        console.log("in this function");
         for (let key in obj) {
-            console.log(key.split("_")[0]);
             if (key.split("_")[0] == 'courses') {
                 this.is_Courses = true;
             }
@@ -955,16 +950,12 @@ export default class QueryController {
                 this.is_Rooms = true;
             }
 
-            console.log(key);
-            console.log(obj[key]);
             let insideObj = obj[key];
             if (Array.isArray(insideObj)) {
-                console.log("is array");
-                 this.checkWhereKeys(insideObj);
+                this.checkWhereKeys(insideObj);
             }
             else if (typeof insideObj == "object") {
-                console.log("is object");
-                 this.checkWhereKeys(insideObj);
+                this.checkWhereKeys(insideObj);
             }
         }
     }
