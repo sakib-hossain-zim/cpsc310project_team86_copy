@@ -33,7 +33,7 @@ export default class ProcessHtml {
 
         let that = this;
         let datasetController = new DatasetController();
-        let htmlProcessedDataset: any = [];
+        let htmlProcessedDataset = [];
         let promises2: Promise<any>[] = [];
 
 
@@ -121,9 +121,14 @@ export default class ProcessHtml {
                                     }
 
                                 }
-                            }
-
-                            else {
+                            } else if (bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].value == 'undefined') {
+                                console.log("inside building only if statement");
+                                let tba: toBeAddedHtml = <any>{};
+                                tba.rooms_fullname = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
+                                tba.rooms_address = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
+                                tba.rooms_shortname = shortName;
+                                htmlProcessedDataset.push(tba);
+                            } else {
 
                                 var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
                                 // console.log(roomsFullName);
@@ -248,7 +253,7 @@ export default class ProcessHtml {
 
             http.get(options, function (res) {
                 res.on("data", function (chunk) {
-                    var jsonlatlon = JSON.parse(chunk);
+                    let jsonlatlon = JSON.parse(chunk);
                     jsonlatlon['short'] = shortname;
                     fulfill(jsonlatlon);
                 });

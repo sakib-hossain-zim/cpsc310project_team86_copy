@@ -16,6 +16,8 @@ export interface QueryRequest {
     GROUP?: string[];
     GT?: {};
     IS?: {};
+    NOT?: {};
+
 }
 
 
@@ -592,16 +594,17 @@ export default class QueryController {
         let ORReturnData2: any = [];
         let NOTfilteredData: any;
 
+
         if (id == 'courses') {
             for (let dataObj of data) {
                 ORretValues.push(dataObj["courses_uuid"]);
             }
         }
-        if (id == 'rooms') {
-            for (let dataObj of data) {
-                ORretValues.push(dataObj["rooms_name"]);
-            }
-        }
+        // if (id == 'rooms') {
+        //     for (let dataObj of data) {
+        //         ORretValues.push(dataObj["rooms_name"]);
+        //     }
+        // }
 
         if (field == 'AND') {
             for (let obj of queryData) {
@@ -641,20 +644,20 @@ export default class QueryController {
             }
             for (let retObj of ORReturnData) {
                 for (let value of ORretValues) {
-                    if (id == "courses") {
+                   // if (id == "courses") {
                         if (retObj["courses_uuid"] == value) {
                             ORReturnData2.push(retObj);
                             let index = ORretValues.indexOf(value);
                             ORretValues.splice(index, 1);
+                    //    }
+                    //  } else {
+                    //      if (retObj["rooms_name"] == value) {
+                    //          ORReturnData2.push(retObj);
+                    //          let index = ORretValues.indexOf(value);
+                    //          ORretValues.splice(index, 1);
+                    //      }
                         }
-                     } else {
-                         if (retObj["rooms_name"] == value) {
-                             ORReturnData2.push(retObj);
-                             let index = ORretValues.indexOf(value);
-                             ORretValues.splice(index, 1);
-                         }
-                    }
-                    }
+                }
             }
             return ORReturnData2;
         }
