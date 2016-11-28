@@ -64,7 +64,6 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 let controller = InsightFacade.datasetController;
                 let datasets = controller.getDatasets();
-
                 if (fs.existsSync('./data/' + id + '.json')){
                     fs.unlink('./data/' + id + '.json');
                     datasets[id] = null;
@@ -95,20 +94,20 @@ export default class InsightFacade implements IInsightFacade {
                 let empty:any =[];
                 let x = null;
                 let result = queryController.query(query);
+                console.log('checking validity');
                 if (isValid === true) {                 // query is valid
                     if (query.WHERE !== null) {
                         var id = queryController.getWhereKeys(obj, empty, x);
                         console.log(id);
                     }
                     if (Object.keys(query.WHERE).length == 0) {
-                        fulfill({code: 200, body: result});
-                    }
+                        if (!fs.existsSync('./data/' + id2 + '.json')){
+                            reject({code: 424, body: {missing: [id2]}});
+                        }
+                        else {
 
-                    console.log (fs.existsSync('./data/' + id2 + '.json'));
-
-                    if (!fs.existsSync('./data/' + id2 + '.json')){     // if id doesn't exist in GET
-                        console.log('exist clause');
-                        reject({code: 424, body: {missing: [id2]}});
+                            fulfill({code: 200, body: result});
+                        }
                     }
 
                     if (typeof id !== 'boolean') {

@@ -761,6 +761,7 @@ export default class QueryController {
             }
         }
 
+        console.log('checking for length')
         if (obj.length > 0){
             obj = obj[0];
 
@@ -771,6 +772,7 @@ export default class QueryController {
 
         for (let prop in obj) {
             let arr = obj[prop];
+            console.log('arrlength ' + arr.length);
             let arrlength = arr.length;
             if (arrlength > 0){
                 for (let i = 0; arrlength > 0; i++) {
@@ -784,6 +786,7 @@ export default class QueryController {
             else {
                 for (let key in arr){
                     let empty: any = [];
+                    console.log('next length');
                     let nextlength = next.length;
                     if (nextlength > 1){                             // if next length is greater than one
                         for (let a =1 ; nextlength > 0; a ++){
