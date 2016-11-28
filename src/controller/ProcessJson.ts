@@ -18,12 +18,12 @@ interface toBeAddedJson {
 
 export default class ProcessJson {
 
-    public process(id: string, data: any, invalidDataset: any): Promise<boolean> {
+    public process(id: string, data: any): Promise<boolean> {
 
-         let that = this;
+        // let that = this;
         let processedDataset = [];
         let datasetController = new DatasetController();
-        let invalidDataSet: boolean = false;
+        console.log('beginning ' + datasetController.invalidDataSet);
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -42,11 +42,11 @@ export default class ProcessJson {
                         promises.push(p);
                     });
                     Promise.all(promises).then(function (files: any[]) {
-                        console.log(files.length);
                         if (typeof files === 'undefined' || files.length < 1) {
-                            invalidDataSet = true;
-                            // invalidDataset = true;
+                            console.log('in here');
+                            fulfill(false);
                         }
+
                         files.forEach(function (file) {
 
                             let results: any[];
@@ -56,8 +56,10 @@ export default class ProcessJson {
                             }
 
                             if ((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-                                invalidDataSet = true;
+                                console.log('in');
+                                fulfill(false);
                             }
+
                             if (results.length > 0) {
 
                                 results.forEach(function (arrObject: any) {
@@ -77,24 +79,18 @@ export default class ProcessJson {
                                 });
                             }
                         });
-                        datasetController.save(id, processedDataset)
-                    }).catch(function (err) {
-                        Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
-                        reject(true);
-                    });
-                    console.log(invalidDataSet);
-                    if (invalidDataSet) {
+                        datasetController.save(id, processedDataset);
+                        console.log('before fulfill ' + datasetController.invalidDataSet);
                         fulfill(true);
-                    } else {
-                        fulfill(false);
-                    }
+                    });
+
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
-                    reject(true);
+                    reject(err);
                 });
             } catch (err) {
                 Log.trace('DatasetController::process(..) - ERROR: ' + err);
-                reject(true);
+                reject(err);
             }
         });
     }

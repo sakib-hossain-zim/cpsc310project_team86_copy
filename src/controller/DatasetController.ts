@@ -71,23 +71,25 @@ export default class DatasetController {
 
                 if (id == "courses") {
                     let jsonProcess = new ProcessJson();
-                    let JSONProcessedDataset = jsonProcess.process(id, data, that.invalidDataSet);
+                    let JSONProcessedDataset = jsonProcess.process(id, data);
                     JSONProcessedDataset.then(function (value) {
-                        console.log(value);
-                        that.invalidDataSet = value;
-                        fulfill(true);
+                        if (value == false ){
+                            that.invalidDataSet = true;
+                            fulfill(true);
+                        }
+                        else {
+                            fulfill(value);
+                        }
                     }).catch(function (err) {
                         Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                         reject(err);
-                    });;
+                    });
                 }
                 if (id == "rooms") {
                     let htmlProcess = new ProcessHtml();
                     let htmlProcessedDataset = htmlProcess.process(id, data, that.invalidDataSet);
                     htmlProcessedDataset.then(function (value) {
-                        console.log(value);
-                        that.invalidDataSet = value;
-                        fulfill(true);
+                        fulfill(value);
                     }).catch(function (err) {
                         Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                         reject(err);
