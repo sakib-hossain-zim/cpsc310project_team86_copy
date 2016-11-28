@@ -56,6 +56,8 @@ interface stringArray {
 export default class QueryController {
     private datasets: Datasets = {};
     private count: number = 0;
+    private is_Courses: boolean = false;
+    private is_Rooms: boolean = false;
 
     constructor(datasets: Datasets) {
         this.datasets = datasets;
@@ -69,6 +71,40 @@ export default class QueryController {
     public isValid(query: QueryRequest): boolean {
         // Undefined query and no AS value
         if (typeof query === 'undefined' || query.AS != 'TABLE') {
+            return false;
+        }
+
+        //Revolution: Should not be possible to query multiple datasets at the same time.
+
+        for (let key of query.GET) {
+
+            if ("courses" == key.split("_")[0]) {
+                this.is_Courses = true;
+            }
+            if ("rooms" == key.split("_")[0]) {
+                this.is_Rooms = true;
+            }
+        }
+
+        this.checkWhereKeys(query.WHERE);
+
+        if (query.ORDER != "undefined") {
+            let key: any = query.ORDER;
+            let keys: any = Object.keys(key)[1];
+            let keysValue: any = key[keys];
+            console.log(keys);
+            console.log(keysValue);
+            for (let insideValue of keysValue) {
+                if (insideValue.split("_")[0] == "courses") {
+                    this.is_Courses = true;
+                }
+                if (insideValue.split("_")[0] == "rooms") {
+                    this.is_Rooms = true;
+                }
+            }
+
+        }
+        if (this.is_Courses == true && this.is_Rooms == true) {
             return false;
         }
 
@@ -904,6 +940,33 @@ export default class QueryController {
             respArray.push(group[0]);
         }
         return respArray;
+    }
+
+    public checkWhereKeys(obj: any) {
+
+
+        console.log("in this function");
+        for (let key in obj) {
+            console.log(key.split("_")[0]);
+            if (key.split("_")[0] == 'courses') {
+                this.is_Courses = true;
+            }
+            if (key.split("_")[0] == 'rooms') {
+                this.is_Rooms = true;
+            }
+
+            console.log(key);
+            console.log(obj[key]);
+            let insideObj = obj[key];
+            if (Array.isArray(insideObj)) {
+                console.log("is array");
+                 this.checkWhereKeys(insideObj);
+            }
+            else if (typeof insideObj == "object") {
+                console.log("is object");
+                 this.checkWhereKeys(insideObj);
+            }
+        }
     }
 
     /**
