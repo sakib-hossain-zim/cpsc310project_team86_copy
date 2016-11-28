@@ -20,9 +20,10 @@ export default class ProcessJson {
 
     public process(id: string, data: any, invalidDataset: any): Promise<boolean> {
 
-        // let that = this;
+         let that = this;
         let processedDataset = [];
         let datasetController = new DatasetController();
+        let invalidDataSet: boolean = false;
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -41,8 +42,9 @@ export default class ProcessJson {
                         promises.push(p);
                     });
                     Promise.all(promises).then(function (files: any[]) {
+                        console.log(files.length);
                         if (typeof files === 'undefined' || files.length < 1) {
-                            datasetController.invalidDataSet = true;
+                            invalidDataSet = true;
                             // invalidDataset = true;
                         }
                         files.forEach(function (file) {
@@ -54,7 +56,7 @@ export default class ProcessJson {
                             }
 
                             if ((!(o.hasOwnProperty("result"))) || (typeof o !== 'object' )) {
-                                datasetController.invalidDataSet = true;
+                                invalidDataSet = true;
                             }
                             if (results.length > 0) {
 
@@ -76,15 +78,23 @@ export default class ProcessJson {
                             }
                         });
                         datasetController.save(id, processedDataset)
+                    }).catch(function (err) {
+                        Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
+                        reject(true);
                     });
-                    fulfill(true);
+                    console.log(invalidDataSet);
+                    if (invalidDataSet) {
+                        fulfill(true);
+                    } else {
+                        fulfill(false);
+                    }
                 }).catch(function (err) {
                     Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
-                    reject(err);
+                    reject(true);
                 });
             } catch (err) {
                 Log.trace('DatasetController::process(..) - ERROR: ' + err);
-                reject(err);
+                reject(true);
             }
         });
     }

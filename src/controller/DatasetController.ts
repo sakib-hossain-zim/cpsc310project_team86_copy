@@ -73,7 +73,9 @@ export default class DatasetController {
                     let jsonProcess = new ProcessJson();
                     let JSONProcessedDataset = jsonProcess.process(id, data, that.invalidDataSet);
                     JSONProcessedDataset.then(function (value) {
-                        fulfill(value);
+                        console.log(value);
+                        that.invalidDataSet = value;
+                        fulfill(true);
                     }).catch(function (err) {
                         Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                         reject(err);
@@ -83,7 +85,9 @@ export default class DatasetController {
                     let htmlProcess = new ProcessHtml();
                     let htmlProcessedDataset = htmlProcess.process(id, data, that.invalidDataSet);
                     htmlProcessedDataset.then(function (value) {
-                        fulfill(value);
+                        console.log(value);
+                        that.invalidDataSet = value;
+                        fulfill(true);
                     }).catch(function (err) {
                         Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
                         reject(err);

@@ -31,7 +31,9 @@ export default class InsightFacade implements IInsightFacade {
                 var controller = InsightFacade.datasetController;
                 controller.process(id, content).then(function (result) {
                     try {
+                        console.log(controller.invalidDataSet);
                         if (controller.invalidDataSet) {
+                            console.log("in here");
                             reject({code: 400, body: {error: "not valid dataset"}});
                         } else {
                             if (idExists == true) {

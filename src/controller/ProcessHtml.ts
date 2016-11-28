@@ -212,8 +212,11 @@ export default class ProcessHtml {
                 }
 
                 datasetController.save(id, htmlProcessedDataset);
-                fulfill(true);
-
+                if (invalidDataset) {
+                    fulfill(true);
+                } else {
+                    reject(false);
+                }
 
             }).catch(function (err) {
                 reject(err);
