@@ -64,6 +64,7 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 let controller = InsightFacade.datasetController;
                 let datasets = controller.getDatasets();
+
                 if (fs.existsSync('./data/' + id + '.json')){
                     fs.unlink('./data/' + id + '.json');
                     datasets[id] = null;
@@ -86,32 +87,33 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             try {
 
-                let datasets = InsightFacade.datasetController.getDatasets();
-                let queryController = new QueryController(datasets);
                 let id2 = query.GET[0].split('_')[0];
+                let datasets = InsightFacade.datasetController.getDatasets();
+
+                let queryController = new QueryController(datasets);
                 let isValid = queryController.isValid(query);
                 let obj = query.WHERE;
                 let empty:any =[];
                 let x = null;
-                let result = queryController.query(query);
-                console.log('checking validity');
-                if (isValid === true) {                 // query is valid
+                if (isValid === true) {// query is valid
+                    if (datasets == null) {
+                        reject({code: 424, body: {missing: [id2]}});
+                    }
+                    if (!fs.existsSync('./data/' + id2 + '.json')){     // if id doesn't exist in GET
+                        reject({code: 424, body: {missing: [id2]}});
+                    }
+
+                    let result = queryController.query(query);
+
                     if (query.WHERE !== null) {
                         var id = queryController.getWhereKeys(obj, empty, x);
                         console.log(id);
                     }
                     if (Object.keys(query.WHERE).length == 0) {
-                        if (!fs.existsSync('./data/' + id2 + '.json')){
-                            reject({code: 424, body: {missing: [id2]}});
-                        }
-                        else {
-
-                            fulfill({code: 200, body: result});
-                        }
+                        fulfill({code: 200, body: result});
                     }
 
                     if (typeof id !== 'boolean') {
-                        console.log('boolean clause');
                         reject({code: 424, body: {missing: [id]}});
 
                     }
