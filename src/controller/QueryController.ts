@@ -483,10 +483,15 @@ export default class QueryController {
                     return data.sort(function (result1: any, result2: any) {
                         return that.sortUpFunction(result1, result2, keysValue, i, data);
                     });
-                } else  {
+                }
+                if (dirValue == 'DOWN' ) {
                     return data.sort(function (result1: any, result2: any) {
                         return that.sortDownFunction(result1, result2, keysValue, i, data);
                     });
+                }
+
+                else {
+                    return data;
                 }
             }
         }
