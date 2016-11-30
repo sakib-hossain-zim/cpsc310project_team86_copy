@@ -33,7 +33,7 @@ export default class ProcessHtml {
 
         let that = this;
         let datasetController = new DatasetController();
-        let htmlProcessedDataset = [];
+        let htmlProcessedDataset: any = [];
         let promises2: Promise<any>[] = [];
 
 
@@ -50,12 +50,12 @@ export default class ProcessHtml {
 
                     let promises1: Promise<string>[] = [];
 
-                        let zip1 = zip.folder('campus');
-                        let zip2 = zip1.folder('discover');
-                        zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
-                            let p1 : Promise<string> = file.async("string");
-                            promises1.push(p1);
-                        });
+                    let zip1 = zip.folder('campus');
+                    let zip2 = zip1.folder('discover');
+                    zip2.folder('buildings-and-classrooms').forEach(function(relativePath, file) {
+                        let p1 : Promise<string> = file.async("string");
+                        promises1.push(p1);
+                    });
 
                     Promise.all(promises1).then(function(files: any[]) {
                         if (typeof files === 'undefined' || files.length < 1) {
@@ -63,175 +63,170 @@ export default class ProcessHtml {
                         }
 
                         console.log("parsing html files");
-        let count: number = 0;
+                        let count: number = 0;
 
-            for (let file of files) {
+                        for (let file of files) {
 
-                var document: ASTNode = parse5.parse(file);
-                for (let child of document.childNodes) {
+                            var document: ASTNode = parse5.parse(file);
+                            for (let child of document.childNodes) {
 
-                    if (child.nodeName == 'html') {
-                        var htmlNode = child;
-                    }
-                }
-                for (let child of htmlNode.childNodes) {
-
-                    if (child.nodeName == 'head') {
-                        var headNode = child;
-                        var headAttrs = headNode.childNodes[9];
-                        if (typeof headAttrs !== 'undefined') {
-                            var shortName = headAttrs.attrs[1].value;
-                            // console.log(shortName);
-                        }
-                    }
-                    if (shortName !== "MAUD" && shortName !== "NIT") {
-
-                        if (child.nodeName == 'body') {
-                            var bodyNode = child;
-                            if (count == 0) {
-                                count++;
-                                break;
+                                if (child.nodeName == 'html') {
+                                    var htmlNode = child;
+                                }
                             }
+                            for (let child of htmlNode.childNodes) {
 
-                            else if (shortName === 'UCLL') {
-
-                                var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
-                                var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
-                                var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
-                                let promise2 = that.getLatLon(ucll_roomAddress, shortName);
-                                promises2.push(promise2);
-                                for (let child of ucll_tbody.childNodes) {
-
-                                    if (child.nodeName == 'tr') {
-                                        let tba: toBeAddedHtml = <any>{};
-                                        tba.rooms_fullname = ucll_roomsFullName;
-                                        tba.rooms_shortname = shortName;
-                                        tba.rooms_address = ucll_roomAddress;
-                                        tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-                                        tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-                                        var ucllroomnumber = tba.rooms_number;
-                                        tba.rooms_name = shortName + "_" + ucllroomnumber;
-                                        tba.rooms_seats = Number(child.childNodes[3].childNodes[0].value.trim());
-                                        tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-                                        tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-                                        htmlProcessedDataset.push(tba);
-
-                                        //  let promise = that.getLatLon(ucll_roomAddress);
-                                        //  promises.push(promise);
+                                if (child.nodeName == 'head') {
+                                    var headNode = child;
+                                    var headAttrs = headNode.childNodes[9];
+                                    if (typeof headAttrs !== 'undefined') {
+                                        var shortName = headAttrs.attrs[1].value;
+                                        // console.log(shortName);
                                     }
-
                                 }
-                            } else if (bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].value == 'undefined') {
-                                console.log("inside building only if statement");
-                                let tba: toBeAddedHtml = <any>{};
-                                tba.rooms_fullname = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
-                                tba.rooms_address = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
-                                tba.rooms_shortname = shortName;
-                                htmlProcessedDataset.push(tba);
-                            } else {
+                                if (shortName !== "MAUD" && shortName !== "NIT") {
 
-                                var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
-                                // console.log(roomsFullName);
-                                var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
-                                var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
-                                let promise2: Promise<any> = that.getLatLon(roomsAddress, shortName);
-                                promises2.push(promise2);
-                                if (typeof room_info_path == 'undefined') {
-                                    break;
-                                }
+                                    if (child.nodeName == 'body') {
+                                        var bodyNode = child;
+                                        if (count == 0) {
+                                            count++;
+                                            break;
+                                        }
 
-                                var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
-                                //console.log(tbody.nodeName);
-                                for (let child of tbody.childNodes) {
-                                    if (child.nodeName == 'tr') {
-                                        let tba: toBeAddedHtml = <any>{};
-                                        tba.rooms_fullname = roomsFullName;
-                                        tba.rooms_shortname = shortName;
-                                        tba.rooms_address = roomsAddress;
-                                        tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
-                                        tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
-                                        var roomnumber = tba.rooms_number;
-                                        tba.rooms_name = shortName + "_" + roomnumber;
-                                        tba.rooms_seats = Number(child.childNodes[3].childNodes[0].value.trim());
-                                        tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
-                                        tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
-                                        htmlProcessedDataset.push(tba);
+                                        else if (shortName === 'UCLL') {
 
+                                            var ucll_roomsFullName = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
+                                            var ucll_roomAddress = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
+                                            var ucll_tbody = bodyNode.childNodes[31].childNodes[12].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
+                                            let promise2 = that.getLatLon(ucll_roomAddress, shortName);
+                                            promises2.push(promise2);
+                                            for (let child of ucll_tbody.childNodes) {
+
+                                                if (child.nodeName == 'tr') {
+                                                    let tba: toBeAddedHtml = <any>{};
+                                                    tba.rooms_fullname = ucll_roomsFullName;
+                                                    tba.rooms_shortname = shortName;
+                                                    tba.rooms_address = ucll_roomAddress;
+                                                    tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                                    tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                                                    var ucllroomnumber = tba.rooms_number;
+                                                    tba.rooms_name = shortName + "_" + ucllroomnumber;
+                                                    tba.rooms_seats = Number(child.childNodes[3].childNodes[0].value.trim());
+                                                    tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                                                    tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                                    htmlProcessedDataset.push(tba);
+
+                                                    //  let promise = that.getLatLon(ucll_roomAddress);
+                                                    //  promises.push(promise);
+                                                }
+
+                                            }
+                                        }
+
+                                        else {
+
+                                            var roomsFullName = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].value;
+                                            // console.log(roomsFullName);
+                                            var roomsAddress = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes[3].childNodes[0].childNodes[0].value;
+                                            var room_info_path = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3];
+                                            let promise2: Promise<any> = that.getLatLon(roomsAddress, shortName);
+                                            promises2.push(promise2);
+                                            if (typeof room_info_path == 'undefined') {
+                                                break;
+                                            }
+
+                                            var tbody = bodyNode.childNodes[31].childNodes[10].childNodes[1].childNodes[3].childNodes[1].childNodes[5].childNodes[1].childNodes[3].childNodes[1].childNodes[3];
+                                            //console.log(tbody.nodeName);
+                                            for (let child of tbody.childNodes) {
+                                                if (child.nodeName == 'tr') {
+                                                    let tba: toBeAddedHtml = <any>{};
+                                                    tba.rooms_fullname = roomsFullName;
+                                                    tba.rooms_shortname = shortName;
+                                                    tba.rooms_address = roomsAddress;
+                                                    tba.rooms_number = child.childNodes[1].childNodes[1].childNodes[0].value;
+                                                    tba.rooms_href = child.childNodes[1].childNodes[1].attrs[0].value;
+                                                    var roomnumber = tba.rooms_number;
+                                                    tba.rooms_name = shortName + "_" + roomnumber;
+                                                    tba.rooms_seats = Number(child.childNodes[3].childNodes[0].value.trim());
+                                                    tba.rooms_furniture = child.childNodes[5].childNodes[0].value.trim();
+                                                    tba.rooms_type = child.childNodes[7].childNodes[0].value.trim();
+                                                    htmlProcessedDataset.push(tba);
+
+                                                }
+
+                                            }
+                                        }
                                     }
-
                                 }
                             }
                         }
-                    }
-                }
-            }
 
-            Promise.all(promises2).then(function (values: any[]) {
-                console.log(htmlProcessedDataset.length);
-                let building = htmlProcessedDataset[0].rooms_shortname;
-                let i = 0;      //count
-                let j = 0;
+                        Promise.all(promises2).then(function (values: any[]) {
+                            console.log(htmlProcessedDataset.length);
+                            let building = htmlProcessedDataset[0].rooms_shortname;
+                            let i = 0;      //count
+                            let j = 0;
 
-                for (var obj of htmlProcessedDataset) {         //htmlArray
-                    // console.log(obj.rooms_shortname);
-                    for (var jsonObj of values) {                //jsonLatLon array
+                            for (var obj of htmlProcessedDataset) {         //htmlArray
+                                // console.log(obj.rooms_shortname);
+                                for (var jsonObj of values) {                //jsonLatLon array
 
-                        if (jsonObj.short === obj.rooms_shortname) {         // if they both have same short name
-                            // console.log('matched');
-                            break;
-                        }
-                        else {
-                            // console.log('still looking');
-                            i++
-                        }
+                                    if (jsonObj.short === obj.rooms_shortname) {         // if they both have same short name
+                                        // console.log('matched');
+                                        break;
+                                    }
+                                    else {
+                                        // console.log('still looking');
+                                        i++
+                                    }
 
 
-                    }
-                    // console.log('here');
-                    if (obj.rooms_shortname !== building) {     //short name is not AERL
-                        building = obj.rooms_shortname;
-                    }
+                                }
+                                // console.log('here');
+                                if (obj.rooms_shortname !== building) {     //short name is not AERL
+                                    building = obj.rooms_shortname;
+                                }
 
 
-                    let geo: GeoResponse = <any>{};
+                                let geo: GeoResponse = <any>{};
 
-                    if (!values[i].hasOwnProperty('error')) {
-                        geo.lat = values[i].lat;
-                        geo.lon = values[i].lon;
-                    }
+                                if (!values[i].hasOwnProperty('error')) {
+                                    geo.lat = values[i].lat;
+                                    geo.lon = values[i].lon;
+                                }
 
-                    else {
-                        geo.error = values[i].error;
-                    }
+                                else {
+                                    geo.error = values[i].error;
+                                }
 
-                    obj.rooms_lat = geo.lat;
-                    obj.rooms_lon = geo.lon;
-                    j++;
-                    i = 0;              //reset count
+                                obj.rooms_lat = geo.lat;
+                                obj.rooms_lon = geo.lon;
+                                j++;
+                                i = 0;              //reset count
 
-                }
+                            }
 
-                datasetController.save(id, htmlProcessedDataset);
-                fulfill(true);
+                            datasetController.save(id, htmlProcessedDataset);
+                            fulfill(true);
 
 
-            }).catch(function (err) {
+                        }).catch(function (err) {
+                            reject(err);
+                        });
+                    }).catch(function(err){
+                        console.log('Error in promise.all ' + err);
+                        reject(err);
+                    });
+                }).catch(function (err) {
+                    Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
+                    reject(err);
+                });
+            } catch (err) {
+                Log.trace('DatasetController::process(..) - ERROR: ' + err);
                 reject(err);
-            });
-            }).catch(function(err){
-            console.log('Error in promise.all ' + err);
-            reject(err);
+            }
         });
-    }).catch(function (err) {
-        Log.trace('DatasetController::process(..) - unzip ERROR: ' + err.message);
-        reject(err);
-    });
-} catch (err) {
-    Log.trace('DatasetController::process(..) - ERROR: ' + err);
-    reject(err);
-}
-});
-}
+    }
 
     // source: http://stackoverflow.com/questions/6968448/where-is-body-in-a-nodejs-http-get-response
 
@@ -253,7 +248,7 @@ export default class ProcessHtml {
 
             http.get(options, function (res) {
                 res.on("data", function (chunk) {
-                    let jsonlatlon = JSON.parse(chunk);
+                    var jsonlatlon = JSON.parse(chunk);
                     jsonlatlon['short'] = shortname;
                     fulfill(jsonlatlon);
                 });

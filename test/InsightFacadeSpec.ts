@@ -13,6 +13,7 @@ describe("InsightFacade", function () {
 
     var jsonZip: string = null;
     var htmlZip: string = null;
+    var randomZip: string = null;
     var facade: InsightFacade = null;
 
     before(function () {
@@ -20,6 +21,7 @@ describe("InsightFacade", function () {
         // this zip might be in a different spot for you
         jsonZip = new Buffer(fs.readFileSync('310courses.1.0.zip')).toString('base64');
         htmlZip = new Buffer(fs.readFileSync('310rooms.1.1.zip')).toString('base64');
+        randomZip = new Buffer(fs.readFileSync('classes12.zip')).toString('base64');
         try {
             // what you delete here is going to depend on your impl, just make sure
             // all of your temporary files and directories are deleted
@@ -65,6 +67,19 @@ describe("InsightFacade", function () {
         var empty = undefined;
         Log.trace("Starting test: " + that.test.title);
         facade.addDataset('courses', empty).then(function (response: InsightResponse) {
+            console.log('failed');
+            expect.fail();
+        }).catch(function (response: InsightResponse) {
+            console.log('failed ' + response.code);
+            expect(response.code).to.equal(400);
+        });
+
+    });
+
+    it('adding an invalid zip should give a 400 error', function() {
+        var that = this;
+        Log.trace("Starting test: " + that.test.title);
+        facade.addDataset('courses', randomZip).then(function (response: InsightResponse) {
             console.log('failed');
             expect.fail();
         }).catch(function (response: InsightResponse) {

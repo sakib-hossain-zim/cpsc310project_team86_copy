@@ -16,8 +16,6 @@ export interface QueryRequest {
     GROUP?: string[];
     GT?: {};
     IS?: {};
-    NOT?: {};
-
 }
 
 
@@ -58,6 +56,8 @@ interface stringArray {
 export default class QueryController {
     private datasets: Datasets = {};
     private count: number = 0;
+    private is_Courses: boolean = false;
+    private is_Rooms: boolean = false;
 
     constructor(datasets: Datasets) {
         this.datasets = datasets;
@@ -71,6 +71,38 @@ export default class QueryController {
     public isValid(query: QueryRequest): boolean {
         // Undefined query and no AS value
         if (typeof query === 'undefined' || query.AS != 'TABLE') {
+            return false;
+        }
+
+        //Revolution: Should not be possible to query multiple datasets at the same time.
+
+        for (let key of query.GET) {
+
+            if ("courses" == key.split("_")[0]) {
+                this.is_Courses = true;
+            }
+            if ("rooms" == key.split("_")[0]) {
+                this.is_Rooms = true;
+            }
+        }
+
+        this.checkWhereKeys(query.WHERE);
+
+        if (typeof query.ORDER != "undefined") {
+            let key: any = query.ORDER;
+            let keys: any = Object.keys(key)[1];
+            let keysValue: any = key[keys];
+            for (let insideValue of keysValue) {
+                if (insideValue.split("_")[0] == "courses") {
+                    this.is_Courses = true;
+                }
+                if (insideValue.split("_")[0] == "rooms") {
+                    this.is_Rooms = true;
+                }
+            }
+        }
+
+        if (this.is_Courses == true && this.is_Rooms == true) {
             return false;
         }
 
@@ -189,9 +221,9 @@ export default class QueryController {
             for (let key of query.GROUP) {
                 if (key !== 'courses_dept' && key !== 'courses_avg' && key !== 'courses_instructor' && key !== 'courses_pass'
                     && key !== 'courses_fail' && key !== 'courses_title' && key !== 'courses_id' && key !== 'courses_audit' && key !== 'courses_uuid'
-                && key !== 'rooms_fullname' && key !== 'rooms_shortname' && key !== 'rooms_fullname' && key !== 'rooms_number' && key !== 'rooms_name'
-                && key !== 'rooms_address' && key !== 'rooms_lat' && key !== 'rooms_lon' && key !== 'rooms_seats' && key !== 'rooms_type'
-                && key !== 'rooms_furniture' && key !== 'rooms_href' && key !== 'courses_year') {
+                    && key !== 'rooms_fullname' && key !== 'rooms_shortname' && key !== 'rooms_fullname' && key !== 'rooms_number' && key !== 'rooms_name'
+                    && key !== 'rooms_address' && key !== 'rooms_lat' && key !== 'rooms_lon' && key !== 'rooms_seats' && key !== 'rooms_type'
+                    && key !== 'rooms_furniture' && key !== 'rooms_href' && key !== 'courses_year') {
                     return false;
                 }
             }
@@ -380,15 +412,15 @@ export default class QueryController {
      * @returns {any}
      */
     public sortUpFunction (value1: any, value2: any, keys: any, i: number, data: any) {
-            if (i < keys.length) {
-                if (value1[keys[i]] < value2[keys[i]]) {
-                    return -1;
-                } else if (value1[keys[i]] > value2[keys[i]]) {
-                    return 1;
-                } else {
-                    return this.sortUpFunction(value1, value2, keys, i + 1, data);
-                }
+        if (i < keys.length) {
+            if (value1[keys[i]] < value2[keys[i]]) {
+                return -1;
+            } else if (value1[keys[i]] > value2[keys[i]]) {
+                return 1;
+            } else {
+                return this.sortUpFunction(value1, value2, keys, i + 1, data);
             }
+        }
     }
 
     /**
@@ -401,14 +433,14 @@ export default class QueryController {
      */
     public sortDownFunction (value1: any, value2: any, keys: any, i: number, data: any) {
 
-            if (i < keys.length) {
-                if (value1[keys[i]] > value2[keys[i]]) {
-                    return -1;
-                } else if (value1[keys[i]] < value2[keys[i]]) {
-                    return 1;
-                } else {
-                    return this.sortDownFunction(value1, value2, keys, i + 1, data);
-                }
+        if (i < keys.length) {
+            if (value1[keys[i]] > value2[keys[i]]) {
+                return -1;
+            } else if (value1[keys[i]] < value2[keys[i]]) {
+                return 1;
+            } else {
+                return this.sortDownFunction(value1, value2, keys, i + 1, data);
+            }
         }
     }
     /**
@@ -449,12 +481,17 @@ export default class QueryController {
             if (i < keysValue.length) {
                 if (dirValue == 'UP') {
                     return data.sort(function (result1: any, result2: any) {
-                         return that.sortUpFunction(result1, result2, keysValue, i, data);
+                        return that.sortUpFunction(result1, result2, keysValue, i, data);
                     });
-                } else  {
+                }
+                if (dirValue == 'DOWN' ) {
                     return data.sort(function (result1: any, result2: any) {
-                         return that.sortDownFunction(result1, result2, keysValue, i, data);
+                        return that.sortDownFunction(result1, result2, keysValue, i, data);
                     });
+                }
+
+                else {
+                    return data;
                 }
             }
         }
@@ -594,7 +631,6 @@ export default class QueryController {
         let ORReturnData2: any = [];
         let NOTfilteredData: any;
 
-
         if (id == 'courses') {
             for (let dataObj of data) {
                 ORretValues.push(dataObj["courses_uuid"]);
@@ -730,6 +766,7 @@ export default class QueryController {
             }
         }
 
+        console.log('checking for length')
         if (obj.length > 0){
             obj = obj[0];
 
@@ -740,6 +777,7 @@ export default class QueryController {
 
         for (let prop in obj) {
             let arr = obj[prop];
+            console.log('arrlength ' + arr.length);
             let arrlength = arr.length;
             if (arrlength > 0){
                 for (let i = 0; arrlength > 0; i++) {
@@ -753,6 +791,7 @@ export default class QueryController {
             else {
                 for (let key in arr){
                     let empty: any = [];
+                    console.log('next length');
                     let nextlength = next.length;
                     if (nextlength > 1){                             // if next length is greater than one
                         for (let a =1 ; nextlength > 0; a ++){
@@ -909,6 +948,26 @@ export default class QueryController {
         return respArray;
     }
 
+    public checkWhereKeys(obj: any) {
+
+        for (let key in obj) {
+            if (key.split("_")[0] == 'courses') {
+                this.is_Courses = true;
+            }
+            if (key.split("_")[0] == 'rooms') {
+                this.is_Rooms = true;
+            }
+
+            let insideObj = obj[key];
+            if (Array.isArray(insideObj)) {
+                this.checkWhereKeys(insideObj);
+            }
+            else if (typeof insideObj == "object") {
+                this.checkWhereKeys(insideObj);
+            }
+        }
+    }
+
     /**
      * The actual query happening
      * @param query
@@ -953,23 +1012,23 @@ export default class QueryController {
                 value = query.WHERE[i];
             }
             let WHERE_Results: {}[] = this.filterRows(key, value, parsedData, false, id);
-           // console.log(WHERE_Results);
+            // console.log(WHERE_Results);
 
             GET_results = this.filterColumns(query, WHERE_Results, id);
-         //   console.log(GET_results);
+            //   console.log(GET_results);
 
         }
         let groupedData: any = this.group(query, GET_results);
-       // console.log(groupedData);
+        // console.log(groupedData);
 
         let appliedData: any = this.apply(query, groupedData);
-      //  console.log(appliedData);
+        //  console.log(appliedData);
 
         let orderedResults: any = this.orderResponse(query, appliedData);
-      //  console.log(orderedResults);
+        //  console.log(orderedResults);
 
         var response: QueryResponse = {render: query.AS, result: orderedResults};
-       // console.log(response);
+        // console.log(response);
         return response;
     }
 }
