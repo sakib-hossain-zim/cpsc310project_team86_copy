@@ -15,7 +15,7 @@ export default class RouteHandler {
 
     public static getHomepage(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('RoutHandler::getHomepage(..)');
-        fs.readFile('./src/rest/views/index3.html', 'utf8', function (err: Error, file: Buffer) {
+        fs.readFile('./src/rest/views/index.html', 'utf8', function (err: Error, file: Buffer) {
             if (err) {
                 res.send(500);
                 Log.error(JSON.stringify(err));
