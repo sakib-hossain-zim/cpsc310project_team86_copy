@@ -15,6 +15,7 @@ $(function () {
         });
     });
 
+
     $("#datasetRm").click(function () {
         var id = $("#datasetId").val();
         $.ajax("/dataset/" + id, {type: "DELETE"}).fail(function (e) {
