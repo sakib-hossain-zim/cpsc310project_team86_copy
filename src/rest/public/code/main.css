@@ -1,0 +1,72 @@
+/*
+Credit: https://github.com/tristanzickovich/Schedule-Maker
+*/
+
+body{
+   background-color: #0066FF;
+}
+body header{
+   font-size: 40px;
+   font-weight: bold;
+}
+.container{
+   text-align: center;
+}
+
+.dataTable{
+   border-collapse: collapse;
+}
+
+.timebox{
+   width: 18px;
+   text-align: center;
+}
+
+tbody td{
+   vertical-align: top;
+}
+
+input{
+   margin: 10px 0 10px 0;
+}
+
+#inputTable{
+   padding: 3px;
+   border: 5px solid black;
+   margin: 0 auto;
+   background-color: #969696;
+}
+
+#inputTable td, #inputTable th{
+   padding: 5px;
+   vertical-align: middle;
+}
+
+.guide{
+   border: 2px solid black;
+}
+
+.hidden{
+   display:none;
+}
+
+#scheduleTable{
+   border: 5px solid black;
+   margin: 0 auto;
+   background-color: #969696;
+}
+
+#scheduleTable td{
+   border: 1px solid black;
+   background-color: white;
+   padding: 10px;
+}
+
+#scheduleTable th{
+   padding: 10px;
+}
+
+mark {
+   background-color: #FDFF55;
+   color: black;
+}

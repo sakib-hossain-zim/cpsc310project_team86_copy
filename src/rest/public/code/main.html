@@ -1,0 +1,65 @@
+<!--Credit: https://github.com/tristanzickovich/Schedule-Maker-->
+<!DOCTYPE html>
+<html>
+<head>
+   <link type="text/css" rel="stylesheet" href="main.css">
+   <title> Schedule Maker </title>
+   <script src="main.js"></script>
+</head>
+<body>
+<div class="container">
+   <header>Schedule Maker</header>
+
+   <input type="button" value="Add Class" onclick="addRow('inputTable')">
+   <input type="button" value="Delete Class" onclick="deleteRow('inputTable')">
+   <table class="dataTable" id="inputTable">
+      <tbody>
+      <tr class="guide">
+         <th>delete</th>
+         <th>MON</th>
+         <th>TUES</th>
+         <th>WED</th>
+         <th>THURS</th>
+         <th>FRI</th>
+         <th>CLASS NAME</th>
+         <th>TIME START</th>
+         <th>am</th>
+         <th>pm</th>
+         <th>TIME END</th>
+         <th>am</th>
+         <th>pm</th>
+      </tr>
+      </tbody>
+   </table>
+
+   <input type="button" value="Make!" onclick="fetchData('inputTable','scheduleTable');unhide('schedule');orderClasses('scheduleTable')">
+</div>
+<div class="hidden" id="schedule">
+   <table class="dataTable" id="scheduleTable">
+      <tbody>
+      <tr class="guide">
+         <th> </th>
+         <th>MONDAY</th>
+         <th>TUESDAY</th>
+         <th>WEDNESDAY</th>
+         <th>THURSDAY</th>
+         <th>FRIDAY</th>
+      </tr>
+
+      <tr id="addhere">
+         <th>class/time</th>
+         <td> </td>
+         <td> </td>
+         <td> </td>
+         <td> </td>
+         <td> </td>
+      </tr>
+      </tbody>
+   </table>
+</div>
+</body>
+<script>addRow('inputTable')</script>
+<script>addRow('inputTable')</script>
+<script>addRow('inputTable')</script>
+
+</html>
