@@ -991,7 +991,6 @@ export default class QueryController {
             return response;
         }
         var parsedData = JSON.parse(data);
-        //console.log(data);
 
         var GET_results: any;
         if (typeof query.WHERE == 'undefined'|| Object.keys(query.WHERE).length == 0) {

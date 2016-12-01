@@ -24,6 +24,8 @@ $(function () {
     $("#queryForm").submit(function (e) {
         e.preventDefault();
         var query = $("#query").val();
+
+
         try {
             $.ajax("/query", {type:"POST", data: query, contentType: "application/json", dataType: "json", success: function(data) {
                 if (data["render"] === "TABLE") {
