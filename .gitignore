@@ -3,11 +3,11 @@ node_modules/
 bak/
 coverage/
 typings/
+!src/rest/public/**/*.js
 src/*.js
 src/*.map
 src/**/*.js
 src/**/*.map
-!src/rest/public/**/*.js
 test/*.js
 test/*.map
 npm-debug.log
