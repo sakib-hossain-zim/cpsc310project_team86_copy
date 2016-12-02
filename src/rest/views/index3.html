@@ -1,54 +1,47 @@
 <!DOCTYPE html>
 <head>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 	<link rel="stylesheet" href="./public/bootstrap.min.css">
-	<link rel="stylesheet" href="./public/main.css">
-	<script src="./public/jquery.min.js"></script>
+	<link rel="stylesheet" href="./public/main2.css">
+	<script type="text/javascript" src="./public/jquery.min.js"></script>
 	<script src="./public/bootstrap.min.js"></script>
 	<script src="./public/d3.min.js"></script>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	<script src="./public/coursesHtml.js"></script>
+	<script src="./public/autocomplete.js"></script>
 	<script src="./public/main.js"></script>
 </head>
 <html>
 <body>
 
-<div id = "navRow">
-	<h1>InsightUBC</h1>
-	<button type="button" class="btn btn-primary" id="courseExplore">Course Explorer</button>
-	<button type="button" class="btn btn-primary" id="roomExplore">Room Explorer</button>
-	<button type="button" class="btn btn-primary" id="roomSchedule">Room Scheduler</button>
-	<button type="button" class="btn btn-primary" id="scheduleMaker">Create Schedule</button>
-
-	<!--THE SCRIPT BELOW LINKS THE SCHEDULE BUTTON TO MY LOCAL FILE-->
-	<script type="text/javascript">
-		document.getElementById("scheduleMaker").onclick = function () {
-//			location.href = "scheduleMaker.html";
-//			window.open('file:///Users/janelle/cpsc310project/src/rest/views/scheduleMaker.html');
-			window.open('http://localhost:63342/cpsc310project/src/rest/public/code/main.html?_ijt=sr3jog5vb4bl6t4htnsuji613p');
-		};
-	</script>
-
+<h2 id="courseExplorerHeader">Course Explorer</h2>
+<hr size=4 noshade>
+<div id="departmentTitle">Department</div>
+<div id="departmentDiv">
+	<form id="departmentForm"><input id="departmentInput"></form>
+</div>
+<div id="sectionTitle">Section</div>
+<div id ="sectionDiv">
+	<form id="sectionForm"><input id="sectionInput"></form>
+</div>
+<div id="instructorTitle">Instructor</div>
+<div id ="instructorDiv">
+	<form id="instructorForm"><input id="instructorInput"></form>
+</div>
+<div id="orderByTitle">Order By</div>
+<div id ="orderByDiv">
+	<select id="orderBySelect">
+		<option id="none">none</option>
+		<option id="maxFail">max number of students failed</option>
+		<option id="maxPass">max number of students passed</option>
+		<option id="Average">average</option>
+	</select>
 </div>
 
-<div id="dataset">
-	<div class="form-group">
-		<h3>Dataset</h3>
-		<label for="datasetId">ID:</label>
-		<input type="text" class="form-control" id="datasetId">
-		<label for="datasetZip">Archive:</label>
-		<input type="file" class="form-control" id="datasetZip">
-	</div>
-	<button type="button" class="btn btn-primary" id="datasetAdd">Add Dataset</button>
-	<button type="button" class="btn btn-primary" id="datasetRm">Remove Dataset</button>
-</div>
-<div id="container">
-	<h3>Query</h3>
-	<form id="queryForm">
-		<div class="form-group">
-			<label for="query">Query:</label>
-			<textarea class="form-control" rows="10" id="query"></textarea>
-		</div>
-		<button type="submit" class="btn btn-primary">Submit</button>
-	</form>
-</div>
+<form id="queryForm">
+	<button type="submit" class="btn btn-default">Submit</button>
+</form>
 <div id="render">
 	<h3>Result</h3>
 </div>

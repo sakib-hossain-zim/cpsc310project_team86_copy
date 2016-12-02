@@ -15,7 +15,6 @@ $(function () {
         });
     });
 
-
     $("#datasetRm").click(function () {
         var id = $("#datasetId").val();
         $.ajax("/dataset/" + id, {type: "DELETE"}).fail(function (e) {
@@ -27,314 +26,1300 @@ $(function () {
     $("#queryForm").submit(function (e) {
         e.preventDefault();
         var query;
-        if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
-            if ($('#departmentInput').val() == 'all departments') {
-                query = JSON.stringify({
-                    "GET": ["courses_dept"],
-                    "WHERE": {},
-                    "ORDER" : "courses_dept",
-                    "AS": "TABLE"
-                })
-            } else {
-                query = JSON.stringify(
-                    {
+        if($('#orderBySelect').val() == 'none') {
+            if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($('#departmentInput').val() == 'all departments') {
+                    query = JSON.stringify({
                         "GET": ["courses_dept"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_dept": $('#departmentInput').val()
-                            }
-                        },
+                        "WHERE": {},
                         "ORDER": "courses_dept",
                         "AS": "TABLE"
-                    });
-            }
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": "courses_dept",
+                            "AS": "TABLE"
+                        });
+                }
 
-        } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length == 0) {
-            if ($("#sectionInput").val() == "all sections") {
-                query = JSON.stringify({
-                    "GET": ["courses_id"],
-                    "WHERE": {},
-                    "ORDER" : "courses_id",
-                    "AS": "TABLE"
-                })
-            } else {
-                query = JSON.stringify(
-                    {
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
                         "GET": ["courses_id"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_id": $('#sectionInput').val()
-                            }
-                        },
+                        "WHERE": {},
                         "ORDER": "courses_id",
                         "AS": "TABLE"
-                    });
-            }
-        } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
-            if ($("#instructorInput").val() == "all instructors") {
-                query = JSON.stringify({
-                    "GET": ["courses_instructor"],
-                    "WHERE": {},
-                    "ORDER" : "courses_instructor",
-                    "AS": "TABLE"
-                })
-            } else {
-                query = JSON.stringify(
-                    {
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": "courses_id",
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify({
                         "GET": ["courses_instructor"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_instructor": $('#instructorInput').val()
-                            }
-                        },
+                        "WHERE": {},
                         "ORDER": "courses_instructor",
                         "AS": "TABLE"
-                    });
-            }
-        } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
-            if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val() == "all instructors") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_id","courses_instructor"],
-                        "WHERE": {},
-                        "ORDER": { "dir": "UP", "keys": ["courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val().length !== 0) {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_instructor","courses_id"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_instructor": $('#instructorInput').val()
-                            }
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_instructor", "courses_id"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#sectionInput").val().length !== 0 && $("#instructorInput").val() == "all instructors") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_instructor", "courses_id"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_id": $('#sectionInput').val()
-                            }
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_instructor", "courses_id"]},
-                        "AS": "TABLE"
-                    });
-            } else {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_instructor", "courses_id"],
-                        "WHERE": {
-                            "AND": [
-                                {"EQ": {"courses_id": $("#sectionInput").val()}},
-                                {"IS": {"courses_instructor": $("#instructorInput").val()}}
-                            ]
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_instructor", "courses_id"]},
-                        "AS": "TABLE"
                     })
-            }
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": "courses_instructor",
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_instructor"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
 
-        } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
-            if ($("#sectionInput").val() == "all sections" && $("#departmentInputInput").val() == "all departments") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept","courses_id"],
-                        "WHERE": {},
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_id"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#sectionInput").val() == "all sections" && $("#departmentInput").val().length !== 0) {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept","courses_id"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_dept": $('#departmentInput').val()
-                            }
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_id"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#sectionInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_id": $('#sectionInput').val()
-                            }
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_id"]},
-                        "AS": "TABLE"
-                    });
-            } else {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id"],
-                        "WHERE": {
-                            "AND": [
-                                {"EQ": {"courses_id": $("#sectionInput").val()}},
-                                {"IS": {"courses_dept": $('#departmentInput').val()}}
-                            ]
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_id"]},
-                        "AS": "TABLE"
-                    })
-            }
-        } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
-            if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept","courses_instructor"],
-                        "WHERE": {},
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val().length !== 0) {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept","courses_instructor"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_dept": $('#departmentInput').val()
-                            }
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#instructorInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_instructor"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_instructor": $('#instructorInput').val()
-                            }
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_instructor"],
-                        "WHERE": {
-                            "AND": [
-                                {"IS": {"courses_instructor": $("#instructorInput").val()}},
-                                {"IS": {"courses_dept": $('#departmentInput').val()}}
-                            ]
-                        },
-                        "ORDER": { "dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
-                        "AS": "TABLE"
-                    })
-            }
-        } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
-            if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": {},
-                        "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": {
-                            "EQ": {
-                                "courses_id": $('#sectionInput').val()
-                            }
-                        },
-                        "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#instructorInput").val() == "all instructors" && $("#sectionInput").val() == "all sections") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_dept": $('#departmentInput').val()
-                            }
-                        },
-                        "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            }  else if ($("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": {
-                            "IS": {
-                                "courses_dept": $('#instructorInput').val()
-                            }
-                        },
-                        "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            }else if ($("#instructorInput").val() == "all instructors") {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": { "AND": [
-                            {"EQ": {"courses_id": $('#sectionInput').val()}},
-                            {"IS": {
-                                "courses_dept": $('#departmentInput').val()}}
-                        ]
-                        },
-                        "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    });
-            } else if ($("#sectionInput").val() == "all sections") {
-                query = JSON.stringify({
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": { "AND": [
-                            {"IS": {"courses_instructor": $('#instructorInput').val()}},
-                            {"IS": {
-                                "courses_dept": $('#departmentInput').val()}}
-                        ]
-                        },
-                        "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                        "AS": "TABLE"
-                    }
-                );
-            }  else if ($("#departmentInput").val() == "all departments") {
-                query = JSON.stringify({
-                    "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                    "WHERE": { "AND": [
-                        {"IS": {"courses_instructor": $('#instructorInput').val()}},
-                        {"EQ": {
-                            "courses_id": $('#sectionInput').val()}}
-                    ]
-                    },
-                    "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
-                    "AS": "TABLE"
-                });
-            } else {
-                query = JSON.stringify(
-                    {
-                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
-                        "WHERE": {
-                            "AND": [
-                                {"AND": [
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#departmentInputInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {
+                                "EQ": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $('#sectionInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {
+                                "AND": [
                                     {"IS": {"courses_instructor": $('#instructorInput').val()}},
-                                    {"IS": {"courses_dept": $("#departmentInput").val()}}
-                                ]},
-                                {"EQ": {"courses_id": $("#sectionInput").val()}}
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        }
+                    );
+                } else if ($("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                        "WHERE": {
+                            "AND": [
+                                {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                {
+                                    "EQ": {
+                                        "courses_id": $('#sectionInput').val()
+                                    }
+                                }
                             ]
                         },
                         "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
                         "AS": "TABLE"
-                    })
+                    });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor"],
+                            "WHERE": {
+                                "AND": [
+                                    {
+                                        "AND": [
+                                            {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                            {"IS": {"courses_dept": $("#departmentInput").val()}}
+                                        ]
+                                    },
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
             }
         }
-        alert(query);
+        if($('#orderBySelect').val() == 'max number of students failed') {
+            if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($('#departmentInput').val() == 'all departments') {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_fail"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_dept"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_dept"]},
+                            "AS": "TABLE"
+                        });
+                }
+
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                        "GET": ["courses_id", "courses_fail"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_id"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify({
+                        "GET": ["courses_instructor","courses_fail"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_instructor"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail", "courses_id","courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_fail"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#departmentInputInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_fail"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_fail"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_fail"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "EQ": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $('#sectionInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                            "GET": ["courses_dept", "courses_id", "courses_instructor", "courses_fail"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        }
+                    );
+                } else if ($("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                        "WHERE": {
+                            "AND": [
+                                {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                {
+                                    "EQ": {
+                                        "courses_id": $('#sectionInput').val()
+                                    }
+                                }
+                            ]
+                        },
+                        "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                        "AS": "TABLE"
+                    });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_fail"],
+                            "WHERE": {
+                                "AND": [
+                                    {
+                                        "AND": [
+                                            {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                            {"IS": {"courses_dept": $("#departmentInput").val()}}
+                                        ]
+                                    },
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_fail","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            }
+        }
+        if($('#orderBySelect').val() == 'max number of students passed') {
+            if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($('#departmentInput').val() == 'all departments') {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_pass"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_dept"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_dept"]},
+                            "AS": "TABLE"
+                        });
+                }
+
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                        "GET": ["courses_id", "courses_pass"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_id"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify({
+                        "GET": ["courses_instructor","courses_pass"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_instructor"]},
+
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass", "courses_id","courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_pass"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#departmentInputInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_pass"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_pass"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_pass"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor", "courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "EQ": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $('#sectionInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                            "GET": ["courses_dept", "courses_id", "courses_instructor", "courses_pass"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        }
+                    );
+                } else if ($("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                        "WHERE": {
+                            "AND": [
+                                {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                {
+                                    "EQ": {
+                                        "courses_id": $('#sectionInput').val()
+                                    }
+                                }
+                            ]
+                        },
+                        "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                        "AS": "TABLE"
+                    });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_pass"],
+                            "WHERE": {
+                                "AND": [
+                                    {
+                                        "AND": [
+                                            {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                            {"IS": {"courses_dept": $("#departmentInput").val()}}
+                                        ]
+                                    },
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            }
+        }
+        if($('#orderBySelect').val() == 'average') {
+            if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($('#departmentInput').val() == 'all departments') {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_avg"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_dept"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_dept"]},
+                            "AS": "TABLE"
+                        });
+                }
+
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                        "GET": ["courses_id", "courses_avg"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_id"]},
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify({
+                        "GET": ["courses_instructor","courses_avg"],
+                        "WHERE": {},
+                        "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_instructor"]},
+
+                        "AS": "TABLE"
+                    })
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length == 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#instructorInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg", "courses_id","courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_instructor", "courses_id","courses_avg"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_instructor", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length == 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#sectionInput").val() == "all sections" && $("#departmentInputInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_avg"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_pass","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id","courses_avg"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length == 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_avg"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val().length !== 0) {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor", "courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val().length !== 0 && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_instructor": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $("#instructorInput").val()}},
+                                    {"IS": {"courses_dept": $('#departmentInput').val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            } else if ($("#sectionInput").val().length !== 0 && $('#instructorInput').val().length !== 0 && $('#departmentInput').val().length !== 0) {
+                if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {},
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "EQ": {
+                                    "courses_id": $('#sectionInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#departmentInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#departmentInput").val() == "all departments" && $("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "IS": {
+                                    "courses_dept": $('#instructorInput').val()
+                                }
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#instructorInput").val() == "all instructors") {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "AND": [
+                                    {"EQ": {"courses_id": $('#sectionInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        });
+                } else if ($("#sectionInput").val() == "all sections") {
+                    query = JSON.stringify({
+                            "GET": ["courses_dept", "courses_id", "courses_instructor", "courses_avg"],
+                            "WHERE": {
+                                "AND": [
+                                    {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                    {
+                                        "IS": {
+                                            "courses_dept": $('#departmentInput').val()
+                                        }
+                                    }
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        }
+                    );
+                } else if ($("#departmentInput").val() == "all departments") {
+                    query = JSON.stringify({
+                        "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                        "WHERE": {
+                            "AND": [
+                                {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                {
+                                    "EQ": {
+                                        "courses_id": $('#sectionInput').val()
+                                    }
+                                }
+                            ]
+                        },
+                        "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                        "AS": "TABLE"
+                    });
+                } else {
+                    query = JSON.stringify(
+                        {
+                            "GET": ["courses_dept", "courses_id", "courses_instructor","courses_avg"],
+                            "WHERE": {
+                                "AND": [
+                                    {
+                                        "AND": [
+                                            {"IS": {"courses_instructor": $('#instructorInput').val()}},
+                                            {"IS": {"courses_dept": $("#departmentInput").val()}}
+                                        ]
+                                    },
+                                    {"EQ": {"courses_id": $("#sectionInput").val()}}
+                                ]
+                            },
+                            "ORDER": {"dir": "UP", "keys": ["courses_avg","courses_dept", "courses_id", "courses_instructor"]},
+                            "AS": "TABLE"
+                        })
+                }
+            }
+        }
 
         try {
             $.ajax("/query", {type:"POST", data: query, contentType: "application/json", dataType: "json", success: function(data) {
