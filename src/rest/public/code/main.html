@@ -5,6 +5,20 @@
    <link type="text/css" rel="stylesheet" href="main.css">
    <title> Schedule Maker </title>
    <script src="main.js"></script>
+
+   <script type="text/javascript" src="external/jquery-1.6.2.min.js"></script>
+   <script type="text/javascript" src="build/html2canvas.js"></script>
+   <script type="text/javascript" src="build/jquery.plugin.html2canvas.js"></script>
+   <script type="text/javascript">
+      $(function(){
+
+
+         $('body').html2canvas();
+
+
+
+      });
+   </script>
 </head>
 <body>
 <div class="container">
@@ -56,7 +70,8 @@
       </tr>
       </tbody>
    </table>
-   <input type="button" value="Share on Facebook!" id="shareButton" onclick= "makeImageScript(); postCanvasToFacebook()">
+   <input type="button" value="Generate Image" id="imageButton" onclick=>
+   <input type="button" value="Share on Facebook!" id="shareButton">
 </div>
 
 </body>
