@@ -3,6 +3,7 @@ node_modules/
 bak/
 coverage/
 typings/
+!src/rest/public/**/*.js
 src/*.js
 src/*.map
 src/**/*.js

@@ -32,7 +32,7 @@
       </tbody>
    </table>
 
-   <input type="button" value="Make!" onclick="fetchData('inputTable','scheduleTable');unhide('schedule');orderClasses('scheduleTable')">
+   <input type="button" value="Make!" onclick="fetchData('inputTable','scheduleTable');unhide('schedule');unhide('shareButton');orderClasses('scheduleTable')">
 </div>
 <div class="hidden" id="schedule">
    <table class="dataTable" id="scheduleTable">
@@ -56,7 +56,9 @@
       </tr>
       </tbody>
    </table>
+   <input type="button" value="Share on Facebook!" id="shareButton" onclick= "makeImageScript(); postCanvasToFacebook()">
 </div>
+
 </body>
 <script>addRow('inputTable')</script>
 <script>addRow('inputTable')</script>

@@ -3,7 +3,8 @@ Credit: https://github.com/tristanzickovich/Schedule-Maker
 */
 
 body{
-   background-color: #0066FF;
+   /*background-color: #0066FF;*/
+   background-color: #FFFFFF;
 }
 body header{
    font-size: 40px;
