@@ -4,6 +4,8 @@ bak/
 coverage/
 typings/
 !src/rest/public/**/*.js
+!src/rest/public/src/coursesHtml.js
+!src/rest/public/src/autocomplete.js
 src/*.js
 src/*.map
 src/**/*.js
