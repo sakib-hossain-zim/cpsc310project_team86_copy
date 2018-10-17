@@ -4,6 +4,31 @@ This is the base project for CPSC310. You will extend this codebase for all of t
 
 The [course webpage](https://github.com/ubccpsc/310/tree/2016sept) is your best resource for additional details about the project, AutoTest, and the specific requirements of each project deliverable. These resources will be frequently updated as the term progresses.
 
+# Project: insightUBC
+
+UBC is a big place, and involves a large number of people doing a variety of tasks. The goal of this project is to provide a way to perform some of the tasks required to run the university and to enable effective querying of the metadata from around campus. This will involve working with courses, prerequisites, past course averages, room scheduling, and timetable creation.
+
+To enable you to focus on the key abstractions, data models, and algorithms, this project will remove most UI concerns; we will provide a reference interface that will connect to your system using network requests. The project will represent a 'full stack' web development project using [Node](https://nodejs.org). You are free to use Javascript, Typescript, or CoffeeScript for your project, but the packages and libraries you use will be strictly limited.
+
+Each project deliverable will be marked using an automated private test suite; you will have access to a public automated test suite as well. While the public test suite will enable you to test that your project conforms to the interface of the private suite, it will be insufficient to gauge how complete your solution is. You are encouraged to create a private fork of the public test suite and extend it yourself to further validate each deliverable. Additional details are available on the [AutoTest](project/AutoTest.md) page.
+
+## Language and environment
+
+Your project will have to be JavaScript ES5 compatible; you can write it in either pure JS, CoffeeScript, or TypeScript (we will use TypeScript in lecture). The language you choose as a team is up to you so choose wisely. The course staff may not have experience with your language choice so it will be up to you to problem solve language-specific issues.
+
+While it might seem daunting to learn a new language on your own, the fluid nature of software systems requires that you get used to this. You will be responsible for learning the language that you choose to use. The syntax of Typescript is extremely similar to both each other and to Java itself, which you should have used in 210 (Javascript has some quirks, but is a relatively simple, if inconsistent, language).  Google will be your friend for Javascript, as there are _thousands_ of free tutorials and videos. Typescript also has a bunch of resources, but you can't really go wrong starting with the [Typescript Handbook](http://www.typescriptlang.org/docs/handbook/basic-types.html) or the [Typescript Deep Dive](https://basarat.gitbooks.io/typescript/content/docs/getting-started.html). If you are starting from scratch, it is really important that you don't just read a bunch of code but actually write some. The [Typescript Playground](http://www.typescriptlang.org/play/index.html) or a [Javascript REPL](https://repl.it/languages/javascript) can be a lightweight way to do this.
+
+All development will take place on Github. You will need a Github account; we will create the repository for your group after the course add/drop date. Being familiar with git is essential; please take a look at the 'getting started' part of the [Atlassian Git Introduction](https://www.atlassian.com/git/tutorials/setting-up-a-repository) before the first lab.
+
+## Allowable packages
+
+The packages and external libraries (aka all of the code you did not write yourself) you can use are limited. The packages below, and the packages they require, are all you are permitted to use. It is notable that a database is **NOT** permitted to be used; the data in this course is sufficiently simple for in-memory manipulation using the features built into the programming language. Essentially if you are typing ```npm install``` it is probably not permitted.
+
+* [typescript](https://www.npmjs.com/package/typescript)
+* [coffeescript](https://www.npmjs.com/package/coffee-script)
+* [restify](https://www.npmjs.com/package/restify)
+* [jszip](https://www.npmjs.com/package/jszip)
+
 ## Configuring your environment
 
 To start using this project you need to get your computer configured so you can build and execute the code. This process should be largely similar to the ```cpsc310starter``` repo used during the first lab. To do this, follow these steps; the specifics of each step (especially the first two) will vary based on which operating system your computer has:
